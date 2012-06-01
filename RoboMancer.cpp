@@ -30,6 +30,9 @@ int main(int argc, char* argv[])
     return -1;
   }
 
+  /* Initialize the subsystem */
+  initialize();
+
   /* Get the main window */
   g_window = GTK_WIDGET( gtk_builder_get_object(g_builder, "window1"));
   /* Connect signals */
@@ -43,4 +46,8 @@ int main(int argc, char* argv[])
 void initialize()
 {
   g_robotManager = new CRobotManager();
+  /* Read the configuration file */
+  g_robotManager->read( CMobot::getConfigFilePath() );
+
+  refreshConnectDialog();
 }
