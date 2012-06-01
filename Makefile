@@ -1,12 +1,13 @@
 #This makefile is for MSYS/MinGW systems
 
 CC=g++
-CFLAGS=-c `pkg-config --cflags gtk+-2.0`
+CFLAGS=-c `pkg-config --cflags gtk+-2.0` `pkg-config --cflags gmodule-export-2.0` -Wl,--export-dynamic
 #LIBS=`pkg-config --libs gtk+-2.0` -L. -lmobot -linterface
-LIBS=`pkg-config --libs gtk+-2.0` -L. -linterface
+LIBS=`pkg-config --libs gtk+-2.0` `pkg-config --libs gmodule-export-2.0` -L. -linterface
 
 #OBJS=RoboMancer.o  connectHandlers.o  gait.o  menuHandlers.o  movementFunctions.o  movementHandlers.o
-OBJS=RoboMancer.o  
+OBJS=connectDialog.o RoboMancer.o 
+HEADERS=RoboMancer.h
 
 #all:libmobot.a $(OBJS) RoboMancer
 all:$(OBJS) RoboMancer
@@ -38,7 +39,7 @@ interface.o:interface/interface.glade
 libinterface.a:interface.o
 	ar rcs libinterface.a interface.o
 
-RoboMancer:$(OBJS) libinterface.a
+RoboMancer:$(OBJS) $(HEADERS) libinterface.a
 	$(CC) -v $(OBJS) $(LIBS) -o RoboMancer
 
 clean:

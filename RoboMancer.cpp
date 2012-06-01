@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include <string.h>
+#include "RoboMancer.h"
 
 /* These store the embedded glade xml file */
 extern const char _binary_interface_interface_glade_start[];

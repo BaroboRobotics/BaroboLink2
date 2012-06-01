@@ -79,7 +79,7 @@
                         <property name="n_rows">3</property>
                         <property name="n_columns">2</property>
                         <child>
-                          <object class="GtkEntry" id="entry1">
+                          <object class="GtkEntry" id="entry_connect_newAddress">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">●</property>
@@ -94,12 +94,13 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="button1">
+                          <object class="GtkButton" id="button_connect_addRobot">
                             <property name="label" translatable="yes">Add Robot</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="use_action_appearance">False</property>
+                            <signal name="clicked" handler="on_button_connect_addRobot_clicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
@@ -137,12 +138,13 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkButton" id="button2">
+                              <object class="GtkButton" id="button_connect_remove">
                                 <property name="label" translatable="yes">Remove</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_connect_remove_clicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -151,12 +153,13 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button3">
+                              <object class="GtkButton" id="button_connect_moveUpAvailable">
                                 <property name="label" translatable="yes">Move Up</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_connect_moveUpAvailable_clicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -165,12 +168,13 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button4">
+                              <object class="GtkButton" id="button_connect_moveDownAvailable">
                                 <property name="label" translatable="yes">Move Down</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_connect_moveDownAvailable_clicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -189,12 +193,13 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="button5">
+                          <object class="GtkButton" id="button_connect_connect">
                             <property name="label" translatable="yes">Connect</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="use_action_appearance">False</property>
+                            <signal name="clicked" handler="on_button_connect_connect_clicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="top_attach">2</property>
@@ -279,12 +284,13 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button8">
+                              <object class="GtkButton" id="button_connect_disconnect">
                                 <property name="label" translatable="yes">Disconnect</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_connect_disconnect_clicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -305,12 +311,13 @@
                             <property name="can_focus">False</property>
                             <property name="layout_style">center</property>
                             <child>
-                              <object class="GtkButton" id="button6">
+                              <object class="GtkButton" id="button_connect_moveUpConnected">
                                 <property name="label" translatable="yes">Move Up</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_connect_moveUpConnected_clicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -319,12 +326,13 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button7">
+                              <object class="GtkButton" id="button_connect_moveDownConnected">
                                 <property name="label" translatable="yes">Move Down</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_connect_moveDownConnected_clicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -995,6 +1003,7 @@ Button A and B together: Clear recorded motions</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_action_appearance">False</property>
+                        <signal name="clicked" handler="on_button_home_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
