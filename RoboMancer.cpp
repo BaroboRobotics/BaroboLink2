@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 #include <string.h>
 #include "RoboMancer.h"
+#include "RobotManager.h"
 
 /* These store the embedded glade xml file */
 extern const char _binary_interface_interface_glade_start[];
@@ -9,6 +10,8 @@ extern const char _binary_interface_interface_glade_end[];
 
 GtkBuilder *g_builder;
 GtkWidget *g_window;
+
+CRobotManager *g_robotManager;
 
 int main(int argc, char* argv[])
 {
@@ -35,4 +38,9 @@ int main(int argc, char* argv[])
   gtk_widget_show(g_window);
   gtk_main();
   return 0;
+}
+
+void initialize()
+{
+  g_robotManager = new CRobotManager();
 }

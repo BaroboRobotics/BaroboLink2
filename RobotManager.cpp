@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "RobotManager.h"
 
-RobotManager::RobotManager()
+CRobotManager::CRobotManager()
 {
   int i;
   for(i = 0; i < MAX_CONNECTED; i++) {
@@ -11,23 +11,23 @@ RobotManager::RobotManager()
   }
 }
 
-RobotManager::~RobotManager()
+CRobotManager::~CRobotManager()
 {
 }
 
-bool RobotManager::isConnected(int index) {
+bool CRobotManager::isConnected(int index) {
   if((index >= numEntries()) || index < 0) {
     return false;
   }
   return _connected[index];
 }
 
-void RobotManager::setConnected(int index, bool connected)
+void CRobotManager::setConnected(int index, bool connected)
 {
   _connected[index] = connected;
 }
 
-int RobotManager::connect(int availableIndex)
+int CRobotManager::connect(int availableIndex)
 {
   int i;
   int index;
@@ -51,7 +51,7 @@ int RobotManager::connect(int availableIndex)
   return err;
 }
 
-int RobotManager::disconnect(int connectIndex)
+int CRobotManager::disconnect(int connectIndex)
 {
   int i;
   int foundEntry = 0;
@@ -74,7 +74,7 @@ int RobotManager::disconnect(int connectIndex)
   return 0; 
 }
 
-int RobotManager::moveUp(int connectIndex) {
+int CRobotManager::moveUp(int connectIndex) {
   CRecordMobot* tempMobot;
   char* tempAddr;
   if(connectIndex < 1 || connectIndex >= numConnected()) return -1;
@@ -88,7 +88,7 @@ int RobotManager::moveUp(int connectIndex) {
   return 0;
 }
 
-int RobotManager::moveDown(int connectIndex) {
+int CRobotManager::moveDown(int connectIndex) {
   CRecordMobot* tempMobot;
   char* tempAddr;
   if(connectIndex < 0 || connectIndex >= (numConnected()-1)) return -1;
@@ -101,7 +101,7 @@ int RobotManager::moveDown(int connectIndex) {
   return 0;
 }
 
-int RobotManager::numConnected()
+int CRobotManager::numConnected()
 {
   int num = 0, i;
   for(i = 0; i < numEntries(); i++) {
@@ -112,14 +112,14 @@ int RobotManager::numConnected()
   return num;
 }
 
-const char* RobotManager::getConnected(int connectIndex) {
+const char* CRobotManager::getConnected(int connectIndex) {
 	if(connectIndex < 0 || connectIndex >= numConnected()) {
 		return NULL;
 	}
 	return _connectedAddresses[connectIndex];
 }
 
-int RobotManager::availableIndexToIndex(int availableIndex)
+int CRobotManager::availableIndexToIndex(int availableIndex)
 {
 	int index = 0;
 	int i;
@@ -135,12 +135,12 @@ int RobotManager::availableIndexToIndex(int availableIndex)
 	return index;
 }
 
-int RobotManager::numAvailable()
+int CRobotManager::numAvailable()
 {
 	return numEntries() - numConnected();
 }
 
-CRecordMobot* RobotManager::getMobot(int connectIndex)
+CRecordMobot* CRobotManager::getMobot(int connectIndex)
 {
 	if(connectIndex < 0 || connectIndex >= numConnected()) {
 		return NULL;
@@ -148,7 +148,7 @@ CRecordMobot* RobotManager::getMobot(int connectIndex)
 	return _mobots[connectIndex];
 }
 
-string* RobotManager::generateProgram(bool looped)
+string* CRobotManager::generateProgram(bool looped)
 {
   string buf;
   string *program = new string();

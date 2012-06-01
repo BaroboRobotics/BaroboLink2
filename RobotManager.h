@@ -10,11 +10,11 @@
 
 #define MAX_CONNECTED 100
 using namespace std;
-class RobotManager : public ConfigFile
+class CRobotManager : public ConfigFile
 {
   public:
-    RobotManager();
-    ~RobotManager();
+    CRobotManager();
+    ~CRobotManager();
     bool isConnected(int index);
     void setConnected(int index, bool connected);
     int connect(int availableIndex);

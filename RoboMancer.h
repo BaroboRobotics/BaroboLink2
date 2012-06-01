@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+/* Global Funcs */
+void initialize();
+
 /* Connect Dialog */
 G_MODULE_EXPORT void on_button_connect_addRobot_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_connect_remove_clicked(GtkWidget* widget, gpointer data);
