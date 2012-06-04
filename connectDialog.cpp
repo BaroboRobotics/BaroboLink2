@@ -4,18 +4,58 @@
 
 void on_button_connect_addRobot_clicked(GtkWidget* widget, gpointer data)
 {
+  GtkEntry* entry = GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_connect_newAddress"));
+  const gchar* addr = gtk_entry_get_text(entry);
+  g_robotManager->addEntry(addr);
+  g_robotManager->write();
+  refreshConnectDialog();
 }
 
 void on_button_connect_remove_clicked(GtkWidget* widget, gpointer data)
 {
+  int i = getConnectSelectedIndex();
+  if(i < 0) return;
+  g_robotManager->remove(i);
+  g_robotManager->write();
+  refreshConnectDialog();
 }
 
 void on_button_connect_moveUpAvailable_clicked(GtkWidget* widget, gpointer data)
 {
+  int i = getConnectSelectedIndex();
+  if(i < 1) {
+    return;
+  }
+  g_robotManager->moveEntryUp(i);
+  g_robotManager->write();
+  refreshConnectDialog();
+  /* Select the moved index */
+  GtkTreePath* treePath;
+  GtkTreeView* availableBots = 
+      GTK_TREE_VIEW(gtk_builder_get_object(g_builder, "treeview_availableRobots"));
+  treePath = gtk_tree_path_new_from_indices(i-1, -1);
+  //gtk_tree_view_row_activated(availableBots, treePath, column);
+  GtkTreeSelection* selection = gtk_tree_view_get_selection(availableBots);
+  gtk_tree_selection_select_path(selection, treePath);
 }
 
 void on_button_connect_moveDownAvailable_clicked(GtkWidget* widget, gpointer data)
 {
+  int i = getConnectSelectedIndex();
+  if(i < 0) {
+    return;
+  }
+  g_robotManager->moveEntryDown(i);
+  g_robotManager->write();
+  refreshConnectDialog();
+  /* Select the moved index */
+  GtkTreePath* treePath;
+  GtkTreeView* availableBots = 
+      GTK_TREE_VIEW(gtk_builder_get_object(g_builder, "treeview_availableRobots"));
+  treePath = gtk_tree_path_new_from_indices(i+1, -1);
+  //gtk_tree_view_row_activated(availableBots, treePath, column);
+  GtkTreeSelection* selection = gtk_tree_view_get_selection(availableBots);
+  gtk_tree_selection_select_path(selection, treePath);
 }
 
 struct connectThreadArg_s {
@@ -85,20 +125,30 @@ gboolean progressBarConnectUpdate(gpointer data)
   }
 }
 
-void on_button_connect_connect_clicked(GtkWidget* widget, gpointer data)
+int getConnectSelectedIndex()
 {
-  GtkWidget* progressBarWindow = GTK_WIDGET(gtk_builder_get_object(g_builder, "window_connectProgress"));
-  GtkWidget* progressBarConnect = GTK_WIDGET(gtk_builder_get_object(g_builder, "progressbar_connect"));
   /* Get the index and/or text */
   GtkWidget* view =  GTK_WIDGET(gtk_builder_get_object(g_builder, "treeview_availableRobots"));
   GtkTreeModel* model = GTK_TREE_MODEL(gtk_builder_get_object(g_builder, "liststore_availableRobots"));
   GtkTreeSelection* selection = gtk_tree_view_get_selection((GTK_TREE_VIEW(view)));
   GList* list = gtk_tree_selection_get_selected_rows(selection, &model);
-  if(list == NULL) return;
+  if(list == NULL) return -1;
   gint* paths = gtk_tree_path_get_indices((GtkTreePath*)list->data);
   int i = paths[0];
   g_list_foreach(list, (GFunc) gtk_tree_path_free, NULL);
   g_list_free(list);
+  return i;
+}
+
+void on_button_connect_connect_clicked(GtkWidget* widget, gpointer data)
+{
+  GtkWidget* progressBarWindow = GTK_WIDGET(gtk_builder_get_object(g_builder, "window_connectProgress"));
+  GtkWidget* progressBarConnect = GTK_WIDGET(gtk_builder_get_object(g_builder, "progressbar_connect"));
+  /* Get the index and/or text */
+  int i = getConnectSelectedIndex();
+  if(i < 0) {
+    return;
+  }
   static struct connectThreadArg_s arg;
   arg.connectIndex = i;
   arg.connectionCompleted = 0;
@@ -106,14 +156,6 @@ void on_button_connect_connect_clicked(GtkWidget* widget, gpointer data)
   THREAD_CREATE(&thread, connectThread, &arg);
   gtk_widget_show(progressBarWindow);
   g_timeout_add(100, progressBarConnectUpdate, &arg);
-}
-
-void on_button_connect_moveUpConnected_clicked(GtkWidget* widget, gpointer data)
-{
-}
-
-void on_button_connect_moveDownConnected_clicked(GtkWidget* widget, gpointer data)
-{
 }
 
 void on_button_connect_disconnect_clicked(GtkWidget* widget, gpointer data)
