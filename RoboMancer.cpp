@@ -51,3 +51,18 @@ void initialize()
 
   refreshConnectDialog();
 }
+
+int getIterModelFromTreeSelection(GtkTreeView *treeView, GtkTreeModel **model, GtkTreeIter *iter)
+{
+  GtkTreeSelection *treeSelection;
+
+  treeSelection = gtk_tree_view_get_selection( treeView );
+  gtk_tree_selection_set_mode(treeSelection, GTK_SELECTION_BROWSE);
+
+  bool success =
+    gtk_tree_selection_get_selected( treeSelection, model, iter );
+  if(!success) {
+    return -1;
+  }
+  return 0;
+}

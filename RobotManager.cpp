@@ -51,6 +51,30 @@ int CRobotManager::connect(int availableIndex)
   return err;
 }
 
+int CRobotManager::connectIndex(int index)
+{
+  if(isConnected(index)) {
+    return 0;
+  }
+  char name[80];
+  sprintf(name, "robot%d", numConnected()+1);
+  CRecordMobot *mobot = new CRecordMobot(name);
+  int err;
+  if(err = mobot->connectWithAddress( getEntry(index), 1 )) {
+    return err;
+  }
+  /* Enable the button callback */
+  /* FIXME */
+  //mobot->enableButtonCallback(CDialogTeaching::OnMobotButton);
+  mobot->setJointSpeedRatios(1, 1, 1, 1);
+  /* Insert the newly connected robot to the bottom of the list. */
+  _mobots[numConnected()] = mobot;
+  _connectedAddresses[numConnected()] = 
+	  _addresses[index];
+  _connected[index] = true;
+  return err;
+}
+
 int CRobotManager::disconnect(int connectIndex)
 {
   int i;

@@ -18,6 +18,7 @@ class CRobotManager : public ConfigFile
     bool isConnected(int index);
     void setConnected(int index, bool connected);
     int connect(int availableIndex);
+    int connectIndex(int index);
     int disconnect(int connectIndex);
     int moveUp(int connectIndex);
     int moveDown(int connectIndex);

@@ -9,6 +9,7 @@ extern "C" {
 
 /* Global Funcs */
 void initialize();
+int getIterModelFromTreeSelection(GtkTreeView *treeView, GtkTreeModel **model, GtkTreeIter *iter);
 
 /* Global Vars */
 extern GtkBuilder *g_builder;
@@ -23,6 +24,7 @@ G_MODULE_EXPORT void on_button_connect_connect_clicked(GtkWidget* widget, gpoint
 G_MODULE_EXPORT void on_button_connect_moveUpConnected_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_connect_moveDownConnected_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_connect_disconnect_clicked(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data);
 void refreshConnectDialog();
 
 #ifdef __cplusplus
