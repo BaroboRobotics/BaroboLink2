@@ -4,7 +4,12 @@
 #include "RobotManager.h"
 
 /* These store the embedded glade xml file */
+#ifndef _MSYS
 extern const char _binary_interface_interface_glade_start[];
+#else
+extern const char binary_interface_interface_glade_start[];
+const char* _binary_interface_interface_glade_start = binary_interface_interface_glade_start;
+#endif
 extern size_t _binary_interface_interface_glade_size;
 extern const char _binary_interface_interface_glade_end[];
 
