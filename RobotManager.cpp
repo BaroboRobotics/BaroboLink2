@@ -61,6 +61,7 @@ int CRobotManager::connectIndex(int index)
   char name[80];
   sprintf(name, "robot%d", numConnected()+1);
   recordMobot_t *mobot = (recordMobot_t*)malloc(sizeof(recordMobot_t));
+  Mobot_init((mobot_t*)mobot);
   int err;
   if(err = Mobot_connectWithAddress( (mobot_t*)mobot, getEntry(index), 1 )) {
     return err;

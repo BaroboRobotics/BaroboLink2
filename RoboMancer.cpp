@@ -52,7 +52,7 @@ void initialize()
 {
   g_robotManager = new CRobotManager();
   /* Read the configuration file */
-  g_robotManager->read( CMobot::getConfigFilePath() );
+  g_robotManager->read( Mobot_getConfigFilePath() );
 
   refreshConnectDialog();
 }

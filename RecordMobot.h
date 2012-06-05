@@ -16,7 +16,7 @@ struct motion_s
 	} data;
 	char* name;
 };
-
+#if 0
 class CRecordMobot :
 	public CMobot
 {
@@ -46,6 +46,7 @@ private:
 	char _name[80];
   char _address[80];
 };
+#endif
 
 typedef struct recordMobot_s
 {
