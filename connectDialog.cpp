@@ -18,6 +18,14 @@ void on_button_connect_remove_clicked(GtkWidget* widget, gpointer data)
   g_robotManager->remove(i);
   g_robotManager->write();
   refreshConnectDialog();
+  /* Select the next mobot automatically */
+  GtkTreePath* treePath;
+  GtkTreeView* availableBots = 
+      GTK_TREE_VIEW(gtk_builder_get_object(g_builder, "treeview_availableRobots"));
+  treePath = gtk_tree_path_new_from_indices(i, -1);
+  //gtk_tree_view_row_activated(availableBots, treePath, column);
+  GtkTreeSelection* selection = gtk_tree_view_get_selection(availableBots);
+  gtk_tree_selection_select_path(selection, treePath);
 }
 
 void on_button_connect_moveUpAvailable_clicked(GtkWidget* widget, gpointer data)
@@ -118,6 +126,10 @@ gboolean progressBarConnectUpdate(gpointer data)
       gtk_widget_show(
         GTK_WIDGET(gtk_builder_get_object(g_builder, "dialog_connectFailed")));
     }
+    if(a->connectReturnVal == 0) {
+      /* Connection Success */
+      refreshConnectDialog();
+    }
     return FALSE;
   } else {
     gtk_progress_bar_pulse(GTK_PROGRESS_BAR(progressBarConnect));
@@ -190,18 +202,18 @@ void refreshConnectDialog()
       gtk_list_store_append(liststore_connected, &connectedIter);
       gtk_list_store_set(liststore_connected, &connectedIter, 
           0, 
-          g_robotManager->getEntry( g_robotManager->availableIndexToIndex(i)),
+          g_robotManager->getEntry(i),
           -1);
       /* Set the blinky light icon to green */
       gtk_list_store_set(liststore_available, &iter,
           0, 
-          g_robotManager->getEntry( g_robotManager->availableIndexToIndex(i)),
+          g_robotManager->getEntry(i),
           1, GTK_STOCK_YES,
           -1 );
     } else {
       gtk_list_store_set(liststore_available, &iter,
           0, 
-          g_robotManager->getEntry( g_robotManager->availableIndexToIndex(i)),
+          g_robotManager->getEntry(i),
           1, GTK_STOCK_NO,
           -1 );
     }

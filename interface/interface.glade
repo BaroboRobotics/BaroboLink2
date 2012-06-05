@@ -943,6 +943,12 @@ Button A and B together: Clear recorded motions</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="model">liststore_connectedRobots</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="cellrenderertext2"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>
