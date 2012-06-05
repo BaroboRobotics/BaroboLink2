@@ -1,5 +1,10 @@
 #include <gtk/gtk.h>
 #include <string.h>
+#define PLAT_GTK 1
+#define GTK
+#include <Scintilla.h>
+#include <SciLexer.h>
+#include <ScintillaWidget.h>
 #include "RoboMancer.h"
 #include "RobotManager.h"
 
@@ -15,6 +20,8 @@ extern const char _binary_interface_interface_glade_end[];
 
 GtkBuilder *g_builder;
 GtkWidget *g_window;
+GtkWidget *g_scieditor;
+ScintillaObject *g_sci;
 
 CRobotManager *g_robotManager;
 
@@ -55,6 +62,15 @@ void initialize()
   g_robotManager->read( Mobot_getConfigFilePath() );
 
   refreshConnectDialog();
+
+  /* Add Scintilla */
+  g_scieditor = scintilla_new();
+  g_sci = SCINTILLA(g_scieditor);
+  GtkWidget *container = GTK_WIDGET(gtk_builder_get_object(g_builder, "alignment3"));
+  gtk_container_add(GTK_CONTAINER(container), g_scieditor);
+  scintilla_set_id(g_sci, 0);
+  gtk_widget_set_usize(g_scieditor, 100, 300);
+  gtk_widget_show(g_scieditor);
 }
 
 int getIterModelFromTreeSelection(GtkTreeView *treeView, GtkTreeModel **model, GtkTreeIter *iter)
