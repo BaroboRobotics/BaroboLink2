@@ -8,16 +8,6 @@
 #include "RoboMancer.h"
 #include "RobotManager.h"
 
-/* These store the embedded glade xml file */
-#ifndef _MSYS
-extern const char _binary_interface_interface_glade_start[];
-#else
-extern const char binary_interface_interface_glade_start[];
-const char* _binary_interface_interface_glade_start = binary_interface_interface_glade_start;
-#endif
-extern size_t _binary_interface_interface_glade_size;
-extern const char _binary_interface_interface_glade_end[];
-
 GtkBuilder *g_builder;
 GtkWidget *g_window;
 GtkWidget *g_scieditor;
@@ -35,7 +25,7 @@ int main(int argc, char* argv[])
   g_builder = gtk_builder_new();
 
   /* Load the UI */
-  if( ! gtk_builder_add_from_string(g_builder, _binary_interface_interface_glade_start, strlen(_binary_interface_interface_glade_start), &error) )
+  if( ! gtk_builder_add_from_file(g_builder, "interface/interface.glade", &error) )
   {
     g_warning("%s", error->message);
     //g_free(error);

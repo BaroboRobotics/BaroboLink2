@@ -2,6 +2,11 @@
 #define _ROBOMANCER_H_
 
 #include "RobotManager.h"
+
+#define PLAT_GTK 1
+#define GTK
+#include <Scintilla.h>
+#include <SciLexer.h>
 #include <ScintillaWidget.h>
 
 #ifdef __cplusplus

@@ -182,9 +182,17 @@ void refreshConnectDialog()
   /* Populate the widgets */
   int i;
   GtkTreeIter iter;
+  GtkTreeIter connectedIter;
   for(i = 0; i < g_robotManager->numEntries(); i++) {
     gtk_list_store_append(liststore_available, &iter);
     if(g_robotManager->isConnected(i)) {
+      /* Add it to the liststore of connected bots */
+      gtk_list_store_append(liststore_connected, &connectedIter);
+      gtk_list_store_set(liststore_connected, &connectedIter, 
+          0, 
+          g_robotManager->getEntry( g_robotManager->availableIndexToIndex(i)),
+          -1);
+      /* Set the blinky light icon to green */
       gtk_list_store_set(liststore_available, &iter,
           0, 
           g_robotManager->getEntry( g_robotManager->availableIndexToIndex(i)),
