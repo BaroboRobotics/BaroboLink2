@@ -26,11 +26,11 @@ class CRobotManager : public ConfigFile
     const char* getConnected(int connectIndex);
     int availableIndexToIndex(int index);
     int numAvailable();
-    CRecordMobot* getMobot(int connectIndex);
+    recordMobot_t* getMobot(int connectIndex);
     string* generateProgram(bool looped = false);
   private:
     bool _connected[MAX_CONNECTED]; /* Index by ConfigFile */
-    CRecordMobot *_mobots[MAX_CONNECTED];
+    recordMobot_t *_mobots[MAX_CONNECTED];
     /* _connectAddresses is an array of pointers to 
        ConfigFile::_addresses */
     char *_connectedAddresses[MAX_CONNECTED];

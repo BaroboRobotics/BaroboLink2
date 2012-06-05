@@ -46,3 +46,34 @@ private:
 	char _name[80];
   char _address[80];
 };
+
+typedef struct recordMobot_s
+{
+  mobot_t mobot;
+  int numMotions;
+  struct motion_s **motions;
+  int numMotionsAllocated;
+  char name[80];
+  char address[80];
+} recordMobot_t;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+void RecordMobot_init(recordMobot_t* mobot, char *name);
+void RecordMobot_destroy(recordMobot_t* mobot);
+int RecordMobot_connectWithAddress(recordMobot_t* mobot, const char address[], int channel);
+const char* RecordMobot_getAddress(recordMobot_t* mobot);
+int RecordMobot_record(recordMobot_t* mobot);
+int RecordMobot_addDelay(recordMobot_t* mobot, double seconds);
+int RecordMobot_play(recordMobot_t* mobot, int index);
+int RecordMobot_getMotionType(recordMobot_t* mobot, int index);
+int RecordMobot_getMotionString(recordMobot_t* mobot, int index, char* buf);
+const char* RecordMobot_getMotionName(recordMobot_t* mobot, int index);
+int RecordMobot_setMotionName(recordMobot_t* mobot, int index, const char* name);
+int RecordMobot_removeMotion(recordMobot_t* mobot, int index, bool releaseData);
+int RecordMobot_clearAllMotions(recordMobot_t* mobot);
+int RecordMobot_moveMotion(recordMobot_t* mobot, int fromindex, int toindex);
+#ifdef __cplusplus
+}
+#endif

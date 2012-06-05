@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "RobotManager.h"
 
 CRobotManager::CRobotManager()
@@ -34,15 +35,16 @@ int CRobotManager::connect(int availableIndex)
   int err = 0;
   char name[80];
   sprintf(name, "robot%d", numConnected()+1);
-  CRecordMobot *mobot = new CRecordMobot(name);
+  recordMobot_t *mobot = (recordMobot_t*)malloc(sizeof(recordMobot_t));
+  RecordMobot_init(mobot, name);
   index = availableIndexToIndex(availableIndex);
-  if(err = mobot->connectWithAddress( getEntry(index), 1 )) {
+  if(err = Mobot_connectWithAddress( (mobot_t*)mobot, getEntry(index), 1 )) {
     return err;
   }
   /* Enable the button callback */
   /* FIXME */
   //mobot->enableButtonCallback(CDialogTeaching::OnMobotButton);
-  mobot->setJointSpeedRatios(1, 1, 1, 1);
+  Mobot_setJointSpeedRatios((mobot_t*)mobot, 1, 1, 1, 1);
   /* Insert the newly connected robot to the bottom of the list. */
   _mobots[numConnected()] = mobot;
   _connectedAddresses[numConnected()] = 
@@ -58,15 +60,15 @@ int CRobotManager::connectIndex(int index)
   }
   char name[80];
   sprintf(name, "robot%d", numConnected()+1);
-  CRecordMobot *mobot = new CRecordMobot(name);
+  recordMobot_t *mobot = (recordMobot_t*)malloc(sizeof(recordMobot_t));
   int err;
-  if(err = mobot->connectWithAddress( getEntry(index), 1 )) {
+  if(err = Mobot_connectWithAddress( (mobot_t*)mobot, getEntry(index), 1 )) {
     return err;
   }
   /* Enable the button callback */
   /* FIXME */
   //mobot->enableButtonCallback(CDialogTeaching::OnMobotButton);
-  mobot->setJointSpeedRatios(1, 1, 1, 1);
+  Mobot_setJointSpeedRatios((mobot_t*)mobot, 1, 1, 1, 1);
   /* Insert the newly connected robot to the bottom of the list. */
   _mobots[numConnected()] = mobot;
   _connectedAddresses[numConnected()] = 
@@ -87,7 +89,7 @@ int CRobotManager::disconnect(int connectIndex)
     }
   }
   if(foundEntry == 0) { return -1; }
-  _mobots[connectIndex]->disconnect();
+  Mobot_disconnect((mobot_t*)_mobots[connectIndex]);
   /* Need to shift addresses and mobots up */
   int j;
   for(j = connectIndex+1; j < numConnected(); j++) {
@@ -99,7 +101,7 @@ int CRobotManager::disconnect(int connectIndex)
 }
 
 int CRobotManager::moveUp(int connectIndex) {
-  CRecordMobot* tempMobot;
+  recordMobot_t* tempMobot;
   char* tempAddr;
   if(connectIndex < 1 || connectIndex >= numConnected()) return -1;
   /* Swap the robot with the one prior */
@@ -113,7 +115,7 @@ int CRobotManager::moveUp(int connectIndex) {
 }
 
 int CRobotManager::moveDown(int connectIndex) {
-  CRecordMobot* tempMobot;
+  recordMobot_t* tempMobot;
   char* tempAddr;
   if(connectIndex < 0 || connectIndex >= (numConnected()-1)) return -1;
   tempMobot = _mobots[connectIndex + 1];
@@ -164,7 +166,7 @@ int CRobotManager::numAvailable()
 	return numEntries() - numConnected();
 }
 
-CRecordMobot* CRobotManager::getMobot(int connectIndex)
+recordMobot_t* CRobotManager::getMobot(int connectIndex)
 {
 	if(connectIndex < 0 || connectIndex >= numConnected()) {
 		return NULL;
@@ -190,7 +192,8 @@ string* CRobotManager::generateProgram(bool looped)
 
   /* Connect to each one */
   for(i = 0; i < numConnected(); i++) {
-    sprintf(tbuf, "robot%d.connectWithAddress(\"%s\", 1);\n", i+1, getMobot(i)->getAddress());
+    sprintf(tbuf, "robot%d.connectWithAddress(\"%s\", 1);\n", i+1, 
+        RecordMobot_getAddress(getMobot(i)));
     buf.assign(tbuf);
     *program += buf;
   }
@@ -202,27 +205,27 @@ string* CRobotManager::generateProgram(bool looped)
     *program += "for(i = 0; i < num; i++) {";
   }
   /* Now go through each motion */
-  for(i = 0; i < getMobot(0)->numMotions(); i++) {
+  for(i = 0; i < getMobot(0)->numMotions; i++) {
     *program += "\n";
     /* First, print the comment for the motion */
-    sprintf(tbuf, "/* %s */\n", getMobot(0)->getMotionName(i));
+    sprintf(tbuf, "/* %s */\n", RecordMobot_getMotionName(getMobot(0), i));
     buf.assign(tbuf);
     if(looped) *program += "    ";
     *program += buf;
     /* Now, print each robots motion */
     for(j = 0; j < numConnected(); j++) {
-      getMobot(j)->getMotionString(i, tbuf);
+      RecordMobot_getMotionString(getMobot(j), i, tbuf);
       buf.assign(tbuf);
       buf += "\n";
       if(looped) *program += "    ";
       *program += buf;
-      if(getMobot(j)->getMotionType(i) == MOTION_SLEEP) {
+      if(RecordMobot_getMotionType(getMobot(j), i) == MOTION_SLEEP) {
         break;
       }
     }
     /* Make sure all the robots are done moving */
     for(j = 0; j < numConnected(); j++) {
-      if(getMobot(j)->getMotionType(i) == MOTION_SLEEP) {
+      if(RecordMobot_getMotionType(getMobot(j), i) == MOTION_SLEEP) {
         break;
       }
       sprintf(tbuf, "robot%d.moveWait();\n", j+1);
