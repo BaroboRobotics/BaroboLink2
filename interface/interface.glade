@@ -930,7 +930,9 @@ Button A and B together: Clear recorded motions</property>
                   <object class="GtkLabel" id="label5">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="xalign">0.94999998807907104</property>
                     <property name="label" translatable="yes">Select a Mobot to control:</property>
+                    <property name="justify">right</property>
                   </object>
                   <packing>
                     <property name="expand">True</property>
