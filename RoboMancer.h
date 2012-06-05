@@ -34,6 +34,7 @@ int getConnectSelectedIndex();
 G_MODULE_EXPORT void on_imagemenuitem_cut_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_copy_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_paste_activate(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_imagemenuitem_open_activate(GtkWidget* widget, gpointer data);
 
 #ifdef __cplusplus
 }
