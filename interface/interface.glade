@@ -1552,6 +1552,8 @@ Button A and B together: Clear recorded motions</property>
                                     <property name="fill_level">100</property>
                                     <property name="round_digits">2</property>
                                     <property name="digits">0</property>
+                                    <signal name="button-press-event" handler="on_vscale_motorspeed1_button_press_event" swapped="no"/>
+                                    <signal name="button-release-event" handler="on_vscale_motorspeed1_button_release_event" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -1592,6 +1594,8 @@ Button A and B together: Clear recorded motions</property>
                                     <property name="fill_level">100</property>
                                     <property name="round_digits">2</property>
                                     <property name="digits">0</property>
+                                    <signal name="button-press-event" handler="on_vscale_motorspeed2_button_press_event" swapped="no"/>
+                                    <signal name="button-release-event" handler="on_vscale_motorspeed2_button_release_event" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -1632,6 +1636,8 @@ Button A and B together: Clear recorded motions</property>
                                     <property name="fill_level">100</property>
                                     <property name="round_digits">2</property>
                                     <property name="digits">0</property>
+                                    <signal name="button-press-event" handler="on_vscale_motorspeed3_button_press_event" swapped="no"/>
+                                    <signal name="button-release-event" handler="on_vscale_motorspeed3_button_release_event" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -1673,6 +1679,8 @@ Button A and B together: Clear recorded motions</property>
                                     <property name="fill_level">100</property>
                                     <property name="round_digits">2</property>
                                     <property name="digits">0</property>
+                                    <signal name="button-press-event" handler="on_vscale_motorspeed4_button_press_event" swapped="no"/>
+                                    <signal name="button-release-event" handler="on_vscale_motorspeed4_button_release_event" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>

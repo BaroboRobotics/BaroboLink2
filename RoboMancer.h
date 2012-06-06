@@ -67,6 +67,16 @@ G_MODULE_EXPORT gboolean on_vscale_motorPos2_button_release_event(GtkWidget*w, G
 G_MODULE_EXPORT gboolean on_vscale_motorPos3_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
 G_MODULE_EXPORT gboolean on_vscale_motorPos4_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
 G_MODULE_EXPORT void on_combobox_connectedRobots_changed(GtkWidget* w, gpointer data);
+
+G_MODULE_EXPORT gboolean on_vscale_motorspeed1_button_press_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorspeed2_button_press_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorspeed3_button_press_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorspeed4_button_press_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorspeed1_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorspeed2_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorspeed3_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorspeed4_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT void on_combobox_connectedRobots_changed(GtkWidget* w, gpointer data);
 void initControlDialog(void);
 void* controllerHandlerThread(void* arg);
 

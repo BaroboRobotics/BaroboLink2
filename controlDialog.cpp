@@ -109,7 +109,11 @@ void* controllerHandlerThread(void* arg)
     /* Go through the buttons and handle the pressed ones */
     for(i = 0; i < NUM_BUTTONS; i++) {
       if(g_buttonState[i]) {
-        g_buttonState[i] = g_handlerFuncs[i](mobot);
+        if( (i >= S_SPEED1) && (i <= S_POS4) ) {
+          g_handlerFuncs[i](mobot);
+        } else {
+          g_buttonState[i] = g_handlerFuncs[i](mobot);
+        }
       }
     }
     //usleep(100000);
@@ -123,6 +127,8 @@ int handlerZERO(void* arg)
 #define HANDLER_FORWARD(n) \
 int handlerJ##n##FORWARD(void* arg) \
 { \
+  Mobot_moveJointContinuousNB((mobot_t*)arg, ROBOT_JOINT##n, ROBOT_FORWARD); \
+  printf("handler forward\n"); \
   return 0; \
 }
 HANDLER_FORWARD(1)
@@ -134,6 +140,7 @@ HANDLER_FORWARD(4)
 #define HANDLER_BACKWARD(n) \
 int handlerJ##n##BACK(void* arg) \
 { \
+  Mobot_moveJointContinuousNB((mobot_t*)arg, ROBOT_JOINT##n, ROBOT_BACKWARD); \
   return 0; \
 }
 HANDLER_BACKWARD(1)
@@ -145,6 +152,7 @@ HANDLER_BACKWARD(4)
 #define HANDLER_STOP(n) \
 int handlerJ##n##STOP(void* arg) \
 { \
+  Mobot_moveJointContinuousNB((mobot_t*)arg, ROBOT_JOINT##n, ROBOT_NEUTRAL); \
   return 0; \
 }
 HANDLER_STOP(1)
@@ -204,6 +212,7 @@ int handlerSPEED##n(void* arg) \
   value = gtk_range_get_value(GTK_RANGE(w)); \
   gdk_threads_leave(); \
   Mobot_setJointSpeedRatio((mobot_t*)arg, ROBOT_JOINT##n, value/100.0); \
+  printf("Set Speed to %lf\n", value/100.0); \
   return 1; \
 }
 HANDLER_SPEED(1)
