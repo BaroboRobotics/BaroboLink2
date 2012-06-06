@@ -11,6 +11,7 @@
 #include <ScintillaWidget.h>
 #include <math.h>
 #define RAD2DEG(x) ((x)*180.0/M_PI)
+#define DEG2RAD(x) ((x)*M_PI/180.0)
 
 #ifdef __cplusplus
 extern "C" {

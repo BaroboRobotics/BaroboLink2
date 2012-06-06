@@ -1,6 +1,7 @@
 #include "RoboMancer.h"
 #include "controlDialog.h"
 #include "thread_macros.h"
+#include <mobot.h>
 
 /* The button state: For Buttons (B_), a value of 1 indicates that the button
  * has been pressed. For the sliders, 1 indicates that the slider is currently
@@ -82,10 +83,10 @@ void* controllerHandlerThread(void* arg)
     /* Go through the buttons and handle the pressed ones */
     for(i = 0; i < NUM_BUTTONS; i++) {
       if(g_buttonState[i]) {
-        g_buttonState[i] = g_handlerFuncs[i](NULL);
+        g_buttonState[i] = g_handlerFuncs[i](mobot);
       }
     }
-    usleep(100000);
+    //usleep(100000);
   }
 }
 
@@ -180,6 +181,14 @@ HANDLER_SPEED(4)
 #define HANDLER_POS(n) \
 int handlerPOS##n(void*arg) \
 { \
+  /* Get the slider position */ \
+  GtkWidget*w; \
+  double value; \
+  gdk_threads_enter(); \
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos" #n)); \
+  value = gtk_range_get_value(GTK_RANGE(w)); \
+  gdk_threads_leave(); \
+  Mobot_moveJointToPIDNB((mobot_t*)arg, ROBOT_JOINT##n, DEG2RAD(value)); \
   return 1; \
 }
 HANDLER_POS(1)
@@ -211,13 +220,11 @@ BUTTONHANDLERS(4)
 gboolean on_vscale_motorPos##n##_button_press_event(GtkWidget*w, GdkEvent* event, gpointer data) \
 { \
   g_buttonState[S_POS##n] = 1; \
-  printf("slider down\n"); \
   return FALSE; \
 } \
 gboolean on_vscale_motorPos##n##_button_release_event(GtkWidget*w, GdkEvent* event, gpointer data) \
 { \
   g_buttonState[S_POS##n] = 0; \
-  printf("slider up\n"); \
   return FALSE; \
 } 
 SLIDERHANDLERS(1)
