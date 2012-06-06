@@ -61,6 +61,8 @@ void initialize()
   scintilla_set_id(g_sci, 0);
   //gtk_widget_set_usize(g_scieditor, 100, 300);
   gtk_widget_show(g_scieditor);
+
+  initControlDialog();
 }
 
 int getIterModelFromTreeSelection(GtkTreeView *treeView, GtkTreeModel **model, GtkTreeIter *iter)

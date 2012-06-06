@@ -941,7 +941,7 @@ Button A and B together: Clear recorded motions</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="combobox1">
+                  <object class="GtkComboBox" id="combobox_connectedRobots">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="model">liststore_connectedRobots</property>
@@ -1025,11 +1025,12 @@ Button A and B together: Clear recorded motions</property>
                             <property name="n_rows">4</property>
                             <property name="n_columns">4</property>
                             <child>
-                              <object class="GtkButton" id="button_motor0back">
+                              <object class="GtkButton" id="button_motor1back">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_motor1back_clicked" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image15">
                                     <property name="visible">True</property>
@@ -1044,11 +1045,12 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button_motor1back">
+                              <object class="GtkButton" id="button_motor2back">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_motor2back_clicked" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image22">
                                     <property name="visible">True</property>
@@ -1065,11 +1067,12 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button_motor2back">
+                              <object class="GtkButton" id="button_motor3back">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_motor3back_clicked" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image23">
                                     <property name="visible">True</property>
@@ -1086,11 +1089,12 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button_motor3back">
+                              <object class="GtkButton" id="button_motor4back">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_motor4back_clicked" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image24">
                                     <property name="visible">True</property>
@@ -1107,11 +1111,12 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button_motor0stop">
+                              <object class="GtkButton" id="button_motor1stop">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_motor1stop_clicked" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image14">
                                     <property name="visible">True</property>
@@ -1126,11 +1131,12 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button_motor1stop">
+                              <object class="GtkButton" id="button_motor2stop">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_motor2stop_clicked" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image19">
                                     <property name="visible">True</property>
@@ -1147,11 +1153,12 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button_motor2stop">
+                              <object class="GtkButton" id="button_motor3stop">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_motor3stop_clicked" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image20">
                                     <property name="visible">True</property>
@@ -1168,11 +1175,12 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button_motor3stop">
+                              <object class="GtkButton" id="button_motor4stop">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_motor4stop_clicked" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image21">
                                     <property name="visible">True</property>
@@ -1189,11 +1197,12 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button_motor0forward">
+                              <object class="GtkButton" id="button_motor1forward">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_motor1forward_clicked" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image13">
                                     <property name="visible">True</property>
@@ -1208,11 +1217,12 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button_motor1forward">
+                              <object class="GtkButton" id="button_motor2forward">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_motor2forward_clicked" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image16">
                                     <property name="visible">True</property>
@@ -1229,11 +1239,12 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button_motor2forward">
+                              <object class="GtkButton" id="button_motor3forward">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_motor3forward_clicked" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image17">
                                     <property name="visible">True</property>
@@ -1250,11 +1261,12 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button_motor3forward">
+                              <object class="GtkButton" id="button_motor4forward">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_action_appearance">False</property>
+                                <signal name="clicked" handler="on_button_motor4forward_clicked" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image18">
                                     <property name="visible">True</property>
@@ -1766,7 +1778,7 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkVScale" id="vscale_motorPos0">
+                              <object class="GtkVScale" id="vscale_motorPos1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="inverted">True</property>
@@ -1779,7 +1791,7 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkVScale" id="vscale_motorPos1">
+                              <object class="GtkVScale" id="vscale_motorPos2">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="inverted">True</property>
@@ -1794,7 +1806,7 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkVScale" id="vscale_motorPos2">
+                              <object class="GtkVScale" id="vscale_motorPos3">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="inverted">True</property>
@@ -1809,7 +1821,7 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkVScale" id="vscale_motorPos3">
+                              <object class="GtkVScale" id="vscale_motorPos4">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="inverted">True</property>
