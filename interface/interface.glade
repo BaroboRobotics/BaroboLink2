@@ -1783,6 +1783,8 @@ Button A and B together: Clear recorded motions</property>
                                 <property name="can_focus">True</property>
                                 <property name="inverted">True</property>
                                 <property name="round_digits">1</property>
+                                <signal name="button-press-event" handler="on_vscale_motorPos1_button_press_event" swapped="no"/>
+                                <signal name="button-release-event" handler="on_vscale_motorPos1_button_release_event" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
@@ -1796,6 +1798,8 @@ Button A and B together: Clear recorded motions</property>
                                 <property name="can_focus">True</property>
                                 <property name="inverted">True</property>
                                 <property name="round_digits">1</property>
+                                <signal name="button-press-event" handler="on_vscale_motorPos2_button_press_event" swapped="no"/>
+                                <signal name="button-release-event" handler="on_vscale_motorPos2_button_release_event" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -1811,6 +1815,8 @@ Button A and B together: Clear recorded motions</property>
                                 <property name="can_focus">True</property>
                                 <property name="inverted">True</property>
                                 <property name="round_digits">1</property>
+                                <signal name="button-press-event" handler="on_vscale_motorPos3_button_press_event" swapped="no"/>
+                                <signal name="button-release-event" handler="on_vscale_motorPos3_button_release_event" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -1826,6 +1832,8 @@ Button A and B together: Clear recorded motions</property>
                                 <property name="can_focus">True</property>
                                 <property name="inverted">True</property>
                                 <property name="round_digits">1</property>
+                                <signal name="button-press-event" handler="on_vscale_motorPos4_button_press_event" swapped="no"/>
+                                <signal name="button-release-event" handler="on_vscale_motorPos4_button_release_event" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>

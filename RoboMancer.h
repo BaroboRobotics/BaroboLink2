@@ -57,6 +57,14 @@ G_MODULE_EXPORT void on_button_motor1forward_clicked(GtkWidget*w, gpointer data)
 G_MODULE_EXPORT void on_button_motor2forward_clicked(GtkWidget*w, gpointer data); 
 G_MODULE_EXPORT void on_button_motor3forward_clicked(GtkWidget*w, gpointer data); 
 G_MODULE_EXPORT void on_button_motor4forward_clicked(GtkWidget*w, gpointer data); 
+G_MODULE_EXPORT gboolean on_vscale_motorPos1_button_press_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorPos2_button_press_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorPos3_button_press_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorPos4_button_press_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorPos1_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorPos2_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorPos3_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT gboolean on_vscale_motorPos4_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
 void initControlDialog(void);
 void* controllerHandlerThread(void* arg);
 
