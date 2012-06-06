@@ -66,6 +66,7 @@ G_MODULE_EXPORT gboolean on_vscale_motorPos1_button_release_event(GtkWidget*w, G
 G_MODULE_EXPORT gboolean on_vscale_motorPos2_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
 G_MODULE_EXPORT gboolean on_vscale_motorPos3_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
 G_MODULE_EXPORT gboolean on_vscale_motorPos4_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
+G_MODULE_EXPORT void on_combobox_connectedRobots_changed(GtkWidget* w, gpointer data);
 void initControlDialog(void);
 void* controllerHandlerThread(void* arg);
 

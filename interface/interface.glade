@@ -945,6 +945,7 @@ Button A and B together: Clear recorded motions</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="model">liststore_connectedRobots</property>
+                    <signal name="changed" handler="on_combobox_connectedRobots_changed" swapped="no"/>
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext2"/>
                       <attributes>
@@ -1544,13 +1545,13 @@ Button A and B together: Clear recorded motions</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkVScale" id="vscale_motorspeed0">
+                                  <object class="GtkVScale" id="vscale_motorspeed1">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="inverted">True</property>
-                                    <property name="fill_level">1</property>
+                                    <property name="fill_level">100</property>
                                     <property name="round_digits">2</property>
-                                    <property name="digits">2</property>
+                                    <property name="digits">0</property>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -1584,13 +1585,13 @@ Button A and B together: Clear recorded motions</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkVScale" id="vscale_motorspeed1">
+                                  <object class="GtkVScale" id="vscale_motorspeed2">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="inverted">True</property>
-                                    <property name="fill_level">1</property>
+                                    <property name="fill_level">100</property>
                                     <property name="round_digits">2</property>
-                                    <property name="digits">2</property>
+                                    <property name="digits">0</property>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -1624,13 +1625,13 @@ Button A and B together: Clear recorded motions</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkVScale" id="vscale_motorspeed2">
+                                  <object class="GtkVScale" id="vscale_motorspeed3">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="inverted">True</property>
-                                    <property name="fill_level">1</property>
+                                    <property name="fill_level">100</property>
                                     <property name="round_digits">2</property>
-                                    <property name="digits">2</property>
+                                    <property name="digits">0</property>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -1664,14 +1665,14 @@ Button A and B together: Clear recorded motions</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkVScale" id="vscale_motorspeed3">
+                                  <object class="GtkVScale" id="vscale_motorspeed4">
                                     <property name="height_request">200</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="inverted">True</property>
-                                    <property name="fill_level">1</property>
+                                    <property name="fill_level">100</property>
                                     <property name="round_digits">2</property>
-                                    <property name="digits">2</property>
+                                    <property name="digits">0</property>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
