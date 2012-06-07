@@ -77,6 +77,12 @@ G_MODULE_EXPORT gboolean on_vscale_motorspeed2_button_release_event(GtkWidget*w,
 G_MODULE_EXPORT gboolean on_vscale_motorspeed3_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
 G_MODULE_EXPORT gboolean on_vscale_motorspeed4_button_release_event(GtkWidget*w, GdkEvent*event, gpointer data);
 G_MODULE_EXPORT void on_combobox_connectedRobots_changed(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_combobox_connectedRobots_changed(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_forward_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_rotateLeft_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_stop_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_rotateRight_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_backward_clicked(GtkWidget* w, gpointer data);
 void initControlDialog(void);
 void* controllerHandlerThread(void* arg);
 

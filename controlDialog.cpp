@@ -163,26 +163,31 @@ HANDLER_STOP(4)
 
 int handlerROLLFORWARD(void* arg)
 {
+  Mobot_motionRollForwardNB((mobot_t*)arg, DEG2RAD(90));
   return 0;
 }
 
 int handlerTURNLEFT(void* arg)
 {
+  Mobot_motionTurnLeftNB((mobot_t*)arg, DEG2RAD(90));
   return 0;
 }
 
 int handlerTURNRIGHT(void* arg)
 {
+  Mobot_motionTurnRightNB((mobot_t*)arg, DEG2RAD(90));
   return 0;
 }
 
 int handlerROLLBACK(void* arg)
 {
+  Mobot_motionRollBackwardNB((mobot_t*)arg, DEG2RAD(90));
   return 0;
 }
 
 int handlerSTOP(void* arg)
 {
+  Mobot_stop((mobot_t*)arg);
   return 0;
 }
 
@@ -289,4 +294,29 @@ SLIDERHANDLERS(4)
 void on_combobox_connectedRobots_changed(GtkWidget* w, gpointer data)
 {
   g_initSpeeds = 1;
+}
+
+void on_button_forward_clicked(GtkWidget* w, gpointer data)
+{
+  g_buttonState[B_ROLLFORWARD] = 1;
+}
+
+void on_button_rotateLeft_clicked(GtkWidget* w, gpointer data)
+{
+  g_buttonState[B_TURNLEFT] = 1;
+}
+
+void on_button_stop_clicked(GtkWidget* w, gpointer data)
+{
+  g_buttonState[B_STOP] = 1;
+}
+
+void on_button_rotateRight_clicked(GtkWidget* w, gpointer data)
+{
+  g_buttonState[B_TURNRIGHT] = 1;
+}
+
+void on_button_backward_clicked(GtkWidget* w, gpointer data)
+{
+  g_buttonState[B_ROLLBACK] = 1;
 }
