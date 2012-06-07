@@ -987,13 +987,13 @@ Button A and B together: Clear recorded motions</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="button_home">
+                      <object class="GtkButton" id="button_moveToZero">
                         <property name="label" translatable="yes">Move To Zero</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_action_appearance">False</property>
-                        <signal name="clicked" handler="on_button_home_clicked" swapped="no"/>
+                        <signal name="clicked" handler="on_button_moveToZero_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -1858,7 +1858,7 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="entry_motorPos0">
+                              <object class="GtkEntry" id="entry_motorPos1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">●</property>
@@ -1876,7 +1876,7 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="entry_motorPos1">
+                              <object class="GtkEntry" id="entry_motorPos2">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">●</property>
@@ -1896,7 +1896,7 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="entry_motorPos2">
+                              <object class="GtkEntry" id="entry_motorPos3">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">●</property>
@@ -1916,7 +1916,7 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="entry_motorPos3">
+                              <object class="GtkEntry" id="entry_motorPos4">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">●</property>
@@ -1936,27 +1936,54 @@ Button A and B together: Clear recorded motions</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button_moveJoints">
-                                <property name="label" translatable="yes">move</property>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <object class="GtkVButtonBox" id="vbuttonbox2">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="use_action_appearance">False</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkButton" id="button_move">
+                                    <property name="label" translatable="yes">move</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <signal name="clicked" handler="on_button_move_clicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="button_moveTo">
+                                    <property name="label" translatable="yes">move to</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <signal name="clicked" handler="on_button_moveTo_clicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
                                 <property name="left_attach">4</property>
                                 <property name="right_attach">5</property>
                                 <property name="top_attach">2</property>
                                 <property name="bottom_attach">3</property>
-                                <property name="x_options"></property>
-                                <property name="y_options"></property>
+                                <property name="x_options">GTK_SHRINK</property>
+                                <property name="y_options">GTK_SHRINK</property>
                               </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
                             </child>
                           </object>
                         </child>

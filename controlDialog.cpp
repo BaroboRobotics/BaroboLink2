@@ -122,6 +122,7 @@ void* controllerHandlerThread(void* arg)
 
 int handlerZERO(void* arg)
 {
+  Mobot_moveToZero((mobot_t*)arg);
 }
 
 #define HANDLER_FORWARD(n) \
@@ -193,11 +194,53 @@ int handlerSTOP(void* arg)
 
 int handlerMOVE(void* arg)
 {
+  /* Get the entry values */
+  double value;
+  const gchar* text;
+  GtkWidget *w;
+#define GETVALUEMOVEJOINT(n) \
+  gdk_threads_enter(); \
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorPos" #n)); \
+  text = gtk_entry_get_text(GTK_ENTRY(w)); \
+  gdk_threads_leave(); \
+  if(text != NULL) { \
+    sscanf(text, "%lf", &value); \
+    Mobot_moveJointNB(\
+      (mobot_t*)arg, \
+      ROBOT_JOINT##n, \
+      DEG2RAD(value)); \
+  }
+  GETVALUEMOVEJOINT(1)
+  GETVALUEMOVEJOINT(2)
+  GETVALUEMOVEJOINT(3)
+  GETVALUEMOVEJOINT(4)
+#undef GETVALUEMOVEJOINT
   return 0;
 }
 
 int handlerMOVETO(void* arg)
 {
+  /* Get the entry values */
+  double value;
+  const gchar* text;
+  GtkWidget *w;
+#define GETVALUEMOVEJOINT(n) \
+  gdk_threads_enter(); \
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorPos" #n)); \
+  text = gtk_entry_get_text(GTK_ENTRY(w)); \
+  gdk_threads_leave(); \
+  if(text != NULL) { \
+    sscanf(text, "%lf", &value); \
+    Mobot_moveJointToNB(\
+      (mobot_t*)arg, \
+      ROBOT_JOINT##n, \
+      DEG2RAD(value)); \
+  }
+  GETVALUEMOVEJOINT(1)
+  GETVALUEMOVEJOINT(2)
+  GETVALUEMOVEJOINT(3)
+  GETVALUEMOVEJOINT(4)
+#undef GETVALUEMOVEJOINT
   return 0;
 }
 
@@ -319,4 +362,19 @@ void on_button_rotateRight_clicked(GtkWidget* w, gpointer data)
 void on_button_backward_clicked(GtkWidget* w, gpointer data)
 {
   g_buttonState[B_ROLLBACK] = 1;
+}
+
+void on_button_moveToZero_clicked(GtkWidget* w, gpointer data)
+{
+  g_buttonState[B_ZERO] = 1;
+}
+
+void on_button_move_clicked(GtkWidget* w, gpointer data)
+{
+  g_buttonState[B_MOVE] = 1;
+}
+
+void on_button_moveTo_clicked(GtkWidget* w, gpointer data)
+{
+  g_buttonState[B_MOVETO] = 1;
 }

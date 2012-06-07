@@ -83,6 +83,9 @@ G_MODULE_EXPORT void on_button_rotateLeft_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_stop_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_rotateRight_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_backward_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_moveToZero_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_move_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_moveTo_clicked(GtkWidget* w, gpointer data);
 void initControlDialog(void);
 void* controllerHandlerThread(void* arg);
 
