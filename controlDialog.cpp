@@ -12,6 +12,13 @@ int g_initSpeeds = 0;
 typedef int(*handlerFunc)(void* arg);
 handlerFunc g_handlerFuncs[NUM_BUTTONS];
 
+enum gaits_e{
+#define GAIT(sym, str, func) GAIT_##sym,
+#include "gaits.x.h"
+#undef GAIT
+  NUM_GAITS
+};
+
 void initControlDialog(void)
 {
 #define BUTTON(x) \
@@ -39,6 +46,17 @@ void initControlDialog(void)
   gtk_range_set_range(GTK_RANGE(w), 0, 100);
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed4"));
   gtk_range_set_range(GTK_RANGE(w), 0, 100);
+
+  /* Initialize gaits liststore */
+  GtkTreeIter iter;
+  GtkListStore* gaits_liststore = 
+      GTK_LIST_STORE(gtk_builder_get_object(g_builder, "liststore_gaits"));
+#define GAIT(sym, str, func) \
+  gtk_list_store_append(gaits_liststore, &iter); \
+  gtk_list_store_set(gaits_liststore, &iter, \
+      0, str, -1);
+#include "gaits.x.h"
+#undef GAIT
 
   /* Start handler thread */
   THREAD_T thread;
@@ -246,6 +264,26 @@ int handlerMOVETO(void* arg)
 
 int handlerPLAY(void* arg)
 {
+  /* Figure out which item is selected */
+  GtkWidget* view =  GTK_WIDGET(gtk_builder_get_object(g_builder, "treeview_gaits"));
+  GtkTreeModel* model = GTK_TREE_MODEL(gtk_builder_get_object(g_builder, "liststore_gaits"));
+  GtkTreeSelection* selection = gtk_tree_view_get_selection((GTK_TREE_VIEW(view)));
+  GList* list = gtk_tree_selection_get_selected_rows(selection, &model);
+  if(list == NULL) return 0;
+  gint* paths = gtk_tree_path_get_indices((GtkTreePath*)list->data);
+  int i = paths[0];
+  g_list_foreach(list, (GFunc) gtk_tree_path_free, NULL);
+  g_list_free(list);
+  switch(i) {
+#define GAIT(sym, str, func) \
+    case GAIT_##sym: \
+      func; \
+      break;
+#include "gaits.x.h"
+#undef GAIT
+    default:
+      return 0;
+  }
   return 0;
 }
 
@@ -377,4 +415,9 @@ void on_button_move_clicked(GtkWidget* w, gpointer data)
 void on_button_moveTo_clicked(GtkWidget* w, gpointer data)
 {
   g_buttonState[B_MOVETO] = 1;
+}
+
+void on_button_playGait_clicked(GtkWidget* w, gpointer data)
+{
+  g_buttonState[B_PLAY] = 1;
 }

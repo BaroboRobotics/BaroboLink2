@@ -101,11 +101,6 @@
       <!-- column-name Name -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Gait Entry Test</col>
-      </row>
-    </data>
   </object>
   <object class="GtkListStore" id="liststore_recordedMotions">
     <columns>
@@ -2068,6 +2063,7 @@ Button A and B together: Clear recorded motions</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="use_action_appearance">False</property>
+                                    <signal name="clicked" handler="on_button_playGait_clicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
