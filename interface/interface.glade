@@ -106,12 +106,9 @@
     <columns>
       <!-- column-name motions -->
       <column type="gchararray"/>
+      <!-- column-name iconName -->
+      <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">test motion</col>
-      </row>
-    </data>
   </object>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
@@ -123,6 +120,7 @@
       <object class="GtkNotebook" id="notebook1">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
+        <signal name="switch-page" handler="on_notebook1_switch_page" swapped="no"/>
         <child>
           <object class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
@@ -718,6 +716,16 @@ Button A and B together: Clear recorded motions</property>
                         </child>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                        <child>
+                          <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2"/>
+                          <attributes>
+                            <attribute name="stock-id">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -729,9 +737,8 @@ Button A and B together: Clear recorded motions</property>
                   <object class="GtkVButtonBox" id="vbuttonbox3">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="layout_style">spread</property>
                     <child>
-                      <object class="GtkCheckButton" id="checkbutton1">
+                      <object class="GtkCheckButton" id="checkbutton_playLooped">
                         <property name="label" translatable="yes">Play Looped</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -746,12 +753,13 @@ Button A and B together: Clear recorded motions</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="button9">
+                      <object class="GtkButton" id="button_recordPos">
                         <property name="label" translatable="yes">Record Positions</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_action_appearance">False</property>
+                        <signal name="clicked" handler="on_button_recordPos_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -764,12 +772,13 @@ Button A and B together: Clear recorded motions</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkButton" id="button10">
+                          <object class="GtkButton" id="button_addDelay">
                             <property name="label" translatable="yes">Add Delay (seconds)</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="use_action_appearance">False</property>
+                            <signal name="clicked" handler="on_button_addDelay_clicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">True</property>
@@ -778,7 +787,7 @@ Button A and B together: Clear recorded motions</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="entry2">
+                          <object class="GtkEntry" id="entry_delaySeconds">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">●</property>
@@ -802,12 +811,13 @@ Button A and B together: Clear recorded motions</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="button11">
+                      <object class="GtkButton" id="button_deleteRecordedPos">
                         <property name="label" translatable="yes">Delete Selected Position</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_action_appearance">False</property>
+                        <signal name="clicked" handler="on_button_deleteRecordedPos_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -816,12 +826,13 @@ Button A and B together: Clear recorded motions</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="button12">
+                      <object class="GtkButton" id="button_clearRecordedPositions">
                         <property name="label" translatable="yes">Clear All Poses</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_action_appearance">False</property>
+                        <signal name="clicked" handler="on_button_clearRecordedPositions_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -830,12 +841,13 @@ Button A and B together: Clear recorded motions</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="button13">
+                      <object class="GtkButton" id="button_saveToProgram">
                         <property name="label" translatable="yes">Save to Program</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_action_appearance">False</property>
+                        <signal name="clicked" handler="on_button_saveToProgram_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -848,12 +860,13 @@ Button A and B together: Clear recorded motions</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkButton" id="button14">
+                          <object class="GtkButton" id="button_playRecorded">
                             <property name="label" translatable="yes">Play</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="use_action_appearance">False</property>
+                            <signal name="clicked" handler="on_button_playRecorded_clicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">True</property>
@@ -862,12 +875,13 @@ Button A and B together: Clear recorded motions</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="button15">
+                          <object class="GtkButton" id="button_stopRecorded">
                             <property name="label" translatable="yes">Stop</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="use_action_appearance">False</property>
+                            <signal name="clicked" handler="on_button_stopRecorded_clicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">True</property>

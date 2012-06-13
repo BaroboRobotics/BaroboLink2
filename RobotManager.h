@@ -16,6 +16,7 @@ class CRobotManager : public ConfigFile
     CRobotManager();
     ~CRobotManager();
     bool isConnected(int index);
+    bool isPlaying();
     void setConnected(int index, bool connected);
     int connect(int availableIndex);
     int connectIndex(int index);
@@ -26,8 +27,12 @@ class CRobotManager : public ConfigFile
     const char* getConnected(int connectIndex);
     int availableIndexToIndex(int index);
     int numAvailable();
+    void record();
+    void addDelay(double seconds);
+    void play();
     recordMobot_t* getMobot(int connectIndex);
     string* generateProgram(bool looped = false);
+    bool _isPlaying;
   private:
     bool _connected[MAX_CONNECTED]; /* Index by ConfigFile */
     recordMobot_t *_mobots[MAX_CONNECTED];

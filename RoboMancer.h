@@ -90,6 +90,16 @@ G_MODULE_EXPORT void on_button_playGait_clicked(GtkWidget* w, gpointer data);
 void initControlDialog(void);
 void* controllerHandlerThread(void* arg);
 
+/* Teaching Dialog */
+G_MODULE_EXPORT void on_button_clearRecordedPositions_clicked(GtkWidget*w, gpointer data);
+G_MODULE_EXPORT void on_button_recordPos_clicked(GtkWidget*w, gpointer data);
+G_MODULE_EXPORT void on_button_addDelay_clicked(GtkWidget*w, gpointer data);
+G_MODULE_EXPORT void on_button_deleteRecordedPos_clicked(GtkWidget*w, gpointer data);
+G_MODULE_EXPORT void on_button_saveToProgram_clicked(GtkWidget*w, gpointer data);
+G_MODULE_EXPORT void on_button_playRecorded_clicked(GtkWidget*w, gpointer data);
+G_MODULE_EXPORT void on_button_stopRecorded_clicked(GtkWidget*w, gpointer data);
+G_MODULE_EXPORT void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_num, gpointer userdata);
+
 #ifdef __cplusplus
 }
 #endif

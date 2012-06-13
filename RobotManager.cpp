@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "RobotManager.h"
+#include "thread_macros.h"
 
 CRobotManager::CRobotManager()
 {
@@ -10,6 +11,7 @@ CRobotManager::CRobotManager()
     _mobots[i] = NULL;
     _connectedAddresses[i] = NULL;
   }
+  _isPlaying = false;
 }
 
 CRobotManager::~CRobotManager()
@@ -22,6 +24,11 @@ bool CRobotManager::isConnected(int index)
     return false;
   }
   return _connected[index];
+}
+
+bool CRobotManager::isPlaying()
+{
+  return _isPlaying;
 }
 
 void CRobotManager::setConnected(int index, bool connected)
@@ -62,14 +69,11 @@ int CRobotManager::connectIndex(int index)
   char name[80];
   sprintf(name, "robot%d", numConnected()+1);
   recordMobot_t *mobot = (recordMobot_t*)malloc(sizeof(recordMobot_t));
-  Mobot_init((mobot_t*)mobot);
+  RecordMobot_init(mobot, name);
   int err;
   if(err = Mobot_connectWithAddress( (mobot_t*)mobot, getEntry(index), 1 )) {
     return err;
   }
-  /* Enable the button callback */
-  /* FIXME */
-  //mobot->enableButtonCallback(CDialogTeaching::OnMobotButton);
   Mobot_setJointSpeedRatios((mobot_t*)mobot, 1, 1, 1, 1);
   /* Insert the newly connected robot to the bottom of the list. */
   _mobots[numConnected()] = mobot;
@@ -166,6 +170,63 @@ int CRobotManager::availableIndexToIndex(int availableIndex)
 int CRobotManager::numAvailable()
 {
 	return numEntries() - numConnected();
+}
+
+void CRobotManager::record()
+{
+  int i;
+  recordMobot_t* mobot;
+  for(i = 0; i < numConnected(); i++) {
+    mobot = getMobot(i);
+    RecordMobot_record(mobot);
+  }
+}
+
+void CRobotManager::addDelay(double seconds)
+{
+  int i;
+  recordMobot_t* mobot;
+  for(i = 0; i < numConnected(); i++) {
+    mobot = getMobot(i);
+    RecordMobot_addDelay(mobot, seconds);
+  }
+}
+
+void* robotManagerPlayThread(void* arg)
+{
+  CRobotManager *rm = (CRobotManager*)arg;
+  recordMobot_t* mobot;
+  if(rm->numConnected() <= 0) {
+    rm->_isPlaying = false;
+    return NULL;
+  }
+  int index, i;
+  /* Go through each motion */
+  for(index = 0; index < rm->getMobot(0)->numMotions; index++) {
+    /* Go through each mobot */
+    for(i = 0; i < rm->numConnected(); i++) {
+      mobot = rm->getMobot(i);
+      if(RecordMobot_getMotionType(mobot, index) == MOTION_SLEEP) {
+        /* Sleep the correct amount of time and break */
+        RecordMobot_play(mobot, index);
+        break;
+      } else if (RecordMobot_getMotionType(mobot, index) == MOTION_POS) {
+        RecordMobot_play(mobot, index);
+      } else {
+        fprintf(stderr, "MEMORY ERROR %s:%d\n", __FILE__, __LINE__);
+        rm->_isPlaying = false;
+        return NULL;
+      }
+    }
+  }
+  rm->_isPlaying = false;
+}
+
+void CRobotManager::play()
+{
+  _isPlaying = true;
+  THREAD_T thread;
+  THREAD_CREATE(&thread, robotManagerPlayThread, this);
 }
 
 recordMobot_t* CRobotManager::getMobot(int connectIndex)
