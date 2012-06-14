@@ -84,6 +84,8 @@
         <col id="1" translatable="yes">gtk-about</col>
       </row>
     </data>
+    <signal name="row-deleted" handler="on_liststore_availableRobots_row_deleted" swapped="no"/>
+    <signal name="row-inserted" handler="on_liststore_availableRobots_row_inserted" swapped="no"/>
   </object>
   <object class="GtkListStore" id="liststore_connectedRobots">
     <columns>
@@ -265,6 +267,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="model">liststore_availableRobots</property>
                                 <property name="headers_clickable">False</property>
+                                <property name="reorderable">True</property>
                                 <property name="search_column">0</property>
                                 <child>
                                   <object class="GtkTreeViewColumn" id="Addresses">

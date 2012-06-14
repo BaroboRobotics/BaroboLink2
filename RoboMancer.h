@@ -36,6 +36,15 @@ G_MODULE_EXPORT void on_button_connect_moveDownAvailable_clicked(GtkWidget* widg
 G_MODULE_EXPORT void on_button_connect_connect_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_connect_disconnect_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_liststore_availableRobots_row_deleted(
+    GtkTreeModel* model,
+    GtkTreePath* path,
+    gpointer user_data);
+G_MODULE_EXPORT void on_liststore_availableRobots_row_inserted(
+    GtkTreeModel* model,
+    GtkTreePath* path,
+    GtkTreeIter* iter,
+    gpointer user_data);
 void refreshConnectDialog();
 int getConnectSelectedIndex();
 

@@ -2,6 +2,9 @@
 #include "RoboMancer.h"
 #include "thread_macros.h"
 
+char g_tmpBuf[80];
+bool g_dndConnect = true;
+
 void on_button_connect_addRobot_clicked(GtkWidget* widget, gpointer data)
 {
   GtkEntry* entry = GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_connect_newAddress"));
@@ -188,12 +191,45 @@ void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data)
   gtk_widget_hide(w);
 }
 
+
+void on_liststore_availableRobots_row_deleted(
+    GtkTreeModel* model,
+    GtkTreePath* path,
+    gpointer user_data)
+{
+  
+  gint* indices;
+  int depth, index;
+  if(g_dndConnect) {
+    indices = gtk_tree_path_get_indices_with_depth(path, &depth);
+    index = indices[0];
+    strcpy(g_tmpBuf, g_robotManager->getEntry(index));
+    g_robotManager->remove(index);
+  }
+}
+
+void on_liststore_availableRobots_row_inserted(
+    GtkTreeModel* model,
+    GtkTreePath* path,
+    GtkTreeIter* iter,
+    gpointer user_data)
+{
+  gint* indices;
+  int depth, index;
+  if(g_dndConnect) {
+    indices = gtk_tree_path_get_indices_with_depth(path, &depth);
+    index = indices[0];
+    g_robotManager->insertEntry(g_tmpBuf, index);
+  }
+}
+
 void refreshConnectDialog()
 {
   static GtkListStore* liststore_available = GTK_LIST_STORE(
       gtk_builder_get_object(g_builder, "liststore_availableRobots"));
   static GtkListStore* liststore_connected = GTK_LIST_STORE(
       gtk_builder_get_object(g_builder, "liststore_connectedRobots"));
+  g_dndConnect = false;
 
   /* Clear the widgets */
   gtk_list_store_clear(liststore_available);
@@ -226,4 +262,5 @@ void refreshConnectDialog()
           -1 );
     }
   }
+  g_dndConnect = true;
 }

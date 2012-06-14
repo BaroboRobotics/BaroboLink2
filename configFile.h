@@ -10,6 +10,7 @@ class ConfigFile
     int numEntries();
     const char* getEntry(int index);
     int addEntry(const char* entry);
+    int insertEntry(const char* entry, int index);
     int moveEntryDown(int index);
     int moveEntryUp(int index);
     int remove(int index);

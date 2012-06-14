@@ -56,6 +56,21 @@ int ConfigFile::addEntry(const char* entry)
   return 0;
 }
 
+int ConfigFile::insertEntry(const char* entry, int index)
+{
+  if(index < 0 || index > numEntries()) {
+    return -1;
+  }
+  /* Make a space for the entry */
+  int i;
+  for(i = numEntries()-1; i >= index; i--) {
+    _addresses[i+1] = _addresses[i];
+  }
+  _addresses[index] = strdup(entry);
+  _numEntries++;
+  return 0;
+}
+
 int ConfigFile::moveEntryDown(int index)
 {
   if(index < 0) {
