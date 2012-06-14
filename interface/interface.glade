@@ -109,6 +109,9 @@
       <!-- column-name iconName -->
       <column type="gchararray"/>
     </columns>
+    <signal name="row-deleted" handler="on_liststore_recordedMotions_row_deleted" swapped="no"/>
+    <signal name="rows-reordered" handler="on_liststore_recordedMotions_rows_reordered" swapped="no"/>
+    <signal name="row-inserted" handler="on_liststore_recordedMotions_row_inserted" swapped="no"/>
   </object>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
@@ -701,15 +704,20 @@ Button A and B together: Clear recorded motions</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkTreeView" id="treeview4">
+                  <object class="GtkTreeView" id="treeview_recordedMotions">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="model">liststore_recordedMotions</property>
+                    <property name="reorderable">True</property>
                     <child>
                       <object class="GtkTreeViewColumn" id="treeviewcolumn2">
                         <property name="title" translatable="yes">Recorded Motions</property>
+                        <property name="reorderable">True</property>
                         <child>
-                          <object class="GtkCellRendererText" id="cellrenderertext3"/>
+                          <object class="GtkCellRendererText" id="cellrenderertext_recordedMotionName">
+                            <property name="editable">True</property>
+                            <signal name="edited" handler="on_cellrenderertext_recordedMotionName_edited" swapped="no"/>
+                          </object>
                           <attributes>
                             <attribute name="text">0</attribute>
                           </attributes>

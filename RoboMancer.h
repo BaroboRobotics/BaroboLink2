@@ -99,6 +99,26 @@ G_MODULE_EXPORT void on_button_saveToProgram_clicked(GtkWidget*w, gpointer data)
 G_MODULE_EXPORT void on_button_playRecorded_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_button_stopRecorded_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_num, gpointer userdata);
+G_MODULE_EXPORT void on_liststore_recordedMotions_rows_reordered(
+    GtkTreeModel* model, 
+    GtkTreePath* path,
+    GtkTreeIter* iter,
+    gpointer new_order,
+    gpointer user_data);
+G_MODULE_EXPORT void on_cellrenderertext_recordedMotionName_edited(
+    GtkCellRendererText* renderer,
+    gchar* path,
+    gchar* new_text,
+    gpointer user_data);
+G_MODULE_EXPORT void on_liststore_recordedMotions_row_deleted(
+    GtkTreeModel* model,
+    GtkTreePath* path,
+    gpointer user_data);
+G_MODULE_EXPORT void on_liststore_recordedMotions_row_inserted(
+    GtkTreeModel* model,
+    GtkTreePath* path,
+    GtkTreeIter* iter,
+    gpointer user_data);
 
 #ifdef __cplusplus
 }

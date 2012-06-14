@@ -75,6 +75,7 @@ int RecordMobot_setMotionName(recordMobot_t* mobot, int index, const char* name)
 int RecordMobot_removeMotion(recordMobot_t* mobot, int index, bool releaseData);
 int RecordMobot_clearAllMotions(recordMobot_t* mobot);
 int RecordMobot_moveMotion(recordMobot_t* mobot, int fromindex, int toindex);
+int RecordMobot_swapMotion(recordMobot_t* mobot, int index1, int index2);
 #ifdef __cplusplus
 }
 #endif

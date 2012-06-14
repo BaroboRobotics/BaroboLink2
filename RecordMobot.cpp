@@ -174,3 +174,21 @@ int RecordMobot_moveMotion(recordMobot_t* mobot, int fromindex, int toindex)
   
   return 0;
 }
+
+int RecordMobot_swapMotion(recordMobot_t* mobot, int index1, int index2)
+{
+  if(index1 == index2) {
+    return 0;
+  }
+  if(index1 < 0 || index1 > mobot->numMotions) {
+    return -1;
+  }
+  if(index2 < 0 || index2 > mobot->numMotions) {
+    return -1;
+  }
+  struct motion_s* tmp;
+  tmp = mobot->motions[index1];
+  mobot->motions[index1] = mobot->motions[index2];
+  mobot->motions[index2] = tmp;
+  return 0;
+}
