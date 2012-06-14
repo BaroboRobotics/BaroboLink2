@@ -113,10 +113,11 @@ void* controllerHandlerThread(void* arg)
           &angles[1], 
           &angles[2], 
           &angles[3]);
-      gdk_threads_enter();
 #define VSCALEHANDLER(n) \
+      gdk_threads_enter(); \
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed" #n)); \
-      gtk_range_set_value(GTK_RANGE(w), angles[n-1] * 100.0);
+      gtk_range_set_value(GTK_RANGE(w), angles[n-1] * 100.0); \
+      gdk_threads_leave();
       VSCALEHANDLER(1)
       VSCALEHANDLER(2)
       VSCALEHANDLER(3)

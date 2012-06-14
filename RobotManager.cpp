@@ -99,8 +99,8 @@ int CRobotManager::disconnect(int connectIndex)
   /* Need to shift addresses and mobots up */
   int j;
   for(j = connectIndex+1; j < numConnected(); j++) {
-	_connectedAddresses[j-1] = _connectedAddresses[j];
-	_mobots[j-1] = _mobots[j];
+    _connectedAddresses[j-1] = _connectedAddresses[j];
+    _mobots[j-1] = _mobots[j];
   }
   _connected[i] = false;
   return 0; 
@@ -165,6 +165,20 @@ int CRobotManager::availableIndexToIndex(int availableIndex)
 	}
 	index--;
 	return index;
+}
+
+int CRobotManager::indexToConnectIndex(int index)
+{
+  if(_connected[index] == false) {
+    return -1;
+  }
+  int i, ci=0;
+  for(i = 0; i < index; i++) {
+    if(_connected[i]) {
+      ci++;
+    }
+  }
+  return ci;
 }
 
 int CRobotManager::numAvailable()

@@ -172,6 +172,14 @@ void on_button_connect_connect_clicked(GtkWidget* widget, gpointer data)
 
 void on_button_connect_disconnect_clicked(GtkWidget* widget, gpointer data)
 {
+  int i = getConnectSelectedIndex();
+  if(i < 0) {
+    return;
+  }
+  g_robotManager->disconnect(
+    g_robotManager->indexToConnectIndex(i)
+    );
+  refreshConnectDialog();
 }
 
 void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data)
