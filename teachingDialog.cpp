@@ -208,9 +208,7 @@ void on_mobotButtonPress(void* data, int button, int buttonDown)
       if(g_isPlaying) {
         g_haltPlayFlag = 1;
       } else {
-        gdk_threads_enter();
         on_button_playRecorded_clicked(NULL, NULL);
-        gdk_threads_leave();
       }
     }
     if(lastState == 0x03) {

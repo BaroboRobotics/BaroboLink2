@@ -209,10 +209,8 @@ int handlerMOVE(void* arg)
   const gchar* text;
   GtkWidget *w;
 #define GETVALUEMOVEJOINT(n) \
-  gdk_threads_enter(); \
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorPos" #n)); \
   text = gtk_entry_get_text(GTK_ENTRY(w)); \
-  gdk_threads_leave(); \
   if(text != NULL) { \
     sscanf(text, "%lf", &value); \
     Mobot_moveJointNB(\
@@ -235,10 +233,8 @@ int handlerMOVETO(void* arg)
   const gchar* text;
   GtkWidget *w;
 #define GETVALUEMOVEJOINT(n) \
-  gdk_threads_enter(); \
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorPos" #n)); \
   text = gtk_entry_get_text(GTK_ENTRY(w)); \
-  gdk_threads_leave(); \
   if(text != NULL) { \
     sscanf(text, "%lf", &value); \
     Mobot_moveJointToNB(\
@@ -285,10 +281,8 @@ int handlerSPEED##n(void* arg) \
   /* Get the slider position */ \
   GtkWidget*w; \
   double value; \
-  gdk_threads_enter(); \
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed" #n)); \
   value = gtk_range_get_value(GTK_RANGE(w)); \
-  gdk_threads_leave(); \
   Mobot_setJointSpeedRatio((mobot_t*)arg, ROBOT_JOINT##n, value/100.0); \
   printf("Set Speed to %lf\n", value/100.0); \
   return 1; \
@@ -305,10 +299,8 @@ int handlerPOS##n(void*arg) \
   /* Get the slider position */ \
   GtkWidget*w; \
   double value; \
-  gdk_threads_enter(); \
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos" #n)); \
   value = gtk_range_get_value(GTK_RANGE(w)); \
-  gdk_threads_leave(); \
   Mobot_moveJointToPIDNB((mobot_t*)arg, ROBOT_JOINT##n, DEG2RAD(value)); \
   return 1; \
 }

@@ -19,8 +19,6 @@ int main(int argc, char* argv[])
 {
   GError *error = NULL;
  
-  g_thread_init(NULL); 
-  gdk_threads_init();
   gtk_init(&argc, &argv);
 
   /* Create the GTK Builder */
