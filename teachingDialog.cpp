@@ -11,41 +11,29 @@ int g_dndRemoveIndex = 0;
 bool g_dndRemoveIndexValid = false;
 bool g_dnd = true;
 
-void teachingDialog_refreshRecordedMotions(int currentMotion, bool reentrant)
+void teachingDialog_refreshRecordedMotions(int currentMotion)
 {
   g_dnd = false;
-#define GTK_ENTER \
-  if(reentrant) gdk_threads_enter()
-#define GTK_LEAVE \
-  if(reentrant) gdk_threads_leave()
   int i;
   GtkTreeIter iter;
   /* Clear the liststore */
-  GTK_ENTER;
   GtkListStore* ls = GTK_LIST_STORE(gtk_builder_get_object(g_builder, "liststore_recordedMotions"));
   gtk_list_store_clear(ls);
-  GTK_LEAVE;
   /* Populate it with motions */
   recordMobot_t* mobot;
   mobot = g_robotManager->getMobot(0);
   for(i = 0; i < mobot->numMotions; i++) {
-    GTK_ENTER;
     gtk_list_store_append(ls, &iter);
-    GTK_LEAVE;
     if(i == currentMotion) {
-      GTK_ENTER;
       gtk_list_store_set(ls, &iter, 
           0, mobot->motions[i]->name,
           1, GTK_STOCK_YES,
           -1);
-      GTK_LEAVE;
     } else {
-      GTK_ENTER;
       gtk_list_store_set(ls, &iter, 
           0, mobot->motions[i]->name,
           1, GTK_STOCK_ABOUT,
           -1);
-      GTK_LEAVE;
     }
   }
   g_dnd = true;
@@ -54,7 +42,7 @@ void teachingDialog_refreshRecordedMotions(int currentMotion, bool reentrant)
 void on_button_recordPos_clicked(GtkWidget*w, gpointer data)
 {
   g_robotManager->record();
-  teachingDialog_refreshRecordedMotions(-1, false);
+  teachingDialog_refreshRecordedMotions(-1);
 }
 
 void on_button_addDelay_clicked(GtkWidget*w, gpointer data)
@@ -81,7 +69,7 @@ void on_button_deleteRecordedPos_clicked(GtkWidget*w, gpointer data)
     RecordMobot_removeMotion(m, index, true);
     m = g_robotManager->getMobot(i);
   }
-  teachingDialog_refreshRecordedMotions(-1, false);
+  teachingDialog_refreshRecordedMotions(-1);
 }
 
 void on_button_clearRecordedPositions_clicked(GtkWidget*w, gpointer data)
@@ -93,28 +81,25 @@ void on_button_clearRecordedPositions_clicked(GtkWidget*w, gpointer data)
     RecordMobot_clearAllMotions(m);
     m = g_robotManager->getMobot(i);
   }
-  teachingDialog_refreshRecordedMotions(-1, false);
+  teachingDialog_refreshRecordedMotions(-1);
 }
 
 void on_button_saveToProgram_clicked(GtkWidget*w, gpointer data)
 {
 }
 
-void* playThread(void* arg)
+gboolean playTimeout(gpointer userdata)
 {
 	CRobotManager* robotManager;
 	robotManager = g_robotManager;
-	int i, j, done;
+	static int i=0, j=0, done=0;
   GtkWidget *w;
   gboolean loop;
 
   /* Get the looped motion check button */
-  gdk_threads_enter();
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "checkbutton_playLooped"));
-  gdk_threads_leave();
-	done = 0;
-	for(i = 0; !done ; i++) {
-		teachingDialog_refreshRecordedMotions(i, TRUE);
+	//for(i = 0; !done ; i++) {
+		teachingDialog_refreshRecordedMotions(i);
 		for(j = 0; j < robotManager->numConnected(); j++) {
 			if(RecordMobot_getMotionType(robotManager->getMobot(j), i) == MOTION_SLEEP) {
 				RecordMobot_play(robotManager->getMobot(j), i);
@@ -122,36 +107,44 @@ void* playThread(void* arg)
 			}
 			if(RecordMobot_play(robotManager->getMobot(j), i)) {
         /* Get the looped checkbutton state */
-        gdk_threads_enter();
         loop = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
-        gdk_threads_leave();
 				if(loop) {
 					i = -1;
-					break;
 				}	else {
 					done = 1;
-					break;
 				}
 			}
 		}
 		for(j = 0; j < robotManager->numConnected(); j++) {
 		  Mobot_moveWait((mobot_t*)robotManager->getMobot(j));
 		}
-		if(g_haltPlayFlag) {
-			g_haltPlayFlag = 0;
-			break;
-		}
-	}
+    if(g_haltPlayFlag) {
+      g_haltPlayFlag = 0;
+
+      for(j = 0; j < robotManager->numConnected(); j++) {
+        Mobot_stop((mobot_t*)robotManager->getMobot(j));
+      }
+      g_isPlaying = false;
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "button_playRecorded"));
+      gtk_widget_set_sensitive(w, TRUE);
+      teachingDialog_refreshRecordedMotions(-1);
+      done = 0; i = 0; j = 0;
+      return false;
+    }
+    i++;
+    if(!done) {
+      return true;
+    }
+	//}
 	for(j = 0; j < robotManager->numConnected(); j++) {
 		Mobot_stop((mobot_t*)robotManager->getMobot(j));
 	}
   g_isPlaying = false;
-  gdk_threads_enter();
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "button_playRecorded"));
   gtk_widget_set_sensitive(w, TRUE);
-  gdk_threads_leave();
-	teachingDialog_refreshRecordedMotions(-1, TRUE);
-	return NULL;
+	teachingDialog_refreshRecordedMotions(-1);
+  done = i = j = 0;
+	return false;
 }
 
 void on_button_playRecorded_clicked(GtkWidget*button, gpointer data) 
@@ -162,8 +155,7 @@ void on_button_playRecorded_clicked(GtkWidget*button, gpointer data)
   gtk_widget_set_sensitive(w, FALSE);
   /* Start the play thread */
   g_haltPlayFlag = false;
-  THREAD_T thread;
-  THREAD_CREATE(&thread, playThread, NULL);
+  g_idle_add(playTimeout, NULL);
 }
 
 void on_button_stopRecorded_clicked(GtkWidget*w, gpointer data)
@@ -208,7 +200,7 @@ void on_mobotButtonPress(void* data, int button, int buttonDown)
       for(i = 0; i < g_robotManager->numConnected(); i++) {
 		    RecordMobot_record(g_robotManager->getMobot(i));
 	    }
-	    teachingDialog_refreshRecordedMotions(-1, TRUE);
+	    teachingDialog_refreshRecordedMotions(-1);
     }
     if(lastState == 0x02) {
       /* Button B press/release */
@@ -232,7 +224,7 @@ void on_mobotButtonPress(void* data, int button, int buttonDown)
         RecordMobot_clearAllMotions(m);
         m = g_robotManager->getMobot(i);
       }
-      teachingDialog_refreshRecordedMotions(-1, true);
+      teachingDialog_refreshRecordedMotions(-1);
     }
   }
   lastState = newState;
@@ -288,7 +280,7 @@ void on_cellrenderertext_recordedMotionName_edited(
     RecordMobot_setMotionName(m, index, new_text);
     m = g_robotManager->getMobot(i);
   }
-  teachingDialog_refreshRecordedMotions(-1, false);
+  teachingDialog_refreshRecordedMotions(-1);
 }
 
 void on_liststore_recordedMotions_row_deleted(
@@ -319,7 +311,7 @@ void on_liststore_recordedMotions_row_deleted(
         RecordMobot_moveMotion(m, g_dndRemoveIndex, g_dndInsertIndex);
         m = g_robotManager->getMobot(i);
       }
-      teachingDialog_refreshRecordedMotions(-1, false);
+      teachingDialog_refreshRecordedMotions(-1);
     }
   }
 }
@@ -348,7 +340,7 @@ void on_liststore_recordedMotions_row_inserted(
         RecordMobot_moveMotion(m, g_dndRemoveIndex, g_dndInsertIndex);
         m = g_robotManager->getMobot(i);
       }
-      teachingDialog_refreshRecordedMotions(-1, false);
+      teachingDialog_refreshRecordedMotions(-1);
     }
   }
 }

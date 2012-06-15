@@ -60,12 +60,10 @@ void initControlDialog(void)
 #undef GAIT
 
   /* Start handler thread */
-  THREAD_T thread;
-  THREAD_CREATE(&thread, controllerHandlerThread, NULL);
-
+  g_idle_add(controllerHandlerTimeout, NULL);
 }
 
-void* controllerHandlerThread(void* arg)
+gboolean controllerHandlerTimeout(gpointer data)
 {
   /* This function will repeatedly check to see if there have been any button
    * presses and process them, as well as update the UI */
@@ -74,37 +72,30 @@ void* controllerHandlerThread(void* arg)
   GtkWidget* w;
   recordMobot_t* mobot;
   double angles[4];
-  return NULL;
-  while(1) {
-    /* First, check to see if a robot is even selected. If none selected, just return. */
-    gdk_threads_enter();
-    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
-    index = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
-    gdk_threads_leave();
-    if(index < 0) {
-      usleep(250000);
-      continue;
-    }
-    /* Get the controlled mobot */
-    mobot = g_robotManager->getMobot(index);
-    /* Update the position sliders */
-    Mobot_getJointAngles((mobot_t*)mobot, 
-        &angles[0], 
-        &angles[1], 
-        &angles[2], 
-        &angles[3]);
-    /* Convert angles to degrees */
-    for(i = 0; i < 4; i++) {
-      angles[i] = RAD2DEG(angles[i]);
-    }
+  /* First, check to see if a robot is even selected. If none selected, just return. */
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
+  index = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
+  if(index < 0) {
+    return true;
+  }
+  /* Get the controlled mobot */
+  mobot = g_robotManager->getMobot(index);
+  /* Update the position sliders */
+  Mobot_getJointAngles((mobot_t*)mobot, 
+      &angles[0], 
+      &angles[1], 
+      &angles[2], 
+      &angles[3]);
+  /* Convert angles to degrees */
+  for(i = 0; i < 4; i++) {
+    angles[i] = RAD2DEG(angles[i]);
+  }
 #define VSCALEHANDLER(n) \
-    if(g_buttonState[S_POS##n] == 0) { \
-      gdk_threads_enter(); \
-      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos" #n)); \
-      gtk_range_set_value(GTK_RANGE(w), angles[n-1]); \
-      gdk_threads_leave(); \
-    }
-    VSCALEHANDLER(1)
+  if(g_buttonState[S_POS##n] == 0) { \
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos" #n)); \
+    gtk_range_set_value(GTK_RANGE(w), angles[n-1]); \
+  }
+  VSCALEHANDLER(1)
     VSCALEHANDLER(2)
     VSCALEHANDLER(3)
     VSCALEHANDLER(4)
@@ -116,29 +107,27 @@ void* controllerHandlerThread(void* arg)
           &angles[2], 
           &angles[3]);
 #define VSCALEHANDLER(n) \
-      gdk_threads_enter(); \
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed" #n)); \
-      gtk_range_set_value(GTK_RANGE(w), angles[n-1] * 100.0); \
-      gdk_threads_leave();
-      VSCALEHANDLER(1)
-      VSCALEHANDLER(2)
-      VSCALEHANDLER(3)
-      VSCALEHANDLER(4)
+      gtk_range_set_value(GTK_RANGE(w), angles[n-1] * 100.0);
+        VSCALEHANDLER(1)
+        VSCALEHANDLER(2)
+        VSCALEHANDLER(3)
+        VSCALEHANDLER(4)
 #undef VSCALEHANDLER
-      g_initSpeeds = 0;
+        g_initSpeeds = 0;
     }
-    /* Go through the buttons and handle the pressed ones */
-    for(i = 0; i < NUM_BUTTONS; i++) {
-      if(g_buttonState[i]) {
-        if( (i >= S_SPEED1) && (i <= S_POS4) ) {
-          g_handlerFuncs[i](mobot);
-        } else {
-          g_buttonState[i] = g_handlerFuncs[i](mobot);
-        }
+  /* Go through the buttons and handle the pressed ones */
+  for(i = 0; i < NUM_BUTTONS; i++) {
+    if(g_buttonState[i]) {
+      if( (i >= S_SPEED1) && (i <= S_POS4) ) {
+        g_handlerFuncs[i](mobot);
+      } else {
+        g_buttonState[i] = g_handlerFuncs[i](mobot);
       }
     }
-    //usleep(100000);
   }
+  //usleep(100000);
+  return true;
 }
 
 int handlerZERO(void* arg)

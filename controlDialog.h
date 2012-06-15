@@ -19,4 +19,14 @@ int handler##x(void* arg);
 #undef BUTTON
 #undef SLIDER
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+gboolean controllerHandlerTimeout(gpointer data);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
