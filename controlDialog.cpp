@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include "RoboMancer.h"
 #include "controlDialog.h"
 #include "thread_macros.h"
@@ -73,6 +74,7 @@ void* controllerHandlerThread(void* arg)
   GtkWidget* w;
   recordMobot_t* mobot;
   double angles[4];
+  return NULL;
   while(1) {
     /* First, check to see if a robot is even selected. If none selected, just return. */
     gdk_threads_enter();

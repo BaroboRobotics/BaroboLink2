@@ -1,6 +1,7 @@
 #include "RoboMancer.h"
 #include "RobotManager.h"
 #include "thread_macros.h"
+#include <mobot.h>
 
 bool g_isPlaying = false;
 bool g_haltPlayFlag = false;
