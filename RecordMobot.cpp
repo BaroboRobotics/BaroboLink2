@@ -2,6 +2,9 @@
 #include <string.h>
 #include <unistd.h>
 #include "RecordMobot.h"
+#ifdef _MSYS
+#include <windows.h>
+#endif
 
 void RecordMobot_init(recordMobot_t* mobot, char *name)
 {
@@ -71,7 +74,11 @@ int RecordMobot_play(recordMobot_t* mobot, int index)
 			mobot->motions[index]->data.pos[3]
 		);
 	} else if (mobot->motions[index]->motionType == MOTION_SLEEP) {
+#ifdef _MSYS
+    Sleep(mobot->motions[index]->data.sleepDuration * 1000);
+#else
 		usleep(mobot->motions[index]->data.sleepDuration * 1000000);
+#endif
 		return 0;
 	}
 }

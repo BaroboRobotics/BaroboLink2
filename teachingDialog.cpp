@@ -22,6 +22,7 @@ void teachingDialog_refreshRecordedMotions(int currentMotion)
   /* Populate it with motions */
   recordMobot_t* mobot;
   mobot = g_robotManager->getMobot(0);
+  if(mobot == NULL) {return;}
   for(i = 0; i < mobot->numMotions; i++) {
     gtk_list_store_append(ls, &iter);
     if(i == currentMotion) {
@@ -58,6 +59,7 @@ void on_button_addDelay_clicked(GtkWidget*w, gpointer data)
   }
   sscanf(str, "%lf", &seconds);
   g_robotManager->addDelay(seconds);
+  teachingDialog_refreshRecordedMotions(-1);
 }
 
 void on_button_deleteRecordedPos_clicked(GtkWidget*w, gpointer data)
@@ -110,7 +112,6 @@ gboolean playTimeout(gpointer userdata)
   /* Get the looped motion check button */
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "checkbutton_playLooped"));
 	//for(i = 0; !done ; i++) {
-		teachingDialog_refreshRecordedMotions(i);
 		for(j = 0; j < robotManager->numConnected(); j++) {
 			if(RecordMobot_getMotionType(robotManager->getMobot(j), i) == MOTION_SLEEP) {
 				RecordMobot_play(robotManager->getMobot(j), i);
@@ -144,6 +145,8 @@ gboolean playTimeout(gpointer userdata)
     }
     i++;
     if(!done) {
+      /* highlight the next motion */
+      teachingDialog_refreshRecordedMotions(i);
       return true;
     }
 	//}
@@ -164,6 +167,7 @@ void on_button_playRecorded_clicked(GtkWidget*button, gpointer data)
   /* Disable the play button */
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "button_playRecorded"));
   gtk_widget_set_sensitive(w, FALSE);
+  teachingDialog_refreshRecordedMotions(0);
   /* Start the play thread */
   g_haltPlayFlag = false;
   g_idle_add(playTimeout, NULL);
