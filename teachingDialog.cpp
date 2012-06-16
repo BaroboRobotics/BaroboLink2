@@ -47,6 +47,17 @@ void on_button_recordPos_clicked(GtkWidget*w, gpointer data)
 
 void on_button_addDelay_clicked(GtkWidget*w, gpointer data)
 {
+  /* Get the text from the entry */
+  const gchar* str;
+  GtkEntry *entry;
+  double seconds;
+  entry = GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_delaySeconds"));
+  str = gtk_entry_get_text(entry);
+  if(strlen(str) == 0) {
+    return;
+  }
+  sscanf(str, "%lf", &seconds);
+  g_robotManager->addDelay(seconds);
 }
 
 void on_button_deleteRecordedPos_clicked(GtkWidget*w, gpointer data)
@@ -163,6 +174,12 @@ void on_button_stopRecorded_clicked(GtkWidget*w, gpointer data)
   g_haltPlayFlag = true;
 }
 
+gboolean refreshTimeout(gpointer userdata)
+{
+  teachingDialog_refreshRecordedMotions(-1);
+  return false;
+}
+
 void on_mobotButtonPress(void* data, int button, int buttonDown)
 {
   /* Button A: Record Motion 
@@ -200,7 +217,8 @@ void on_mobotButtonPress(void* data, int button, int buttonDown)
       for(i = 0; i < g_robotManager->numConnected(); i++) {
 		    RecordMobot_record(g_robotManager->getMobot(i));
 	    }
-	    teachingDialog_refreshRecordedMotions(-1);
+	    //teachingDialog_refreshRecordedMotions(-1);
+      g_idle_add(refreshTimeout, NULL);
     }
     if(lastState == 0x02) {
       /* Button B press/release */
@@ -222,7 +240,8 @@ void on_mobotButtonPress(void* data, int button, int buttonDown)
         RecordMobot_clearAllMotions(m);
         m = g_robotManager->getMobot(i);
       }
-      teachingDialog_refreshRecordedMotions(-1);
+      //teachingDialog_refreshRecordedMotions(-1);
+      g_idle_add(refreshTimeout, NULL);
     }
   }
   lastState = newState;
