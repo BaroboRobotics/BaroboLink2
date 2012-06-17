@@ -56,6 +56,7 @@ typedef struct recordMobot_s
   int numMotionsAllocated;
   char name[80];
   char address[80];
+  bool bound; /* Is the mobot bound via external TCP socket? */
 } recordMobot_t;
 
 #ifdef __cplusplus

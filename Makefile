@@ -13,7 +13,7 @@ LIBS=`pkg-config --libs gtk+-2.0` \
 		-lmobot -linterface -lscintilla
 
 #OBJS=RoboMancer.o  connectHandlers.o  gait.o  menuHandlers.o  movementFunctions.o  movementHandlers.o
-OBJS=connectDialog.o RoboMancer.o configFile.o RobotManager.o RecordMobot.o programDialog.o controlDialog.o teachingDialog.o
+OBJS=connectDialog.o RoboMancer.o configFile.o RobotManager.o RecordMobot.o programDialog.o controlDialog.o teachingDialog.o commsHandler.o
 HEADERS=RoboMancer.h
 
 #all:libmobot.a $(OBJS) RoboMancer

@@ -63,6 +63,7 @@ void initialize()
   gtk_widget_show(g_scieditor);
 
   initControlDialog();
+  initializeComms();
 }
 
 int getIterModelFromTreeSelection(GtkTreeView *treeView, GtkTreeModel **model, GtkTreeIter *iter)

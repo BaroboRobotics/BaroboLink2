@@ -129,6 +129,9 @@ G_MODULE_EXPORT void on_liststore_recordedMotions_row_inserted(
     GtkTreeIter* iter,
     gpointer user_data);
 
+/* Comms Engine */
+int initializeComms(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -106,6 +106,20 @@ int CRobotManager::disconnect(int connectIndex)
   return 0; 
 }
 
+recordMobot_t* CRobotManager::getUnboundMobot()
+{
+  int i;
+  recordMobot_t* mobot;
+  mobot = getMobot(0);
+  for(i = 1; mobot != NULL; i++) {
+    if(mobot->bound == false) {
+      return mobot;
+    }
+    mobot = getMobot(i);
+  }
+  return NULL;
+}
+
 int CRobotManager::moveUp(int connectIndex) {
   recordMobot_t* tempMobot;
   char* tempAddr;

@@ -21,6 +21,7 @@ class CRobotManager : public ConfigFile
     int connect(int availableIndex);
     int connectIndex(int index);
     int disconnect(int connectIndex);
+    recordMobot_t* getUnboundMobot();
     int indexToConnectIndex(int index);
     int moveUp(int connectIndex);
     int moveDown(int connectIndex);

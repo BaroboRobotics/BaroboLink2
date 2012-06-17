@@ -12,6 +12,7 @@ void RecordMobot_init(recordMobot_t* mobot, char *name)
   mobot->numMotions = 0;
   mobot->motions = (struct motion_s**)malloc(sizeof(struct motion_s*) * 100); 
   mobot->numMotionsAllocated = 100;
+  mobot->bound = false;
   strcpy(mobot->name, name);
 }
 
