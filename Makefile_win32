@@ -16,10 +16,10 @@ LIBS= \
       `pkg-config --libs gmodule-2.0` \
       -L. \
       -L$(MOBOT_PREFIX)/lib \
-      -lmobot -linterface -lpthread -mwindows
+      -lmobot -linterface -lpthread -mwindows -lws2_32
 
 #OBJS=RoboMancer.o  connectHandlers.o  gait.o  menuHandlers.o  movementFunctions.o  movementHandlers.o
-OBJS=connectDialog.o RoboMancer.o configFile.o RobotManager.o RecordMobot.o programDialog.o controlDialog.o teachingDialog.o mobot++_wrapper.o
+OBJS=connectDialog.o RoboMancer.o configFile.o RobotManager.o RecordMobot.o programDialog.o controlDialog.o teachingDialog.o mobot++_wrapper.o commsHandler.o
 HEADERS=RoboMancer.h
 
 #all:libmobot.a $(OBJS) RoboMancer

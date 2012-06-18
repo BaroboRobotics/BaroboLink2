@@ -1,5 +1,10 @@
+#define WINVER 0x0501
 #include <stdio.h>
 #include <stdlib.h>
+#include "RoboMancer.h"
+#include "RecordMobot.h"
+#include "thread_macros.h"
+#ifndef _MSYS
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
@@ -10,9 +15,11 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <signal.h>
-#include "RoboMancer.h"
-#include "RecordMobot.h"
-#include "thread_macros.h"
+#else
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#endif
 
 #define PORT "5768"
 #define BACKLOG 10
@@ -45,7 +52,7 @@ void* commsThread(void* arg)
   while(1) {
     bytes = 0; datasize = 100;
     while(bytes < datasize) {
-      err = recv(comms->new_fd, &byte, 1, 0);
+      err = recv(comms->new_fd, (char*)&byte, 1, 0);
       if(err <= 0) { 
         /* Mark the mobot as unbound */
         comms->mobot->bound = false;
@@ -63,7 +70,7 @@ void* commsThread(void* arg)
     /* Get a response from the Mobot */
     RecvFromIMobot((mobot_t*)comms->mobot, &buf[0], 100);
     /* Send the response to the connected party */
-    send(comms->new_fd, &buf[0], buf[1], 0);
+    send(comms->new_fd, (const char*)&buf[0], buf[1], 0);
   }
   return NULL;
 }
@@ -74,7 +81,7 @@ void* listenThread(void* arg)
   struct addrinfo hints, *servinfo, *p;
   struct sockaddr_storage their_addr; // connector's address information
   socklen_t sin_size;
-  struct sigaction sa;
+  //struct sigaction sa;
   int yes=1;
   char s[INET6_ADDRSTRLEN];
   int rv;
@@ -83,6 +90,7 @@ void* listenThread(void* arg)
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE; // use my IP
+  printf("Listenthread started.\n");
 
   if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
     fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
@@ -97,14 +105,23 @@ void* listenThread(void* arg)
       continue;
     }
 
-    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes,
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, 
+#ifdef _MSYS
+          (const char*)&yes,
+#else
+          &yes,
+#endif
           sizeof(int)) == -1) {
       perror("setsockopt");
       exit(1);
     }
 
     if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+#ifdef _MSYS
+      closesocket(sockfd);
+#else
       close(sockfd);
+#endif
       perror("server: bind");
       continue;
     }
@@ -134,7 +151,6 @@ void* listenThread(void* arg)
   }
 #endif
 
-  printf("server: waiting for connections...\n");
 
   while(1) {  // main accept() loop
     sin_size = sizeof their_addr;
@@ -143,18 +159,25 @@ void* listenThread(void* arg)
       perror("accept");
       continue;
     }
+    printf("Got connection!\n");
 
+    /*
     inet_ntop(their_addr.ss_family,
         get_in_addr((struct sockaddr *)&their_addr),
         s, sizeof s);
     printf("server: got connection from %s\n", s);
+    */
 
     /* Check to see if there are available mobots to control */
     recordMobot_t* mobot;
     mobot = g_robotManager->getUnboundMobot();
     if(mobot == NULL) {
       /* No unconnected mobots found. Disconnect immediately */
+#ifdef _MSYS
+      closesocket(new_fd);
+#else
       close(new_fd);
+#endif
       continue;
     }
     mobot->bound = true;
@@ -181,6 +204,14 @@ void* listenThread(void* arg)
 
 int initializeComms(void)
 {
+  /* Initialize Winsock */
+#ifdef _MSYS
+  WSADATA wsaData;
+  if(WSAStartup(MAKEWORD(2,0), &wsaData) != 0) {
+    fprintf(stderr, "WSAStartup Failed.\n");
+    exit(1);
+  }
+#endif
   /* Just start the listenThread */
   THREAD_T thread;
   THREAD_CREATE(&thread, listenThread, NULL);
