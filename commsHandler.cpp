@@ -46,7 +46,11 @@ void* commsThread(void* arg)
     bytes = 0; datasize = 100;
     while(bytes < datasize) {
       err = recv(comms->new_fd, &byte, 1, 0);
-      if(err <= 0) { return NULL; }
+      if(err <= 0) { 
+        /* Mark the mobot as unbound */
+        comms->mobot->bound = false;
+        return NULL; 
+      }
       buf[bytes] = byte;
       /* The second byte stores the message size */
       if(bytes == 1) {
@@ -153,6 +157,7 @@ void* listenThread(void* arg)
       close(new_fd);
       continue;
     }
+    mobot->bound = true;
 
 #if 0
     if (!fork()) { // this is the child process
