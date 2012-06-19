@@ -40,3 +40,11 @@ void on_imagemenuitem_open_activate(GtkWidget* widget, gpointer data)
   }
   gtk_widget_destroy (dialog);
 }
+
+void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
+{
+}
+
+void on_button_runExe_clicked(GtkWidget* widget, gpointer data)
+{
+}
