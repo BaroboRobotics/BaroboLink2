@@ -1,4 +1,5 @@
 #This makefile is for MSYS/MinGW systems
+VERSION=0.1
 MOBOT_PREFIX=/home/dko/sys
 MOBOTDIR=/d/Projects/iMobot_gumstix_api/libimobotcomms
 SCIPREFIX=/d/Projects/scintilla
@@ -60,3 +61,13 @@ clean:
 	rm -rf RoboMancer $(OBJS) libinterface.a interface.o 
 	#rm -rf RoboMancer $(OBJS) libinterface.a interface.o libmobot.a mobot.def mobot.lib mobot.dll
 
+pkg:
+	rm -rf RoboMancer-v$(VERSION)
+	mkdir RoboMancer-v$(VERSION)
+	cp -R ../mingw RoboMancer-v$(VERSION)
+	cp libmobot.a RoboMancer-v$(VERSION)/mingw/lib/
+	cp mobot.h RoboMancer-v$(VERSION)/mingw/include/
+	cp RoboMancer.exe RoboMancer-v$(VERSION)/
+	cp dll/* RoboMancer-v$(VERSION)/
+	cp mobot.dll RoboMancer-v$(VERSION)/
+	cp -R interface RoboMancer-v$(VERSION)/
