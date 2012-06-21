@@ -626,7 +626,7 @@
                             <property name="hscrollbar_policy">automatic</property>
                             <property name="vscrollbar_policy">automatic</property>
                             <child>
-                              <object class="GtkTextView" id="textview1">
+                              <object class="GtkTextView" id="textview_programMessages">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="editable">False</property>
@@ -640,7 +640,7 @@
                       <object class="GtkLabel" id="label8">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">&lt;b&gt;Program Output&lt;/b&gt;</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Messages&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
                       </object>
                     </child>
