@@ -50,8 +50,27 @@ void initProgramDialog(void)
   on_imagemenuitem_new_activate(NULL, NULL);
 }
 
+void check_save_on_dirty()
+{
+  if(g_dirty) {
+    GtkWidget *w;
+    w = gtk_message_dialog_new(GTK_WINDOW(g_window),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_WARNING,
+        GTK_BUTTONS_YES_NO,
+        "There are unsaved changes in this file. Would you like to save?");
+    gint result = gtk_dialog_run(GTK_DIALOG(w));
+    if(result == GTK_RESPONSE_YES) {
+      on_imagemenuitem_save_activate(NULL, NULL);
+    }
+    gtk_widget_destroy(w);
+  }
+}
+
 void on_imagemenuitem_new_activate(GtkWidget* widget, gpointer data)
 {
+  check_save_on_dirty();
+
   if(g_curFileName != NULL) {
     free(g_curFileName);
     g_curFileName = NULL;
@@ -89,6 +108,7 @@ void on_imagemenuitem_new_activate(GtkWidget* widget, gpointer data)
 
 void on_imagemenuitem_open_activate(GtkWidget* widget, gpointer data)
 {
+  check_save_on_dirty();
   GtkWidget *dialog;
   dialog = gtk_file_chooser_dialog_new ("Open File",
       GTK_WINDOW(g_window),
