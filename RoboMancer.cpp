@@ -63,6 +63,7 @@ void initialize()
   gtk_widget_show(g_scieditor);
 
   initControlDialog();
+  initProgramDialog();
   initializeComms();
 }
 

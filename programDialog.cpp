@@ -9,20 +9,66 @@
 #ifdef _MSYS
 #include <windows.h>
 #endif
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <errno.h>
 
-void on_imagemenuitem_cut_activate(GtkWidget* widget, gpointer data)
+#ifndef _MSYS
+#define MAX_PATH 512
+#endif
+
+char *g_curFileName = NULL;
+bool g_dirty = false;
+
+void initProgramDialog(void)
 {
-  scintilla_send_message(g_sci, SCI_CUT, 0, 0);
+  /* Attach signal handlers */
+  g_signal_connect(G_OBJECT(g_scieditor), SCINTILLA_NOTIFY, G_CALLBACK(on_scintilla_notify), NULL);
+  /* Set a monospace font */
+  scintilla_send_message(
+      g_sci,
+      SCI_STYLESETFONT,
+      STYLE_DEFAULT,
+      (sptr_t)"!Courier");
+  scintilla_send_message(
+      g_sci,
+      SCI_STYLESETSIZE,
+      STYLE_DEFAULT,
+      (sptr_t)10);
+  on_imagemenuitem_new_activate(NULL, NULL);
 }
 
-void on_imagemenuitem_copy_activate(GtkWidget* widget, gpointer data)
+void on_imagemenuitem_new_activate(GtkWidget* widget, gpointer data)
 {
-  scintilla_send_message(g_sci, SCI_COPY, 0, 0);
-}
-
-void on_imagemenuitem_paste_activate(GtkWidget* widget, gpointer data)
-{
-  scintilla_send_message(g_sci, SCI_PASTE, 0, 0);
+  if(g_curFileName != NULL) {
+    free(g_curFileName);
+    g_curFileName = NULL;
+  }
+  /* Clear the document */
+  scintilla_send_message(g_sci, SCI_CLEARALL, 0, 0);
+  /* Set up the initial code stub */
+  scintilla_send_message(g_sci, SCI_INSERTTEXT, 0, (sptr_t)
+      "#include <stdio.h>\n"
+      "#include <mobot.h>\n"
+      "\n"
+      "int main()\n"
+      "{\n"
+      "    /* Declare a new robot variable */\n"
+      "    CMobot robot;\n"
+      "    /* Link the new variable with a physical robot */\n"
+      "    robot.connect();\n"
+      "    /* Move the robot to its zero position */\n"
+      "    robot.moveToZero();\n"
+      "\n"
+      "    /* The next lines of code make the program pause until the user presses a\n"
+      "     * key. This is useful in Windows especially to keep the console window \n"
+      "     * open after the program has finished. */\n"
+      "    printf(\"Program Ended. Press a key to continue.\\n\");\n"
+      "    getchar();\n"
+      "    return 0;\n"
+      "}\n" );
 }
 
 void on_imagemenuitem_open_activate(GtkWidget* widget, gpointer data)
@@ -38,10 +84,120 @@ void on_imagemenuitem_open_activate(GtkWidget* widget, gpointer data)
   {
     char *filename;
     filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-    //open_file (filename);
+    /* Load the contents of the file into the scintilla window. First, load the
+     * whole file contents into a character buffer. */
+    char *contents;
+    struct stat s;
+    stat(filename, &s);
+    FILE *fp;
+    fp = fopen(filename, "r");
+    if(fp == NULL) {
+      /* FIXME: Should pop up a warning dialog or something */
+      return;
+    }
+    contents = (char*)malloc(s.st_size+1);
+    fread(contents, s.st_size, 1, fp);
+    scintilla_send_message(g_sci, SCI_SETTEXT, 0, (sptr_t)contents);
+    fclose(fp);
+    free(contents);
+    
+    g_curFileName = strdup(filename);
     g_free (filename);
   }
   gtk_widget_destroy (dialog);
+}
+
+void save_to_file(const char* filename)
+{
+  /* Open the file for writing */
+  FILE* fp;
+  fp = fopen(filename, "w");
+  if(fp == NULL) {
+    /* Could not open the file. Pop up an error message */
+    GtkWidget* dialog;
+    dialog = gtk_message_dialog_new (GTK_WINDOW(g_window),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_ERROR,
+        GTK_BUTTONS_CLOSE,
+        "Error saving to file '%s': %s",
+        filename, g_strerror (errno));
+
+    /* Destroy the dialog when the user responds to it (e.g. clicks a button) */
+    g_signal_connect_swapped (dialog, "response",
+        G_CALLBACK (gtk_widget_destroy),
+        dialog);
+    return;
+  }
+  int sourceCodeSize;
+  char* sourceCode;
+  sourceCodeSize = scintilla_send_message(g_sci, SCI_GETLENGTH, 0, 0) + 1;
+  sourceCode = (char*)malloc(sourceCodeSize);
+  scintilla_send_message(g_sci, SCI_GETTEXT, sourceCodeSize, (sptr_t)sourceCode);
+  /* Write it to the file */
+  fwrite(sourceCode, sourceCodeSize, sizeof(char), fp); 
+  /* Close the file */
+  fclose(fp);
+  free(sourceCode);
+  /* Set the scintilla save point */
+  scintilla_send_message(g_sci, SCI_SETSAVEPOINT, 0, 0);
+  return;
+}
+
+void on_imagemenuitem_save_activate(GtkWidget* widget, gpointer data)
+{
+  /* if there is a current file name, just save there */
+  if(g_curFileName != NULL) {
+    save_to_file(g_curFileName);
+  } else {
+    on_imagemenuitem_saveAs_activate(widget, data);
+  }
+}
+
+void on_imagemenuitem_saveAs_activate(GtkWidget* widget, gpointer data)
+{
+  /* Open a save file dialog */
+  GtkWidget *dialog;
+  dialog = gtk_file_chooser_dialog_new ("Save File",
+      GTK_WINDOW(g_window),
+      GTK_FILE_CHOOSER_ACTION_SAVE,
+      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+      GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+      NULL);
+  gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), TRUE);
+  if (g_curFileName == NULL)
+  {
+    //gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), default_folder_for_saving);
+    gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), "Untitled document");
+  }
+  else
+    gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), g_curFileName);
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+  {
+    char *filename;
+    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+    save_to_file (filename);
+    if(g_curFileName != NULL) {
+      free(g_curFileName);
+      g_curFileName = strdup(filename);
+    }
+    g_free (filename);
+  }
+  gtk_widget_destroy (dialog);
+}
+
+void on_imagemenuitem_cut_activate(GtkWidget* widget, gpointer data)
+{
+  scintilla_send_message(g_sci, SCI_CUT, 0, 0);
+}
+
+void on_imagemenuitem_copy_activate(GtkWidget* widget, gpointer data)
+{
+  scintilla_send_message(g_sci, SCI_COPY, 0, 0);
+}
+
+void on_imagemenuitem_paste_activate(GtkWidget* widget, gpointer data)
+{
+  scintilla_send_message(g_sci, SCI_PASTE, 0, 0);
 }
 
 void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
@@ -175,4 +331,23 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
 
 void on_button_runExe_clicked(GtkWidget* widget, gpointer data)
 {
+}
+
+void on_scintilla_notify(GObject *gobject, GParamSpec *pspec, struct SCNotification* scn)
+{
+  GtkWidget *w;
+  switch(scn->nmhdr.code) {
+    case SCN_SAVEPOINTREACHED:
+      /* gray out "save" file menu item */
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "imagemenuitem_save"));
+      gtk_widget_set_sensitive(w, false);
+      g_dirty = false;
+      break;
+    case SCN_SAVEPOINTLEFT:
+      /* Ungray "save" menu item */
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "imagemenuitem_save"));
+      gtk_widget_set_sensitive(w, true);
+      g_dirty = true;
+      break;
+  }
 }

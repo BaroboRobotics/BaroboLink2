@@ -402,6 +402,7 @@
                             <property name="use_action_appearance">False</property>
                             <property name="use_underline">True</property>
                             <property name="use_stock">True</property>
+                            <signal name="activate" handler="on_imagemenuitem_new_activate" swapped="no"/>
                           </object>
                         </child>
                         <child>
@@ -423,6 +424,7 @@
                             <property name="use_action_appearance">False</property>
                             <property name="use_underline">True</property>
                             <property name="use_stock">True</property>
+                            <signal name="activate" handler="on_imagemenuitem_save_activate" swapped="no"/>
                           </object>
                         </child>
                         <child>
@@ -433,6 +435,7 @@
                             <property name="use_action_appearance">False</property>
                             <property name="use_underline">True</property>
                             <property name="use_stock">True</property>
+                            <signal name="activate" handler="on_imagemenuitem_saveAs_activate" swapped="no"/>
                           </object>
                         </child>
                       </object>

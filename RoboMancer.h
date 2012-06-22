@@ -49,12 +49,18 @@ void refreshConnectDialog();
 int getConnectSelectedIndex();
 
 /* Program Dialog */
+void initProgramDialog(void);
+G_MODULE_EXPORT void on_imagemenuitem_new_activate(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_imagemenuitem_open_activate(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_imagemenuitem_save_activate(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_imagemenuitem_saveAs_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_cut_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_copy_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_paste_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_open_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_exportExe_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_runExe_clicked(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_scintilla_notify(GObject *gobject, GParamSpec *pspec, struct SCNotification* scn);
 
 /* Control Dialog */
 G_MODULE_EXPORT void on_button_motor1back_clicked(GtkWidget*w, gpointer data); 
