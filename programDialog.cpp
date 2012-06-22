@@ -37,6 +37,16 @@ void initProgramDialog(void)
       SCI_STYLESETSIZE,
       STYLE_DEFAULT,
       (sptr_t)10);
+#define SSM(m, w, l) scintilla_send_message(g_sci, m, w, l)
+   SSM(SCI_SETLEXER, SCLEX_CPP, 0);
+   SSM(SCI_SETKEYWORDS, 0, (sptr_t)"int char float double CMobot if else for while");
+   SSM(SCI_STYLESETFORE, SCE_C_COMMENT, 0x008000);
+   SSM(SCI_STYLESETFORE, SCE_C_COMMENTLINE, 0x008000);
+   SSM(SCI_STYLESETFORE, SCE_C_NUMBER, 0x808000);
+   SSM(SCI_STYLESETFORE, SCE_C_WORD, 0x800000);
+   SSM(SCI_STYLESETFORE, SCE_C_STRING, 0x800080);
+   SSM(SCI_STYLESETBOLD, SCE_C_OPERATOR, 1);
+
   on_imagemenuitem_new_activate(NULL, NULL);
 }
 
@@ -69,6 +79,12 @@ void on_imagemenuitem_new_activate(GtkWidget* widget, gpointer data)
       "    getchar();\n"
       "    return 0;\n"
       "}\n" );
+  scintilla_send_message(g_sci, SCI_EMPTYUNDOBUFFER, 0, 0);
+  GtkWidget *w;
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "imagemenuitem_undo"));
+  gtk_widget_set_sensitive(w, false);
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "imagemenuitem_redo"));
+  gtk_widget_set_sensitive(w, false);
 }
 
 void on_imagemenuitem_open_activate(GtkWidget* widget, gpointer data)
@@ -183,6 +199,30 @@ void on_imagemenuitem_saveAs_activate(GtkWidget* widget, gpointer data)
     g_free (filename);
   }
   gtk_widget_destroy (dialog);
+}
+
+void on_imagemenuitem_undo_activate(GtkWidget* widget, gpointer data)
+{
+  GtkWidget *w;
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "imagemenuitem_undo"));
+  scintilla_send_message(g_sci, SCI_UNDO, 0, 0);
+  if( scintilla_send_message(g_sci, SCI_CANUNDO, 0, 0) ) {
+    gtk_widget_set_sensitive(w, true);
+  } else {
+    gtk_widget_set_sensitive(w, false);
+  }
+}
+
+void on_imagemenuitem_redo_activate(GtkWidget* widget, gpointer data)
+{
+  GtkWidget *w;
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "imagemenuitem_redo"));
+  scintilla_send_message(g_sci, SCI_REDO, 0, 0);
+  if( scintilla_send_message(g_sci, SCI_CANREDO, 0, 0) ) {
+    gtk_widget_set_sensitive(w, true);
+  } else {
+    gtk_widget_set_sensitive(w, false);
+  }
 }
 
 void on_imagemenuitem_cut_activate(GtkWidget* widget, gpointer data)
@@ -348,6 +388,21 @@ void on_scintilla_notify(GObject *gobject, GParamSpec *pspec, struct SCNotificat
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "imagemenuitem_save"));
       gtk_widget_set_sensitive(w, true);
       g_dirty = true;
+      break;
+    case SCN_MODIFIED:
+      /* Update undo and redo buttons */
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "imagemenuitem_undo"));
+      if(scintilla_send_message(g_sci, SCI_CANUNDO, 0, 0)) {
+        gtk_widget_set_sensitive(w, true);
+      } else {
+        gtk_widget_set_sensitive(w, false);
+      }
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "imagemenuitem_redo"));
+      if(scintilla_send_message(g_sci, SCI_CANREDO, 0, 0)) {
+        gtk_widget_set_sensitive(w, true);
+      } else {
+        gtk_widget_set_sensitive(w, false);
+      }
       break;
   }
 }

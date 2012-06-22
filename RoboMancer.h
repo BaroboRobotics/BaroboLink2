@@ -54,6 +54,8 @@ G_MODULE_EXPORT void on_imagemenuitem_new_activate(GtkWidget* widget, gpointer d
 G_MODULE_EXPORT void on_imagemenuitem_open_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_save_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_saveAs_activate(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_imagemenuitem_undo_activate(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_imagemenuitem_redo_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_cut_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_copy_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_paste_activate(GtkWidget* widget, gpointer data);
