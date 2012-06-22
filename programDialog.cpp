@@ -92,8 +92,8 @@ void on_imagemenuitem_new_activate(GtkWidget* widget, gpointer data)
       "    robot.moveToZero();\n"
       "\n"
       "    /* The next lines of code make the program pause until the user presses a\n"
-      "     * key. This is useful in Windows especially to keep the console window \n"
-      "     * open after the program has finished. */\n"
+      "     * key. This is used to keep the console window open after the program has\n"
+      "     * finished. */\n"
       "    printf(\"Program Ended. Press a key to continue.\\n\");\n"
       "    getchar();\n"
       "    return 0;\n"
@@ -133,6 +133,7 @@ void on_imagemenuitem_open_activate(GtkWidget* widget, gpointer data)
     }
     contents = (char*)malloc(s.st_size+1);
     fread(contents, s.st_size, 1, fp);
+    contents[s.st_size] = '\0';
     scintilla_send_message(g_sci, SCI_SETTEXT, 0, (sptr_t)contents);
     fclose(fp);
     free(contents);

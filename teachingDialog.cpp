@@ -2,6 +2,7 @@
 #include "RobotManager.h"
 #include "thread_macros.h"
 #include <mobot.h>
+#include <errno.h>
 
 bool g_isPlaying = false;
 bool g_haltPlayFlag = false;
@@ -97,8 +98,55 @@ void on_button_clearRecordedPositions_clicked(GtkWidget*w, gpointer data)
   teachingDialog_refreshRecordedMotions(-1);
 }
 
-void on_button_saveToProgram_clicked(GtkWidget*w, gpointer data)
+void on_button_saveToProgram_clicked(GtkWidget*widget, gpointer data)
 {
+  /* See if the looped checkmark is checked */
+  string* program;
+  GtkWidget *w;
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "checkbutton_playLooped"));
+  if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))) {
+    program = g_robotManager->generateProgram(true);
+  } else {
+    program = g_robotManager->generateProgram(false);
+  }
+  /* Open a save file dialog */
+  GtkWidget *dialog;
+  dialog = gtk_file_chooser_dialog_new ("Save File",
+      GTK_WINDOW(g_window),
+      GTK_FILE_CHOOSER_ACTION_SAVE,
+      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+      GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+      NULL);
+  gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), TRUE);
+  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), "Untitled document.cpp");
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+  {
+    char *filename;
+    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+    FILE *fp;
+    fp = fopen(filename, "w");
+    if(fp == NULL) {
+      /* Could not open the file. Pop up an error message */
+      GtkWidget* dialog;
+      dialog = gtk_message_dialog_new (GTK_WINDOW(g_window),
+          GTK_DIALOG_DESTROY_WITH_PARENT,
+          GTK_MESSAGE_ERROR,
+          GTK_BUTTONS_CLOSE,
+          "Error saving to file '%s': %s",
+          filename, g_strerror (errno));
+
+      /* Destroy the dialog when the user responds to it (e.g. clicks a button) */
+      g_signal_connect_swapped (dialog, "response",
+          G_CALLBACK (gtk_widget_destroy),
+          dialog);
+      return;
+    }
+    fwrite(program->c_str(), program->size(), sizeof(char), fp);
+    fclose(fp);
+    g_free (filename);
+  }
+  gtk_widget_destroy (dialog);
+  delete program;
 }
 
 gboolean playTimeout(gpointer userdata)

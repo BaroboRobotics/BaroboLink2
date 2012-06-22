@@ -262,5 +262,12 @@ void refreshConnectDialog()
           -1 );
     }
   }
+  /* If there is only one entry, set that entry as active in the "Control
+   * Robot" dialog. */
+  if(g_robotManager->numConnected() == 1) {
+    GtkWidget *w;
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
+    gtk_combo_box_set_active(GTK_COMBO_BOX(w), 0);
+  }
   g_dndConnect = true;
 }
