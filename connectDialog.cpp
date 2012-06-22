@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <gtk/gtk.h>
 #include "RoboMancer.h"
 #include "thread_macros.h"
@@ -191,7 +192,6 @@ void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data)
   gtk_widget_hide(w);
 }
 
-
 void on_liststore_availableRobots_row_deleted(
     GtkTreeModel* model,
     GtkTreePath* path,
@@ -203,8 +203,8 @@ void on_liststore_availableRobots_row_deleted(
   if(g_dndConnect) {
     indices = gtk_tree_path_get_indices_with_depth(path, &depth);
     index = indices[0];
-    strcpy(g_tmpBuf, g_robotManager->getEntry(index));
     g_robotManager->remove(index);
+    g_robotManager->write();
   }
 }
 
@@ -217,10 +217,37 @@ void on_liststore_availableRobots_row_inserted(
   gint* indices;
   int depth, index;
   if(g_dndConnect) {
+    /* Get the text entry from the liststore */
+    gchar* addr;
     indices = gtk_tree_path_get_indices_with_depth(path, &depth);
     index = indices[0];
-    g_robotManager->insertEntry(g_tmpBuf, index);
+    gtk_tree_model_get(model, iter, 0, &addr, -1);
+    if(addr == NULL) {
+      addr = strdup("00:00:00:00:00:00");
+    }
+    g_robotManager->insertEntry(addr, index);
+    free(addr);
+    g_robotManager->write();
   }
+}
+
+void on_liststore_availableRobots_row_changed(
+    GtkTreeModel* model,
+    GtkTreePath* path,
+    GtkTreeIter* iter,
+    gpointer user_data)
+{
+  gint* indices;
+  int depth, index;
+  /* Get the new value */
+  gchar* addr;
+  gtk_tree_model_get(model, iter, 0, &addr, -1);
+  if(addr == NULL) {
+    return;
+  }
+  indices = gtk_tree_path_get_indices_with_depth(path, &depth);
+  index = indices[0];
+  g_robotManager->rename(addr, index);
 }
 
 void refreshConnectDialog()

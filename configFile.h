@@ -14,6 +14,7 @@ class ConfigFile
     int moveEntryDown(int index);
     int moveEntryUp(int index);
     int remove(int index);
+    int rename(const char* newName, int index);
     int write();
 
   protected:

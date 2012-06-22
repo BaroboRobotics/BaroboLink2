@@ -126,6 +126,19 @@ int ConfigFile::remove(int index)
   _numEntries--;
 }
 
+int ConfigFile::rename(const char* newName, int index)
+{
+  if(index >= _numEntries) {
+    return -1;
+  }
+  if(index < 0) {
+    return -1;
+  }
+  free(_addresses[index]);
+  _addresses[index] = strdup(newName);
+  return 0;
+}
+
 int ConfigFile::write()
 {
   ofstream file;

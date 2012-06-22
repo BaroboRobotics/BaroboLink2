@@ -45,6 +45,11 @@ G_MODULE_EXPORT void on_liststore_availableRobots_row_inserted(
     GtkTreePath* path,
     GtkTreeIter* iter,
     gpointer user_data);
+G_MODULE_EXPORT void on_liststore_availableRobots_row_changed(
+    GtkTreeModel* model,
+    GtkTreePath* path,
+    GtkTreeIter* iter,
+    gpointer user_data);
 void refreshConnectDialog();
 int getConnectSelectedIndex();
 
@@ -102,6 +107,7 @@ G_MODULE_EXPORT void on_button_rotateLeft_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_stop_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_rotateRight_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_backward_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_setSpeeds_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_moveToZero_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_move_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_moveTo_clicked(GtkWidget* w, gpointer data);

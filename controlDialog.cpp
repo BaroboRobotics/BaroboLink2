@@ -202,6 +202,30 @@ int handlerSTOP(void* arg)
   return 0;
 }
 
+int handlerSETSPEEDS(void* arg)
+{
+  /* Get the entry values */
+  double value;
+  const gchar* text;
+  GtkWidget *w;
+#define GETVALUESETSPEED(n) \
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorSpeed" #n)); \
+  text = gtk_entry_get_text(GTK_ENTRY(w)); \
+  if(text != NULL) { \
+    sscanf(text, "%lf", &value); \
+    Mobot_setJointSpeedRatio(\
+      (mobot_t*)arg, \
+      ROBOT_JOINT##n, \
+      value/100.0); \
+  }
+  GETVALUESETSPEED(1)
+  GETVALUESETSPEED(2)
+  GETVALUESETSPEED(3)
+  GETVALUESETSPEED(4)
+#undef GETVALUESETSPEED
+  return 0;
+}
+
 int handlerMOVE(void* arg)
 {
   /* Get the entry values */
@@ -384,6 +408,11 @@ void on_button_rotateRight_clicked(GtkWidget* w, gpointer data)
 void on_button_backward_clicked(GtkWidget* w, gpointer data)
 {
   g_buttonState[B_ROLLBACK] = 1;
+}
+
+void on_button_setSpeeds_clicked(GtkWidget* w, gpointer data)
+{
+  g_buttonState[B_SETSPEEDS] = 1;
 }
 
 void on_button_moveToZero_clicked(GtkWidget* w, gpointer data)
