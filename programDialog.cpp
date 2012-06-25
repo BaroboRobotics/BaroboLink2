@@ -172,7 +172,7 @@ void save_to_file(const char* filename)
   sourceCode = (char*)malloc(sourceCodeSize);
   scintilla_send_message(g_sci, SCI_GETTEXT, sourceCodeSize, (sptr_t)sourceCode);
   /* Write it to the file */
-  fwrite(sourceCode, sourceCodeSize, sizeof(char), fp); 
+  fwrite(sourceCode, sourceCodeSize-1, sizeof(char), fp); 
   /* Close the file */
   fclose(fp);
   free(sourceCode);
@@ -267,13 +267,24 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
 #ifdef _MSYS
   static bool path_set = false;
   static char lastFilename[256] = "";
+  GtkWidget *dialog;
   /* Make sure the file is saved */
+  if(g_curFileName == NULL) {
+    dialog = gtk_message_dialog_new(
+        GTK_WINDOW(g_window),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_WARNING,
+        GTK_BUTTONS_OK,
+        "File not yet saved. Save the source code to a file to continue.");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+    return;
+  }
   on_imagemenuitem_save_activate(NULL, NULL);
   if(g_curFileName == NULL) {
     return;
   }
   /* Pop up a "save file" dialog and get the filename */
-  GtkWidget *dialog;
   dialog = gtk_file_chooser_dialog_new ("Export Executable",
       GTK_WINDOW(g_window),
       GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -355,16 +366,40 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
       return;
     }
     GtkWidget *w = GTK_WIDGET(gtk_builder_get_object(g_builder, "textview_programMessages"));
-    w = GTK_WIDGET(gtk_text_view_get_buffer(GTK_TEXT_VIEW(w)));
+    GtkTextBuffer *tb = GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(w)));
     char line[512];
+    /* Clear the text buffer */
+    gtk_text_buffer_set_text(tb, "", -1);
     /* Get the file line by line, inserting it into the text buffer */
+    bool errMsg = false;
     while(fgets(line, 512, logfile) != NULL) {
+      if(
+          !strstr(line, "manifestdependency") &&
+          !strstr(line, "EXPORT")
+          ) {
+        gtk_text_buffer_insert_at_cursor(
+            GTK_TEXT_BUFFER(tb),
+            line,
+            -1);
+        errMsg = true;
+      }
+    }
+    if(errMsg) {
       gtk_text_buffer_insert_at_cursor(
-          GTK_TEXT_BUFFER(w),
-          line,
+          GTK_TEXT_BUFFER(tb),
+          "Export process completed.\n",
           -1);
     }
     fclose(logfile);
+
+    /* Delete the log file */
+    swprintf(compileCommand, L"%s\\log.txt", dirname);
+    DeleteFileW(compileCommand);
+    /* Delete the object file */
+    swprintf(compileCommand, L"%s\\object.o", dirname);
+    DeleteFileW(compileCommand);
+    /* Delete the directory */
+    RemoveDirectoryW(dirname);
 
     g_free (filename);
 
