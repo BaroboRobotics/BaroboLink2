@@ -301,6 +301,9 @@ void on_mobotButtonPress(void* data, int button, int buttonDown)
 
 void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_num, gpointer userdata)
 {
+  static int lastPage = 0;
+  static bool buttonCallbackEnabled = false;
+  static int selectedRobot = 0;
   int i;
   mobot_t* mobot;
   /* If the teaching dialog gets selected, we should initialize all connected
@@ -310,14 +313,29 @@ void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_n
     for(i = 0; i < g_robotManager->numConnected(); i++) {
       mobot = (mobot_t*)g_robotManager->getMobot(i);
       Mobot_enableButtonCallback(mobot, mobot, on_mobotButtonPress);
+      buttonCallbackEnabled = true;
     }
   } else {
+    if(buttonCallbackEnabled) {
     /* Disable all button callbacks */
-    for(i = 0; i < g_robotManager->numConnected(); i++) {
-      mobot = (mobot_t*)g_robotManager->getMobot(i);
-      Mobot_disableButtonCallback(mobot);
+      for(i = 0; i < g_robotManager->numConnected(); i++) {
+        mobot = (mobot_t*)g_robotManager->getMobot(i);
+        Mobot_disableButtonCallback(mobot);
+      }
     }
   }
+
+  /* If the control dialog is selected... */
+  GtkWidget *w;
+  if(page_num == 3) {
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
+    gtk_combo_box_set_active(GTK_COMBO_BOX(w), selectedRobot);
+  } else {
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
+    gtk_combo_box_set_active(GTK_COMBO_BOX(w), -1);
+  }
+
+  lastPage = page_num;
 }
 
 void on_liststore_recordedMotions_rows_reordered(

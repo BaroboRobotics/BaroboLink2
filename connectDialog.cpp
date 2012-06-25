@@ -180,9 +180,14 @@ void on_button_connect_disconnect_clicked(GtkWidget* widget, gpointer data)
   if(i < 0) {
     return;
   }
+  /* We have to lock the controlDialog locks first to make sure we don't screw
+   * up their data. */
+  MUTEX_LOCK(&g_activeMobotLock);
   g_robotManager->disconnect(
     g_robotManager->indexToConnectIndex(i)
     );
+  g_activeMobot = NULL;
+  MUTEX_UNLOCK(&g_activeMobotLock);
   refreshConnectDialog();
 }
 
@@ -291,10 +296,12 @@ void refreshConnectDialog()
   }
   /* If there is only one entry, set that entry as active in the "Control
    * Robot" dialog. */
+  /*
   if(g_robotManager->numConnected() == 1) {
     GtkWidget *w;
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
     gtk_combo_box_set_active(GTK_COMBO_BOX(w), 0);
   }
+  */
   g_dndConnect = true;
 }

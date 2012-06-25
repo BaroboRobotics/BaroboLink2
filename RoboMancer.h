@@ -27,6 +27,12 @@ extern CRobotManager *g_robotManager;
 extern GtkWidget *g_scieditor;
 extern GtkWidget *g_window;
 extern ScintillaObject *g_sci;
+extern recordMobot_t* g_activeMobot;
+#ifdef _MSYS
+extern HANDLE g_activeMobotLock;
+#else
+extern pthread_mutex_t g_activeMobotLock;
+#endif
 
 /* Connect Dialog */
 G_MODULE_EXPORT void on_button_connect_addRobot_clicked(GtkWidget* widget, gpointer data);

@@ -10,6 +10,18 @@
 int g_buttonState[NUM_BUTTONS];
 int g_initSpeeds = 0;
 
+/* Global variables that store slider and text entry values */
+double g_speedSliderValues[4];
+double g_speedEntryValues[4];
+bool   g_speedEntryValuesValid[4];
+double g_positionSliderValues[4];
+double g_positionEntryValues[4];
+bool   g_positionEntryValuesValid[4];
+double g_positionValues[4];
+int g_playIndex;
+recordMobot_t* g_activeMobot = NULL;
+MUTEX_T g_activeMobotLock;
+
 typedef int(*handlerFunc)(void* arg);
 handlerFunc g_handlerFuncs[NUM_BUTTONS];
 
@@ -59,8 +71,14 @@ void initControlDialog(void)
 #include "gaits.x.h"
 #undef GAIT
 
+  /* Initialize thread stuff */
+  MUTEX_INIT(&g_activeMobotLock);
+
   /* Start handler thread */
-  g_idle_add(controllerHandlerTimeout, NULL);
+  //g_idle_add(controllerHandlerTimeout, NULL);
+  g_timeout_add(100, controllerHandlerTimeout, NULL);
+  THREAD_T thread;
+  THREAD_CREATE(&thread, controllerHandlerThread, NULL);
 }
 
 gboolean controllerHandlerTimeout(gpointer data)
@@ -76,24 +94,22 @@ gboolean controllerHandlerTimeout(gpointer data)
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
   index = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
   if(index < 0) {
+    MUTEX_LOCK(&g_activeMobotLock);
+    g_activeMobot = NULL;
+    MUTEX_UNLOCK(&g_activeMobotLock);
     return true;
   }
   /* Get the controlled mobot */
   mobot = g_robotManager->getMobot(index);
-  /* Update the position sliders */
-  Mobot_getJointAngles((mobot_t*)mobot, 
-      &angles[0], 
-      &angles[1], 
-      &angles[2], 
-      &angles[3]);
-  /* Convert angles to degrees */
-  for(i = 0; i < 4; i++) {
-    angles[i] = RAD2DEG(angles[i]);
+  if(mobot != g_activeMobot) {
+    MUTEX_LOCK(&g_activeMobotLock);
+    g_activeMobot = mobot;
+    MUTEX_UNLOCK(&g_activeMobotLock);
   }
 #define VSCALEHANDLER(n) \
   if(g_buttonState[S_POS##n] == 0) { \
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos" #n)); \
-    gtk_range_set_value(GTK_RANGE(w), angles[n-1]); \
+    gtk_range_set_value(GTK_RANGE(w), g_positionValues[n-1]); \
   }
   VSCALEHANDLER(1)
     VSCALEHANDLER(2)
@@ -109,25 +125,86 @@ gboolean controllerHandlerTimeout(gpointer data)
 #define VSCALEHANDLER(n) \
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed" #n)); \
       gtk_range_set_value(GTK_RANGE(w), angles[n-1] * 100.0);
-        VSCALEHANDLER(1)
+      VSCALEHANDLER(1)
         VSCALEHANDLER(2)
         VSCALEHANDLER(3)
         VSCALEHANDLER(4)
 #undef VSCALEHANDLER
         g_initSpeeds = 0;
     }
-  /* Go through the buttons and handle the pressed ones */
-  for(i = 0; i < NUM_BUTTONS; i++) {
-    if(g_buttonState[i]) {
-      if( (i >= S_SPEED1) && (i <= S_POS4) ) {
-        g_handlerFuncs[i](mobot);
-      } else {
-        g_buttonState[i] = g_handlerFuncs[i](mobot);
+  /* Get slider, entry values */
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos1"));
+  g_positionSliderValues[0] = gtk_range_get_value(GTK_RANGE(w));
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos2"));
+  g_positionSliderValues[1] = gtk_range_get_value(GTK_RANGE(w));
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos3"));
+  g_positionSliderValues[2] = gtk_range_get_value(GTK_RANGE(w));
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos4"));
+  g_positionSliderValues[3] = gtk_range_get_value(GTK_RANGE(w));
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed1"));
+  g_speedSliderValues[0] = gtk_range_get_value(GTK_RANGE(w));
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed2"));
+  g_speedSliderValues[1] = gtk_range_get_value(GTK_RANGE(w));
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed3"));
+  g_speedSliderValues[2] = gtk_range_get_value(GTK_RANGE(w));
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed4"));
+  g_speedSliderValues[3] = gtk_range_get_value(GTK_RANGE(w));
+  return true;
+}
+
+void* controllerHandlerThread(void* arg)
+{
+  /* This thread is responsible for communicating with the Mobot. All mobot
+   * communications should be done in this thread to prevent communication
+   * errors from hanging the app. */
+  while(1) {
+    /* First, check to see if a mobot is even connected. */
+    MUTEX_LOCK(&g_activeMobotLock);
+    if(g_activeMobot == NULL) {
+      MUTEX_UNLOCK(&g_activeMobotLock);
+      sleep(1);
+      continue;
+    }
+    MUTEX_UNLOCK(&g_activeMobotLock);
+
+#define TESTLOCK \
+    MUTEX_LOCK(&g_activeMobotLock); \
+    if(g_activeMobot == NULL) { \
+      MUTEX_UNLOCK(&g_activeMobotLock); \
+      sleep(1); \
+      continue; \
+    }
+
+    TESTLOCK
+    Mobot_getJointAngles(
+        (mobot_t*)g_activeMobot,
+        &g_positionValues[0],
+        &g_positionValues[1],
+        &g_positionValues[2],
+        &g_positionValues[3]);
+    MUTEX_UNLOCK(&g_activeMobotLock);
+    /* First, get motor position values */
+    /* Convert angles to degrees */
+    int i;
+    for(i = 0; i < 4; i++) {
+      g_positionValues[i] = RAD2DEG(g_positionValues[i]);
+    }
+    /* Cycle through button handlers */
+    for(i = 0; i < NUM_BUTTONS; i++) {
+      if(g_buttonState[i]) {
+        if( (i >= S_SPEED1) && (i <= S_POS4) ) {
+          TESTLOCK
+          g_handlerFuncs[i](g_activeMobot);
+          MUTEX_UNLOCK(&g_activeMobotLock);
+        } else {
+          TESTLOCK
+          g_buttonState[i] = g_handlerFuncs[i](g_activeMobot);
+          MUTEX_UNLOCK(&g_activeMobotLock);
+        }
       }
     }
+    MUTEX_UNLOCK(&g_activeMobotLock);
   }
-  //usleep(100000);
-  return true;
 }
 
 int handlerZERO(void* arg)
@@ -209,15 +286,13 @@ int handlerSETSPEEDS(void* arg)
   const gchar* text;
   GtkWidget *w;
 #define GETVALUESETSPEED(n) \
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorSpeed" #n)); \
-  text = gtk_entry_get_text(GTK_ENTRY(w)); \
-  if(text != NULL) { \
-    sscanf(text, "%lf", &value); \
+  if(g_speedEntryValuesValid[n-1]) { \
     Mobot_setJointSpeedRatio(\
       (mobot_t*)arg, \
       ROBOT_JOINT##n, \
-      value/100.0); \
+      g_speedEntryValues[n-1]/100.0); \
   }
+
   GETVALUESETSPEED(1)
   GETVALUESETSPEED(2)
   GETVALUESETSPEED(3)
@@ -233,15 +308,13 @@ int handlerMOVE(void* arg)
   const gchar* text;
   GtkWidget *w;
 #define GETVALUEMOVEJOINT(n) \
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorPos" #n)); \
-  text = gtk_entry_get_text(GTK_ENTRY(w)); \
-  if(text != NULL) { \
-    sscanf(text, "%lf", &value); \
+  if(g_positionEntryValuesValid[n-1]) { \
     Mobot_moveJointNB(\
       (mobot_t*)arg, \
       ROBOT_JOINT##n, \
-      DEG2RAD(value)); \
+      DEG2RAD(g_positionEntryValues[n-1])); \
   }
+
   GETVALUEMOVEJOINT(1)
   GETVALUEMOVEJOINT(2)
   GETVALUEMOVEJOINT(3)
@@ -257,15 +330,13 @@ int handlerMOVETO(void* arg)
   const gchar* text;
   GtkWidget *w;
 #define GETVALUEMOVEJOINT(n) \
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorPos" #n)); \
-  text = gtk_entry_get_text(GTK_ENTRY(w)); \
-  if(text != NULL) { \
-    sscanf(text, "%lf", &value); \
+  if(g_positionEntryValuesValid[n-1]) { \
     Mobot_moveJointToNB(\
       (mobot_t*)arg, \
       ROBOT_JOINT##n, \
-      DEG2RAD(value)); \
+      DEG2RAD(g_positionEntryValues[n-1])); \
   }
+
   GETVALUEMOVEJOINT(1)
   GETVALUEMOVEJOINT(2)
   GETVALUEMOVEJOINT(3)
@@ -276,17 +347,7 @@ int handlerMOVETO(void* arg)
 
 int handlerPLAY(void* arg)
 {
-  /* Figure out which item is selected */
-  GtkWidget* view =  GTK_WIDGET(gtk_builder_get_object(g_builder, "treeview_gaits"));
-  GtkTreeModel* model = GTK_TREE_MODEL(gtk_builder_get_object(g_builder, "liststore_gaits"));
-  GtkTreeSelection* selection = gtk_tree_view_get_selection((GTK_TREE_VIEW(view)));
-  GList* list = gtk_tree_selection_get_selected_rows(selection, &model);
-  if(list == NULL) return 0;
-  gint* paths = gtk_tree_path_get_indices((GtkTreePath*)list->data);
-  int i = paths[0];
-  g_list_foreach(list, (GFunc) gtk_tree_path_free, NULL);
-  g_list_free(list);
-  switch(i) {
+  switch(g_playIndex) {
 #define GAIT(sym, str, func) \
     case GAIT_##sym: \
       func; \
@@ -303,12 +364,9 @@ int handlerPLAY(void* arg)
 int handlerSPEED##n(void* arg) \
 { \
   /* Get the slider position */ \
-  GtkWidget*w; \
   double value; \
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed" #n)); \
-  value = gtk_range_get_value(GTK_RANGE(w)); \
+  value = g_speedSliderValues[n-1]; \
   Mobot_setJointSpeedRatio((mobot_t*)arg, ROBOT_JOINT##n, value/100.0); \
-  printf("Set Speed to %lf\n", value/100.0); \
   return 1; \
 }
 HANDLER_SPEED(1)
@@ -321,10 +379,8 @@ HANDLER_SPEED(4)
 int handlerPOS##n(void*arg) \
 { \
   /* Get the slider position */ \
-  GtkWidget*w; \
   double value; \
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos" #n)); \
-  value = gtk_range_get_value(GTK_RANGE(w)); \
+  value = g_positionSliderValues[n-1]; \
   Mobot_moveJointToPIDNB((mobot_t*)arg, ROBOT_JOINT##n, DEG2RAD(value)); \
   return 1; \
 }
@@ -410,8 +466,27 @@ void on_button_backward_clicked(GtkWidget* w, gpointer data)
   g_buttonState[B_ROLLBACK] = 1;
 }
 
-void on_button_setSpeeds_clicked(GtkWidget* w, gpointer data)
+void on_button_setSpeeds_clicked(GtkWidget* wid, gpointer data)
 {
+  double value;
+  const gchar* text;
+  GtkWidget *w;
+  /* Populate the data variables */
+#define GETVALUESETSPEED(n) \
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorSpeed" #n)); \
+  text = gtk_entry_get_text(GTK_ENTRY(w)); \
+  if(text != NULL) { \
+    sscanf(text, "%lf", &value); \
+    g_speedEntryValues[n-1] = value; \
+    g_speedEntryValuesValid[n-1] = true; \
+  } else { \
+    g_speedEntryValuesValid[n-1] = false; \
+  }
+  GETVALUESETSPEED(1)
+  GETVALUESETSPEED(2)
+  GETVALUESETSPEED(3)
+  GETVALUESETSPEED(4)
+#undef GETVALUESETSPEED
   g_buttonState[B_SETSPEEDS] = 1;
 }
 
@@ -420,17 +495,67 @@ void on_button_moveToZero_clicked(GtkWidget* w, gpointer data)
   g_buttonState[B_ZERO] = 1;
 }
 
-void on_button_move_clicked(GtkWidget* w, gpointer data)
+void on_button_move_clicked(GtkWidget* wid, gpointer data)
 {
+  /* Get the entry values */
+  double value;
+  const gchar* text;
+  GtkWidget *w;
+#define GETVALUEMOVEJOINT(n) \
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorPos" #n)); \
+  text = gtk_entry_get_text(GTK_ENTRY(w)); \
+  if(text != NULL) { \
+    sscanf(text, "%lf", &value); \
+    g_positionEntryValues[n-1] = value; \
+    g_positionEntryValuesValid[n-1] = true; \
+  } else { \
+    g_positionEntryValuesValid[n-1] = false; \
+  }
+  GETVALUEMOVEJOINT(1)
+  GETVALUEMOVEJOINT(2)
+  GETVALUEMOVEJOINT(3)
+  GETVALUEMOVEJOINT(4)
+#undef GETVALUEMOVEJOINT
   g_buttonState[B_MOVE] = 1;
 }
 
-void on_button_moveTo_clicked(GtkWidget* w, gpointer data)
+void on_button_moveTo_clicked(GtkWidget* wid, gpointer data)
 {
+  /* Get the entry values */
+  double value;
+  const gchar* text;
+  GtkWidget *w;
+#define GETVALUEMOVEJOINT(n) \
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorPos" #n)); \
+  text = gtk_entry_get_text(GTK_ENTRY(w)); \
+  if(text != NULL) { \
+    sscanf(text, "%lf", &value); \
+    g_positionEntryValues[n-1] = value; \
+    g_positionEntryValuesValid[n-1] = true; \
+  } else { \
+    g_positionEntryValuesValid[n-1] = false; \
+  }
+  GETVALUEMOVEJOINT(1)
+  GETVALUEMOVEJOINT(2)
+  GETVALUEMOVEJOINT(3)
+  GETVALUEMOVEJOINT(4)
+#undef GETVALUEMOVEJOINT
   g_buttonState[B_MOVETO] = 1;
 }
 
 void on_button_playGait_clicked(GtkWidget* w, gpointer data)
 {
+  /* Figure out which item is selected */
+  GtkWidget* view =  GTK_WIDGET(gtk_builder_get_object(g_builder, "treeview_gaits"));
+  GtkTreeModel* model = GTK_TREE_MODEL(gtk_builder_get_object(g_builder, "liststore_gaits"));
+  GtkTreeSelection* selection = gtk_tree_view_get_selection((GTK_TREE_VIEW(view)));
+  GList* list = gtk_tree_selection_get_selected_rows(selection, &model);
+  if(list == NULL) return;
+  gint* paths = gtk_tree_path_get_indices((GtkTreePath*)list->data);
+  int i = paths[0];
+  g_list_foreach(list, (GFunc) gtk_tree_path_free, NULL);
+  g_list_free(list);
+  g_playIndex = i;
+
   g_buttonState[B_PLAY] = 1;
 }

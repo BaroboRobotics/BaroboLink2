@@ -2,7 +2,7 @@
 MOBOT_PREFIX=/home/dko/sys
 SCIPREFIX=/home/dko/sys
 CC=g++
-CFLAGS=-c -g `pkg-config --cflags gtk+-2.0` \
+CFLAGS=-c -g -pg `pkg-config --cflags gtk+-2.0` \
 			`pkg-config --cflags gmodule-export-2.0` \
 			-I$(SCIPREFIX)/include/scintilla \
 			-I$(MOBOT_PREFIX)/include -Wl,--export-dynamic
@@ -10,7 +10,7 @@ CFLAGS=-c -g `pkg-config --cflags gtk+-2.0` \
 LIBS=`pkg-config --libs gtk+-2.0` \
 		`pkg-config --libs gmodule-export-2.0` \
 		-L. -L$(MOBOT_PREFIX)/lib -L$(SCIPREFIX)/lib \
-		-lmobot -linterface -lscintilla
+		-lmobot -linterface -lscintilla -pg
 
 #OBJS=RoboMancer.o  connectHandlers.o  gait.o  menuHandlers.o  movementFunctions.o  movementHandlers.o
 OBJS=connectDialog.o RoboMancer.o configFile.o RobotManager.o RecordMobot.o programDialog.o controlDialog.o teachingDialog.o commsHandler.o
