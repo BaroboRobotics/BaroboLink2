@@ -319,7 +319,7 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
       free(newpathenv);
     }
     /* Set up the compile command */
-    wchar_t *compileCommand= new wchar_t[MAX_PATH];
+    wchar_t *compileCommand= new wchar_t[MAX_PATH*10];
     wchar_t curFileNameW[MAX_PATH];
     wchar_t filenameW[MAX_PATH];
     mbstowcs(&curFileNameW[0], g_curFileName, MAX_PATH);
