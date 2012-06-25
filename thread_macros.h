@@ -8,7 +8,7 @@
 /* * * * * * * * * * * * */
 /* U N I X   M A C R O S */
 /* * * * * * * * * * * * */
-#ifndef _WIN32
+#ifndef _WIN32 && not defined (FORCEWINTHREADS)
 #include <pthread.h>
 #define THREAD_T pthread_t
 #define THREAD_CREATE( thread_handle, function, arg ) \

@@ -20,30 +20,22 @@ LIBS= \
       -lmobot -linterface -lpthread -mwindows -lws2_32
 
 #OBJS=RoboMancer.o  connectHandlers.o  gait.o  menuHandlers.o  movementFunctions.o  movementHandlers.o
-OBJS=connectDialog.o RoboMancer.o configFile.o RobotManager.o RecordMobot.o programDialog.o controlDialog.o teachingDialog.o mobot++_wrapper.o commsHandler.o
+OBJS=connectDialog.o RoboMancer.o configFile.o RobotManager.o RecordMobot.o programDialog.o controlDialog.o teachingDialog.o commsHandler.o
 HEADERS=RoboMancer.h
 
 #all:libmobot.a $(OBJS) RoboMancer
-all:$(OBJS) RoboMancer 
+all:$(OBJS) RoboMancer libmobot.a libmobot++_wrapper.a mobot.h
 
 MOBOTDIR=/d/Projects/iMobot_gumstix_api/libimobotcomms
-
-mobot.dll:$(MOBOTDIR)/Release/mobot.dll
-	cp $(MOBOTDIR)/Release/mobot.dll mobot.dll
-
-mobot.lib:$(MOBOTDIR)/Release/mobot.lib
-	cp $(MOBOTDIR)/Release/mobot.lib mobot.lib
 
 mobot.h:$(MOBOTDIR)/mobot.h
 	cp $(MOBOTDIR)/mobot.h mobot.h
 
-mobot.def:mobot.dll mobot.lib
-	pexports mobot.dll | sed 's/^_//' > mobot.def
+libmobot.a:$(MOBOTDIR)/Release/mobot.lib
+	cp $(MOBOTDIR)/Release/mobot.lib libmobot.a
 
-libmobot.a:mobot.def mobot.dll mobot++_wrapper.o
-	dlltool --input-def mobot.def --dllname mobot.dll --output-lib libmobot.a -k
-	ar -r libmobot.a mobot++_wrapper.o
-	ranlib libmobot.a
+libmobot++_wrapper.a:mobot++_wrapper.o
+	ar cr libmobot++_wrapper.a mobot++_wrapper.o
 
 .cpp.o: mobot.h
 	$(CC) $(CFLAGS) $<
@@ -58,7 +50,7 @@ RoboMancer:$(OBJS) $(HEADERS) libinterface.a libmobot.a
 	$(CC) -v $(OBJS) $(LIBS) -o RoboMancer
 
 clean:
-	rm -rf RoboMancer $(OBJS) libinterface.a interface.o 
+	rm -rf RoboMancer $(OBJS) libinterface.a interface.o libmobot.a libmobot++_wrapper.a
 	#rm -rf RoboMancer $(OBJS) libinterface.a interface.o libmobot.a mobot.def mobot.lib mobot.dll
 
 pkg:
@@ -66,8 +58,9 @@ pkg:
 	mkdir RoboMancer-v$(VERSION)
 	cp -R ../mingw RoboMancer-v$(VERSION)
 	cp libmobot.a RoboMancer-v$(VERSION)/mingw/lib/
+	cp libmobot++_wrapper.a RoboMancer-v$(VERSION)/mingw/lib/
 	cp mobot.h RoboMancer-v$(VERSION)/mingw/include/
 	cp RoboMancer.exe RoboMancer-v$(VERSION)/
 	cp dll/* RoboMancer-v$(VERSION)/
-	cp mobot.dll RoboMancer-v$(VERSION)/
+#cp mobot.dll RoboMancer-v$(VERSION)/
 	cp -R interface RoboMancer-v$(VERSION)/

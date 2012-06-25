@@ -126,13 +126,14 @@ void on_imagemenuitem_open_activate(GtkWidget* widget, gpointer data)
     struct stat s;
     stat(filename, &s);
     FILE *fp;
-    fp = fopen(filename, "r");
+    fp = fopen(filename, "rb");
     if(fp == NULL) {
       /* FIXME: Should pop up a warning dialog or something */
       return;
     }
     contents = (char*)malloc(s.st_size+1);
     fread(contents, s.st_size, 1, fp);
+    contents[s.st_size-1] = '\0';
     contents[s.st_size] = '\0';
     scintilla_send_message(g_sci, SCI_SETTEXT, 0, (sptr_t)contents);
     fclose(fp);
@@ -148,7 +149,7 @@ void save_to_file(const char* filename)
 {
   /* Open the file for writing */
   FILE* fp;
-  fp = fopen(filename, "w");
+  fp = fopen(filename, "wb");
   if(fp == NULL) {
     /* Could not open the file. Pop up an error message */
     GtkWidget* dialog;
@@ -215,8 +216,8 @@ void on_imagemenuitem_saveAs_activate(GtkWidget* widget, gpointer data)
     save_to_file (filename);
     if(g_curFileName != NULL) {
       free(g_curFileName);
-      g_curFileName = strdup(filename);
     }
+    g_curFileName = strdup(filename);
     g_free (filename);
   }
   gtk_widget_destroy (dialog);
@@ -266,10 +267,14 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
 #ifdef _MSYS
   static bool path_set = false;
   static char lastFilename[256] = "";
-  printf("Hello there\n");
+  /* Make sure the file is saved */
+  on_imagemenuitem_save_activate(NULL, NULL);
+  if(g_curFileName == NULL) {
+    return;
+  }
   /* Pop up a "save file" dialog and get the filename */
   GtkWidget *dialog;
-  dialog = gtk_file_chooser_dialog_new ("Save File",
+  dialog = gtk_file_chooser_dialog_new ("Export Executable",
       GTK_WINDOW(g_window),
       GTK_FILE_CHOOSER_ACTION_SAVE,
       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -286,7 +291,6 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
   {
     char *filename;
     filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-    //open_file (filename);
     wchar_t *tmpdirname = new wchar_t[MAX_PATH];
     wchar_t tmpdirpfx[256] = L"RoboMancerTmp";
     wchar_t* dirname;
@@ -294,27 +298,6 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
     dirname = _wtempnam(tmpdirname, tmpdirpfx);
     /* Create the directory */
     _wmkdir(dirname);
-    /* Copy the source code over there */
-    char* sourceCode;
-    int sourceCodeSize;
-    sourceCodeSize = scintilla_send_message(g_sci, SCI_GETLENGTH, 0, 0) + 1;
-    sourceCode = (char*)malloc(sourceCodeSize);
-    scintilla_send_message(g_sci, SCI_GETTEXT, sourceCodeSize, (sptr_t)sourceCode);
-    wchar_t sourceFileName[256];
-    swprintf(sourceFileName, L"%s/source.cpp", dirname);
-    wprintf(L"%s\n", sourceFileName);
-    FILE *fp;
-    fp = _wfopen(sourceFileName, L"w");
-    if(fp == NULL) {
-      fprintf(stderr, "Error writing temporary source code file\n.");
-      free(sourceCode);
-      g_free(filename);
-      gtk_widget_destroy(dialog);
-      return;
-    }
-    fprintf(fp, "%s\n", sourceCode);
-    fclose(fp);
-    free(sourceCode);
     /* Get the current working directory */
     wchar_t *cwd = new wchar_t[MAX_PATH];
     _wgetcwd(cwd, MAX_PATH);
@@ -337,17 +320,30 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
     }
     /* Set up the compile command */
     wchar_t *compileCommand= new wchar_t[MAX_PATH];
+    wchar_t curFileNameW[MAX_PATH];
+    wchar_t filenameW[MAX_PATH];
+    mbstowcs(&curFileNameW[0], g_curFileName, MAX_PATH);
+    mbstowcs(&filenameW[0], filename, MAX_PATH);
+    /* Compile the object file first */
     swprintf(
         compileCommand, 
-        L"%s\\mingw\\bin\\gcc.exe -U_WIN32 -lmobot %s -o %s\\program.exe > %s\\log.txt 2>&1", 
-        cwd, sourceFileName, dirname, dirname);
+        L"%s\\mingw\\bin\\gcc.exe -c -U_WIN32 -D_MSYS \"%s\" -o \"%s\\object.o\" > %s\\log.txt 2>&1", 
+        cwd, curFileNameW, dirname, dirname);
     _wsystem(compileCommand);
-    /* Copy the compiled file to the requested location */
-    wchar_t* fileOrigin = new wchar_t[MAX_PATH];
-    swprintf(fileOrigin, L"%s\\program.exe", dirname);
-    char* fileOriginA = new char[MAX_PATH];
-    wcstombs(fileOriginA, fileOrigin, MAX_PATH);
-    CopyFileA(fileOriginA, filename, false);
+    wprintf(L"%s\n", compileCommand);
+    /* Make sure the object file exists */
+    struct _stat s;
+    swprintf(compileCommand, L"%s\\object.o", dirname);
+    int filestatus = _wstat(compileCommand, &s);
+    if(filestatus == 0) {
+      /* Link the executable */
+      swprintf(
+          compileCommand, 
+          L"%s\\mingw\\bin\\g++.exe -static -static-libgcc -static-libstdc++ \"%s\\object.o\" -lmobot++_wrapper -lmobot -lws2_32 -o \"%s\" >> %s\\log.txt 2>&1", 
+          cwd, dirname, filenameW, dirname);
+      _wsystem(compileCommand);
+      wprintf(L"%s\n", compileCommand);
+    }
     /* Display the log contents */
     /* Open the log file */
     FILE *logfile;
@@ -368,10 +364,6 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
           line,
           -1);
     }
-      gtk_text_buffer_insert_at_cursor(
-          GTK_TEXT_BUFFER(w),
-          "Helloooo!!!",
-          -1);
     fclose(logfile);
 
     g_free (filename);
@@ -381,8 +373,6 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
     delete[] tmpdirname;
     delete[] cwd;
     delete[] compileCommand;
-    delete[] fileOrigin;
-    delete[] fileOriginA;
   } else {
     printf("Gtk response was not accept!\n");
   }

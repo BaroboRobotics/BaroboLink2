@@ -1,14 +1,37 @@
-
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <windows.h>
 #undef NONRELEASE
 #include "mobot.h"
 #undef THREAD_T
 #undef MUTEX_T
 #undef COND_T
-#include "thread_macros.h"
 #define RAD2DEG(x) ((x)*180.0/M_PI)
 #define DEG2RAD(x) ((x)*M_PI/180.0)
+
+/* ******* *
+ * THREADS *
+ * ******* */
+#ifndef THREAD_T
+#define THREAD_T HANDLE
+#endif
+
+#define pthread_t HANDLE
+
+#define THREAD_CREATE(thread_handle, function, arg) \
+  *(thread_handle) = CreateThread( \
+      NULL, \
+      0, \
+      (LPTHREAD_START_ROUTINE)function, \
+      arg, \
+      0, \
+      NULL \
+      )
+
+#define MUTEX_T HANDLE
+#define COND_T HANDLE
 
 CMobot::CMobot()
 {
@@ -38,13 +61,6 @@ int CMobot::connectWithAddress(const char* address, int channel)
 {
   return Mobot_connectWithAddress(_comms, address, channel);
 }
-
-#ifndef _WIN32
-int CMobot::connectWithTTY(const char* ttyfilename)
-{
-  return Mobot_connectWithTTY(_comms, ttyfilename);
-}
-#endif
 
 int CMobot::disconnect()
 {
@@ -1091,11 +1107,8 @@ void* CMobotGroup::motionTumbleRightThread(void* arg)
   int num = cmg->argInt;
 
   cmg->moveToZero();
-#ifndef _WIN32
-  sleep(1);
-#else
+
   Sleep(1000);
-#endif
 
   for(i = 0; i < num; i++) {
     cmg->moveJointTo(ROBOT_JOINT3, DEG2RAD(85));
@@ -1144,11 +1157,7 @@ void* CMobotGroup::motionTumbleLeftThread(void* arg)
   int num = cmg->argInt;
 
   cmg->moveToZero();
-#ifndef _WIN32
-  sleep(1);
-#else
   Sleep(1000);
-#endif
 
   for(i = 0; i < num; i++) {
     cmg->moveJointTo(ROBOT_JOINT2, DEG2RAD(-85));
