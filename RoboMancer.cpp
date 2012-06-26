@@ -81,3 +81,4 @@ int getIterModelFromTreeSelection(GtkTreeView *treeView, GtkTreeModel **model, G
   }
   return 0;
 }
+
