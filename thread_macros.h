@@ -35,6 +35,9 @@
 #define THREAD_EXIT() \
   pthread_exit(NULL)
 
+#define THREAD_YIELD() \
+  pthread_yield()
+
 /* ***** */
 /* MUTEX */
 /* ***** */
@@ -199,6 +202,9 @@ fprintf(stderr, "rwunlock error: %s:%d\n", __FILE__, __LINE__)
   ExitThread(0)
 
 #define THREAD_DETACH() 
+
+#define THREAD_YIELD() \
+  SwitchToThread()
 
 /* ***** */
 /* MUTEX */

@@ -168,10 +168,10 @@ void* controllerHandlerThread(void* arg)
     MUTEX_UNLOCK(&g_activeMobotLock);
 
 #define TESTLOCK \
+    THREAD_YIELD(); \
     MUTEX_LOCK(&g_activeMobotLock); \
     if(g_activeMobot == NULL) { \
       MUTEX_UNLOCK(&g_activeMobotLock); \
-      sleep(1); \
       continue; \
     }
 
@@ -190,16 +190,13 @@ void* controllerHandlerThread(void* arg)
       g_positionValues[i] = RAD2DEG(g_positionValues[i]);
     }
     /* Cycle through button handlers */
+    TESTLOCK
     for(i = 0; i < NUM_BUTTONS; i++) {
       if(g_buttonState[i]) {
         if( (i >= S_SPEED1) && (i <= S_POS4) ) {
-          TESTLOCK
           g_handlerFuncs[i](g_activeMobot);
-          MUTEX_UNLOCK(&g_activeMobotLock);
         } else {
-          TESTLOCK
           g_buttonState[i] = g_handlerFuncs[i](g_activeMobot);
-          MUTEX_UNLOCK(&g_activeMobotLock);
         }
       }
     }
