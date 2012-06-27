@@ -1,8 +1,13 @@
 #include <unistd.h>
+#include <stdlib.h>
 #include "RoboMancer.h"
 #include "controlDialog.h"
 #include "thread_macros.h"
 #include <mobot.h>
+
+#ifdef _MSYS
+#define sleep(x) _sleep(x)
+#endif
 
 /* The button state: For Buttons (B_), a value of 1 indicates that the button
  * has been pressed. For the sliders, 1 indicates that the slider is currently
