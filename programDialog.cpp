@@ -320,8 +320,8 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
       int pathenvSize;
       pathenvSize = GetEnvironmentVariableW(L"PATH", NULL, 0);
       pathenvSize += MAX_PATH*2;
-      pathenv = (wchar_t*)malloc(pathenvSize+1);
-      newpathenv = (wchar_t*)malloc(pathenvSize+1);
+      pathenv = (wchar_t*)malloc(sizeof(wchar_t)*(pathenvSize+1));
+      newpathenv = (wchar_t*)malloc(sizeof(wchar_t)*(pathenvSize+1));
       GetEnvironmentVariableW(L"PATH", pathenv, pathenvSize);
       swprintf(newpathenv, L"%s;%s\\mingw\\bin", pathenv, cwd);
       SetEnvironmentVariableW(L"PATH", newpathenv);
