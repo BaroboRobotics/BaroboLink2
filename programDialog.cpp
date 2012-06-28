@@ -20,7 +20,9 @@
 #endif
 
 char *g_curFileName = NULL;
+char *g_exportFileName = NULL;
 bool g_dirty = false;
+bool g_reexportFlag = false;
 
 void initProgramDialog(void)
 {
@@ -268,6 +270,7 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
   static bool path_set = false;
   static char lastFilename[256] = "";
   GtkWidget *dialog;
+  char *exportExecutableFileName;
   /* Make sure the file is saved */
   if(g_curFileName == NULL) {
     dialog = gtk_message_dialog_new(
@@ -284,139 +287,153 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
   if(g_curFileName == NULL) {
     return;
   }
-  /* Pop up a "save file" dialog and get the filename */
-  dialog = gtk_file_chooser_dialog_new ("Export Executable",
-      GTK_WINDOW(g_window),
-      GTK_FILE_CHOOSER_ACTION_SAVE,
-      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-      GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-      NULL);
-  gtk_file_chooser_set_do_overwrite_confirmation( GTK_FILE_CHOOSER(dialog), TRUE);
-  if(lastFilename[0] != '\0') {
-    /* A file has been saved before */
-    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), lastFilename);
+  if(g_exportFileName != NULL && g_reexportFlag) {
+    exportExecutableFileName = g_malloc(sizeof(char) * (strlen(g_exportFileName)+1));
+    strcpy(exportExecutableFileName, g_exportFileName);
   } else {
-    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "program.exe");
-  }
-  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
-  {
-    char *filename;
-    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-    wchar_t *tmpdirname = new wchar_t[MAX_PATH];
-    wchar_t tmpdirpfx[256] = L"RoboMancerTmp";
-    wchar_t* dirname;
-    GetTempPathW(256, tmpdirname);
-    dirname = _wtempnam(tmpdirname, tmpdirpfx);
-    /* Create the directory */
-    _wmkdir(dirname);
-    /* Get the current working directory */
-    wchar_t *cwd = new wchar_t[MAX_PATH];
-    _wgetcwd(cwd, MAX_PATH);
-    /* Modify the PATH environment variables so that necessary libraries can be
-     * found */
-    if(!path_set) {
-      wchar_t* pathenv;
-      wchar_t* newpathenv;
-      int pathenvSize;
-      pathenvSize = GetEnvironmentVariableW(L"PATH", NULL, 0);
-      pathenvSize += MAX_PATH*2;
-      pathenv = (wchar_t*)malloc(sizeof(wchar_t)*(pathenvSize+1));
-      newpathenv = (wchar_t*)malloc(sizeof(wchar_t)*(pathenvSize+1));
-      GetEnvironmentVariableW(L"PATH", pathenv, pathenvSize);
-      swprintf(newpathenv, L"%s;%s\\mingw\\bin", pathenv, cwd);
-      SetEnvironmentVariableW(L"PATH", newpathenv);
-      path_set = true;
-      free(pathenv);
-      free(newpathenv);
+    /* Pop up a "save file" dialog and get the exportExecutableFileName */
+    dialog = gtk_file_chooser_dialog_new ("Export Executable",
+        GTK_WINDOW(g_window),
+        GTK_FILE_CHOOSER_ACTION_SAVE,
+        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+        GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+        NULL);
+    gtk_file_chooser_set_do_overwrite_confirmation( GTK_FILE_CHOOSER(dialog), TRUE);
+    if(lastFilename[0] != '\0') {
+      /* A file has been saved before */
+      gtk_file_chooser_set_exportExecutableFileName(GTK_FILE_CHOOSER(dialog), lastFilename);
+    } else {
+      gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "program.exe");
     }
-    /* Set up the compile command */
-    wchar_t *compileCommand= new wchar_t[MAX_PATH*10];
-    wchar_t curFileNameW[MAX_PATH];
-    wchar_t filenameW[MAX_PATH];
-    mbstowcs(&curFileNameW[0], g_curFileName, MAX_PATH);
-    mbstowcs(&filenameW[0], filename, MAX_PATH);
-    /* Compile the object file first */
-    swprintf(
-        compileCommand, 
-        L"%s\\mingw\\bin\\gcc.exe -c -U_WIN32 -D_MSYS \"%s\" -o \"%s\\object.o\" > %s\\log.txt 2>&1", 
-        cwd, curFileNameW, dirname, dirname);
-    _wsystem(compileCommand);
-    wprintf(L"%s\n", compileCommand);
-    /* Make sure the object file exists */
-    struct _stat s;
-    swprintf(compileCommand, L"%s\\object.o", dirname);
-    int filestatus = _wstat(compileCommand, &s);
-    if(filestatus == 0) {
-      /* Link the executable */
-      swprintf(
-          compileCommand, 
-          L"%s\\mingw\\bin\\g++.exe -static -static-libgcc -static-libstdc++ \"%s\\object.o\" -lmobot++_wrapper -lmobot -lws2_32 -o \"%s\" >> %s\\log.txt 2>&1", 
-          cwd, dirname, filenameW, dirname);
-      _wsystem(compileCommand);
-      wprintf(L"%s\n", compileCommand);
-    }
-    /* Display the log contents */
-    /* Open the log file */
-    FILE *logfile;
-    wchar_t* logfileName = new wchar_t[MAX_PATH];
-    swprintf(logfileName, L"%s\\log.txt", dirname);
-    logfile = _wfopen(logfileName, L"r");
-    if(logfile == NULL) {
-      fprintf(stderr, "Could not open compile-log file for reading!\n");
+    if (gtk_dialog_run (GTK_DIALOG (dialog)) != GTK_RESPONSE_ACCEPT)
+    {
       return;
     }
-    GtkWidget *w = GTK_WIDGET(gtk_builder_get_object(g_builder, "textview_programMessages"));
-    GtkTextBuffer *tb = GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(w)));
-    char line[512];
-    /* Clear the text buffer */
-    gtk_text_buffer_set_text(tb, "", -1);
-    /* Get the file line by line, inserting it into the text buffer */
-    bool errMsg = false;
-    while(fgets(line, 512, logfile) != NULL) {
-      if(
-          !strstr(line, "manifestdependency") &&
-          !strstr(line, "EXPORT")
-          ) {
-        gtk_text_buffer_insert_at_cursor(
-            GTK_TEXT_BUFFER(tb),
-            line,
-            -1);
-        errMsg = true;
+    exportExecutableFileName = gtk_file_chooser_get_exportExecutableFileName (GTK_FILE_CHOOSER (dialog));
+  }
+  wchar_t *tmpdirname = new wchar_t[MAX_PATH];
+  wchar_t tmpdirpfx[256] = L"RoboMancerTmp";
+  wchar_t* dirname;
+  GetTempPathW(256, tmpdirname);
+  dirname = _wtempnam(tmpdirname, tmpdirpfx);
+  /* Create the directory */
+  _wmkdir(dirname);
+  /* Get the current working directory */
+  wchar_t *cwd = new wchar_t[MAX_PATH];
+  _wgetcwd(cwd, MAX_PATH);
+  /* Modify the PATH environment variables so that necessary libraries can be
+   * found */
+  if(!path_set) {
+    wchar_t* pathenv;
+    wchar_t* newpathenv;
+    int pathenvSize;
+    pathenvSize = GetEnvironmentVariableW(L"PATH", NULL, 0);
+    pathenvSize += MAX_PATH*2;
+    pathenv = (wchar_t*)malloc(sizeof(wchar_t)*(pathenvSize+1));
+    newpathenv = (wchar_t*)malloc(sizeof(wchar_t)*(pathenvSize+1));
+    GetEnvironmentVariableW(L"PATH", pathenv, pathenvSize);
+    swprintf(newpathenv, L"%s;%s\\mingw\\bin", pathenv, cwd);
+    SetEnvironmentVariableW(L"PATH", newpathenv);
+    path_set = true;
+    free(pathenv);
+    free(newpathenv);
+  }
+  /* Set up the compile command */
+  wchar_t *compileCommand= new wchar_t[MAX_PATH*10];
+  wchar_t curFileNameW[MAX_PATH];
+  wchar_t exportExecutableFileNameW[MAX_PATH];
+  mbstowcs(&curFileNameW[0], g_curFileName, MAX_PATH);
+  mbstowcs(&exportExecutableFileNameW[0], exportExecutableFileName, MAX_PATH);
+  /* Compile the object file first */
+  swprintf(
+      compileCommand, 
+      L"%s\\mingw\\bin\\gcc.exe -c -U_WIN32 -D_MSYS \"%s\" -o \"%s\\object.o\" > %s\\log.txt 2>&1", 
+      cwd, curFileNameW, dirname, dirname);
+  _wsystem(compileCommand);
+  wprintf(L"%s\n", compileCommand);
+  /* Make sure the object file exists */
+  struct _stat s;
+  swprintf(compileCommand, L"%s\\object.o", dirname);
+  int filestatus = _wstat(compileCommand, &s);
+  if(filestatus == 0) {
+    /* Link the executable */
+    swprintf(
+        compileCommand, 
+        L"%s\\mingw\\bin\\g++.exe -static -static-libgcc -static-libstdc++ \"%s\\object.o\" -lmobot++_wrapper -lmobot -lws2_32 -o \"%s\" >> %s\\log.txt 2>&1", 
+        cwd, dirname, exportExecutableFileNameW, dirname);
+    _wsystem(compileCommand);
+    wprintf(L"%s\n", compileCommand);
+    /* Check to see if the executable was successfully linked */
+    filestatus = _wstat(exportExecutableFileNameW, &s);
+    if(filestatus == 0) {
+      if(g_exportFileName != NULL) {
+        free(g_exportFileName);
       }
+      g_exportFileName = (char*)malloc(sizeof(char)*MAX_PATH);
+      wcstombs(g_exportFileName, exportExecutableFileNameW, sizeof(char)*MAX_PATH);
     }
-    if(errMsg) {
+  }
+  /* Display the log contents */
+  /* Open the log file */
+  FILE *logfile;
+  wchar_t* logfileName = new wchar_t[MAX_PATH];
+  swprintf(logfileName, L"%s\\log.txt", dirname);
+  logfile = _wfopen(logfileName, L"r");
+  if(logfile == NULL) {
+    fprintf(stderr, "Could not open compile-log file for reading!\n");
+    return;
+  }
+  GtkWidget *w = GTK_WIDGET(gtk_builder_get_object(g_builder, "textview_programMessages"));
+  GtkTextBuffer *tb = GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(w)));
+  char line[512];
+  /* Clear the text buffer */
+  gtk_text_buffer_set_text(tb, "", -1);
+  /* Get the file line by line, inserting it into the text buffer */
+  bool errMsg = false;
+  while(fgets(line, 512, logfile) != NULL) {
+    if(
+        !strstr(line, "manifestdependency") &&
+        !strstr(line, "EXPORT")
+      ) {
       gtk_text_buffer_insert_at_cursor(
           GTK_TEXT_BUFFER(tb),
-          "Export process completed.\n",
+          line,
           -1);
+      errMsg = true;
     }
-    fclose(logfile);
-
-    /* Delete the log file */
-    swprintf(compileCommand, L"%s\\log.txt", dirname);
-    DeleteFileW(compileCommand);
-    /* Delete the object file */
-    swprintf(compileCommand, L"%s\\object.o", dirname);
-    DeleteFileW(compileCommand);
-    /* Delete the directory */
-    RemoveDirectoryW(dirname);
-
-    g_free (filename);
-
-    /* FRee eevveryythinggg!!! */
-    delete[] logfileName;
-    delete[] tmpdirname;
-    delete[] cwd;
-    delete[] compileCommand;
-  } else {
-    printf("Gtk response was not accept!\n");
   }
+  if(errMsg) {
+    gtk_text_buffer_insert_at_cursor(
+        GTK_TEXT_BUFFER(tb),
+        "Export process completed.\n",
+        -1);
+  }
+  fclose(logfile);
+
+  /* Delete the log file */
+  swprintf(compileCommand, L"%s\\log.txt", dirname);
+  DeleteFileW(compileCommand);
+  /* Delete the object file */
+  swprintf(compileCommand, L"%s\\object.o", dirname);
+  DeleteFileW(compileCommand);
+  /* Delete the directory */
+  RemoveDirectoryW(dirname);
+
+  g_free (exportExecutableFileName);
+
+  /* FRee eevveryythinggg!!! */
+  delete[] logfileName;
+  delete[] tmpdirname;
+  delete[] cwd;
+  delete[] compileCommand;
   gtk_widget_destroy (dialog);
 #endif
 }
 
 void on_button_runExe_clicked(GtkWidget* widget, gpointer data)
 {
+  if(g_exportFileName == NULL) {
+  }
 }
 
 void on_scintilla_notify(GObject *gobject, GParamSpec *pspec, struct SCNotification* scn)
