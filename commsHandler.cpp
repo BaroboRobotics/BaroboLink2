@@ -158,7 +158,6 @@ void* listenThread(void* arg)
       perror("accept");
       continue;
     }
-    printf("Got connection!\n");
 
     /*
     inet_ntop(their_addr.ss_family,
