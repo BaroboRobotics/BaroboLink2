@@ -288,7 +288,7 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
     return;
   }
   if(g_exportFileName != NULL && g_reexportFlag) {
-    exportExecutableFileName = g_malloc(sizeof(char) * (strlen(g_exportFileName)+1));
+    exportExecutableFileName = (char*)g_malloc(sizeof(char) * (strlen(g_exportFileName)+1));
     strcpy(exportExecutableFileName, g_exportFileName);
   } else {
     /* Pop up a "save file" dialog and get the exportExecutableFileName */
@@ -301,7 +301,7 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
     gtk_file_chooser_set_do_overwrite_confirmation( GTK_FILE_CHOOSER(dialog), TRUE);
     if(lastFilename[0] != '\0') {
       /* A file has been saved before */
-      gtk_file_chooser_set_exportExecutableFileName(GTK_FILE_CHOOSER(dialog), lastFilename);
+      gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog), lastFilename);
     } else {
       gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "program.exe");
     }
@@ -309,7 +309,7 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
     {
       return;
     }
-    exportExecutableFileName = gtk_file_chooser_get_exportExecutableFileName (GTK_FILE_CHOOSER (dialog));
+    exportExecutableFileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
   }
   wchar_t *tmpdirname = new wchar_t[MAX_PATH];
   wchar_t tmpdirpfx[256] = L"RoboMancerTmp";
@@ -433,6 +433,7 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
 void on_button_runExe_clicked(GtkWidget* widget, gpointer data)
 {
   if(g_exportFileName == NULL) {
+    return;
   }
 }
 
