@@ -212,7 +212,7 @@ int handlerZERO(void* arg)
 #define HANDLER_FORWARD(n) \
 int handlerJ##n##FORWARD(void* arg) \
 { \
-  Mobot_moveJointContinuousNB((mobot_t*)arg, ROBOT_JOINT##n, ROBOT_FORWARD); \
+  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT##n, MOBOT_FORWARD); \
   printf("handler forward\n"); \
   return 0; \
 }
@@ -225,7 +225,7 @@ HANDLER_FORWARD(4)
 #define HANDLER_BACKWARD(n) \
 int handlerJ##n##BACK(void* arg) \
 { \
-  Mobot_moveJointContinuousNB((mobot_t*)arg, ROBOT_JOINT##n, ROBOT_BACKWARD); \
+  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT##n, MOBOT_BACKWARD); \
   return 0; \
 }
 HANDLER_BACKWARD(1)
@@ -237,7 +237,7 @@ HANDLER_BACKWARD(4)
 #define HANDLER_STOP(n) \
 int handlerJ##n##STOP(void* arg) \
 { \
-  Mobot_moveJointContinuousNB((mobot_t*)arg, ROBOT_JOINT##n, ROBOT_NEUTRAL); \
+  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT##n, MOBOT_NEUTRAL); \
   return 0; \
 }
 HANDLER_STOP(1)
@@ -286,7 +286,7 @@ int handlerSETSPEEDS(void* arg)
   if(g_speedEntryValuesValid[n-1]) { \
     Mobot_setJointSpeedRatio(\
       (mobot_t*)arg, \
-      ROBOT_JOINT##n, \
+      MOBOT_JOINT##n, \
       g_speedEntryValues[n-1]/100.0); \
   }
 
@@ -308,7 +308,7 @@ int handlerMOVE(void* arg)
   if(g_positionEntryValuesValid[n-1]) { \
     Mobot_moveJointNB(\
       (mobot_t*)arg, \
-      ROBOT_JOINT##n, \
+      MOBOT_JOINT##n, \
       DEG2RAD(g_positionEntryValues[n-1])); \
   }
 
@@ -330,7 +330,7 @@ int handlerMOVETO(void* arg)
   if(g_positionEntryValuesValid[n-1]) { \
     Mobot_moveJointToNB(\
       (mobot_t*)arg, \
-      ROBOT_JOINT##n, \
+      MOBOT_JOINT##n, \
       DEG2RAD(g_positionEntryValues[n-1])); \
   }
 
@@ -363,7 +363,7 @@ int handlerSPEED##n(void* arg) \
   /* Get the slider position */ \
   double value; \
   value = g_speedSliderValues[n-1]; \
-  Mobot_setJointSpeedRatio((mobot_t*)arg, ROBOT_JOINT##n, value/100.0); \
+  Mobot_setJointSpeedRatio((mobot_t*)arg, MOBOT_JOINT##n, value/100.0); \
   return 1; \
 }
 HANDLER_SPEED(1)
@@ -378,7 +378,7 @@ int handlerPOS##n(void*arg) \
   /* Get the slider position */ \
   double value; \
   value = g_positionSliderValues[n-1]; \
-  Mobot_moveJointToPIDNB((mobot_t*)arg, ROBOT_JOINT##n, DEG2RAD(value)); \
+  Mobot_moveJointToPIDNB((mobot_t*)arg, MOBOT_JOINT##n, DEG2RAD(value)); \
   return 1; \
 }
 HANDLER_POS(1)
