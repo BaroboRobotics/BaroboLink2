@@ -392,7 +392,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkHButtonBox" id="hbuttonbox5">
+                                  <object class="GtkVButtonBox" id="hbuttonbox5">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <child>
