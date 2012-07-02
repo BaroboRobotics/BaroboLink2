@@ -52,13 +52,13 @@ void initControlDialog(void)
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos4"));
   gtk_range_set_range(GTK_RANGE(w), -180, 180);
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed1"));
-  gtk_range_set_range(GTK_RANGE(w), 0, 100);
+  gtk_range_set_range(GTK_RANGE(w), 0, 120);
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed2"));
-  gtk_range_set_range(GTK_RANGE(w), 0, 100);
+  gtk_range_set_range(GTK_RANGE(w), 0, 120);
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed3"));
-  gtk_range_set_range(GTK_RANGE(w), 0, 100);
+  gtk_range_set_range(GTK_RANGE(w), 0, 120);
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed4"));
-  gtk_range_set_range(GTK_RANGE(w), 0, 100);
+  gtk_range_set_range(GTK_RANGE(w), 0, 120);
 
   /* Initialize gaits liststore */
   GtkTreeIter iter;
@@ -117,14 +117,14 @@ gboolean controllerHandlerTimeout(gpointer data)
     VSCALEHANDLER(4)
 #undef VSCALEHANDLER
     if(g_initSpeeds) {
-      Mobot_getJointSpeedRatios((mobot_t*)mobot, 
+      Mobot_getJointSpeeds((mobot_t*)mobot, 
           &angles[0], 
           &angles[1], 
           &angles[2], 
           &angles[3]);
 #define VSCALEHANDLER(n) \
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed" #n)); \
-      gtk_range_set_value(GTK_RANGE(w), angles[n-1] * 100.0);
+      gtk_range_set_value(GTK_RANGE(w), RAD2DEG(angles[n-1])); 
       VSCALEHANDLER(1)
         VSCALEHANDLER(2)
         VSCALEHANDLER(3)
@@ -213,7 +213,6 @@ int handlerZERO(void* arg)
 int handlerJ##n##FORWARD(void* arg) \
 { \
   Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT##n, MOBOT_FORWARD); \
-  printf("handler forward\n"); \
   return 0; \
 }
 HANDLER_FORWARD(1)
@@ -284,10 +283,10 @@ int handlerSETSPEEDS(void* arg)
   GtkWidget *w;
 #define GETVALUESETSPEED(n) \
   if(g_speedEntryValuesValid[n-1]) { \
-    Mobot_setJointSpeedRatio(\
+    Mobot_setJointSpeed(\
       (mobot_t*)arg, \
       MOBOT_JOINT##n, \
-      g_speedEntryValues[n-1]/100.0); \
+      DEG2RAD(g_speedEntryValues[n-1])); \
   }
 
   GETVALUESETSPEED(1)
@@ -363,7 +362,7 @@ int handlerSPEED##n(void* arg) \
   /* Get the slider position */ \
   double value; \
   value = g_speedSliderValues[n-1]; \
-  Mobot_setJointSpeedRatio((mobot_t*)arg, MOBOT_JOINT##n, value/100.0); \
+  Mobot_setJointSpeed((mobot_t*)arg, MOBOT_JOINT##n, DEG2RAD(value)); \
   return 1; \
 }
 HANDLER_SPEED(1)
