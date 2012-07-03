@@ -232,6 +232,12 @@ gboolean refreshTimeout(gpointer userdata)
   return false;
 }
 
+gboolean initPlayTimeout(gpointer userdata)
+{
+  on_button_playRecorded_clicked(NULL, NULL);
+  return false;
+}
+
 void on_mobotButtonPress(void* data, int button, int buttonDown)
 {
   /* Button A: Record Motion 
@@ -278,7 +284,7 @@ void on_mobotButtonPress(void* data, int button, int buttonDown)
       if(g_isPlaying) {
         g_haltPlayFlag = 1;
       } else {
-        on_button_playRecorded_clicked(NULL, NULL);
+        g_idle_add(initPlayTimeout, NULL);
       }
     }
     if(lastState == 0x03) {
