@@ -183,9 +183,7 @@ void on_button_connect_disconnect_clicked(GtkWidget* widget, gpointer data)
   /* We have to lock the controlDialog locks first to make sure we don't screw
    * up their data. */
   MUTEX_LOCK(&g_activeMobotLock);
-  g_robotManager->disconnect(
-    g_robotManager->indexToConnectIndex(i)
-    );
+  g_robotManager->disconnect( i );
   g_activeMobot = NULL;
   MUTEX_UNLOCK(&g_activeMobotLock);
   refreshConnectDialog();

@@ -36,31 +36,6 @@ void CRobotManager::setConnected(int index, bool connected)
   _connected[index] = connected;
 }
 
-int CRobotManager::connect(int availableIndex)
-{
-  int i;
-  int index;
-  int err = 0;
-  char name[80];
-  sprintf(name, "robot%d", numConnected()+1);
-  recordMobot_t *mobot = (recordMobot_t*)malloc(sizeof(recordMobot_t));
-  RecordMobot_init(mobot, name);
-  index = availableIndexToIndex(availableIndex);
-  if(err = RecordMobot_connectWithAddress( mobot, getEntry(index), 1 )) {
-    return err;
-  }
-  /* Enable the button callback */
-  /* FIXME */
-  //mobot->enableButtonCallback(CDialogTeaching::OnMobotButton);
-  Mobot_setJointSpeedRatios((mobot_t*)mobot, 1, 1, 1, 1);
-  /* Insert the newly connected robot to the bottom of the list. */
-  _mobots[numConnected()] = mobot;
-  _connectedAddresses[numConnected()] = 
-	  _addresses[availableIndexToIndex(availableIndex)];
-  _connected[availableIndexToIndex(availableIndex)] = true;
-  return err;
-}
-
 int CRobotManager::connectIndex(int index)
 {
   if(isConnected(index)) {
@@ -76,34 +51,22 @@ int CRobotManager::connectIndex(int index)
   }
   Mobot_setJointSpeedRatios((mobot_t*)mobot, 1, 1, 1, 1);
   /* Insert the newly connected robot to the bottom of the list. */
-  _mobots[numConnected()] = mobot;
+  _mobots[index] = mobot;
   _connectedAddresses[numConnected()] = 
 	  _addresses[index];
   _connected[index] = true;
   return err;
 }
 
-int CRobotManager::disconnect(int connectIndex)
+int CRobotManager::disconnect(int index)
 {
-  int i;
-  int foundEntry = 0;
-  /* Need to find the ConfigFile index of the connected robot */
-  for(i = 0; i < numEntries(); i++) {
-    if(_connectedAddresses[connectIndex] == _addresses[i]) {
-      foundEntry = 1;
-      break;
-    }
+  if(_connected[index] == false) {
+    return -1;
   }
-  if(foundEntry == 0) { return -1; }
-  Mobot_disconnect((mobot_t*)_mobots[connectIndex]);
-  /* Need to shift addresses and mobots up */
-  int j;
-  for(j = connectIndex+1; j < numConnected(); j++) {
-    _connectedAddresses[j-1] = _connectedAddresses[j];
-    _mobots[j-1] = _mobots[j];
-  }
-  _connected[i] = false;
-  return 0; 
+  Mobot_disconnect((mobot_t*)_mobots[index]);
+  _mobots[index] = NULL;
+  _connected[index] = false;
+  return 0;
 }
 
 recordMobot_t* CRobotManager::getUnboundMobot()
@@ -120,49 +83,15 @@ recordMobot_t* CRobotManager::getUnboundMobot()
   return NULL;
 }
 
-int CRobotManager::moveUp(int connectIndex) {
-  recordMobot_t* tempMobot;
-  char* tempAddr;
-  if(connectIndex < 1 || connectIndex >= numConnected()) return -1;
-  /* Swap the robot with the one prior */
-  tempMobot = _mobots[connectIndex-1];
-  tempAddr = _connectedAddresses[connectIndex-1];
-  _mobots[connectIndex-1] = _mobots[connectIndex];
-  _connectedAddresses[connectIndex-1] = _connectedAddresses[connectIndex];
-  _mobots[connectIndex] = tempMobot;
-  _connectedAddresses[connectIndex] = tempAddr;
-  return 0;
-}
-
-int CRobotManager::moveDown(int connectIndex) {
-  recordMobot_t* tempMobot;
-  char* tempAddr;
-  if(connectIndex < 0 || connectIndex >= (numConnected()-1)) return -1;
-  tempMobot = _mobots[connectIndex + 1];
-  tempAddr = _connectedAddresses[connectIndex + 1];
-  _mobots[connectIndex+1] = _mobots[connectIndex];
-  _connectedAddresses[connectIndex+1] = _connectedAddresses[connectIndex];
-  _mobots[connectIndex] = tempMobot;
-  _connectedAddresses[connectIndex] = tempAddr;
-  return 0;
-}
-
 int CRobotManager::numConnected()
 {
   int num = 0, i;
-  for(i = 0; i < numEntries(); i++) {
+  for(i = 0; i < MAX_CONNECTED; i++) {
     if(_connected[i]) {
       num++;
     }
   }
   return num;
-}
-
-const char* CRobotManager::getConnected(int connectIndex) {
-	if(connectIndex < 0 || connectIndex >= numConnected()) {
-		return NULL;
-	}
-	return _connectedAddresses[connectIndex];
 }
 
 int CRobotManager::availableIndexToIndex(int availableIndex)

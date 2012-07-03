@@ -18,15 +18,11 @@ class CRobotManager : public ConfigFile
     bool isConnected(int index);
     bool isPlaying();
     void setConnected(int index, bool connected);
-    int connect(int availableIndex);
     int connectIndex(int index);
-    int disconnect(int connectIndex);
+    int disconnect(int index);
     recordMobot_t* getUnboundMobot();
     int indexToConnectIndex(int index);
-    int moveUp(int connectIndex);
-    int moveDown(int connectIndex);
     int numConnected();
-    const char* getConnected(int connectIndex);
     int availableIndexToIndex(int index);
     int numAvailable();
     void record();
