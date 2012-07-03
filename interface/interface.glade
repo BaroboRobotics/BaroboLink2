@@ -2230,7 +2230,7 @@ Button A and B together: Clear recorded motions</property>
                                     <property name="layout_style">spread</property>
                                     <child>
                                       <object class="GtkButton" id="button_move">
-                                        <property name="label" translatable="yes">move</property>
+                                        <property name="label" translatable="yes">Move</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
@@ -2245,7 +2245,7 @@ Button A and B together: Clear recorded motions</property>
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="button_moveTo">
-                                        <property name="label" translatable="yes">move to</property>
+                                        <property name="label" translatable="yes">Move To</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
