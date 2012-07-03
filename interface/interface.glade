@@ -1677,7 +1677,7 @@ Button A and B together: Clear recorded motions</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <child>
-                                  <object class="GtkLabel" id="label2">
+                                  <object class="GtkLabel" id="label29">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="label" translatable="yes">Joint Speed ([0, 120] deg/sec)</property>
