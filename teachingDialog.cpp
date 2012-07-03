@@ -156,6 +156,7 @@ gboolean playTimeout(gpointer userdata)
 	static int i=0, j=0, done=0;
   GtkWidget *w;
   gboolean loop;
+  g_isPlaying = true;
 
   g_isPlaying = true;
 
