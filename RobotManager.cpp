@@ -7,7 +7,6 @@ CRobotManager::CRobotManager()
 {
   int i;
   for(i = 0; i < MAX_CONNECTED; i++) {
-    _connected[i] = false;
     _mobots[i] = NULL;
     _connectedAddresses[i] = NULL;
   }
@@ -23,17 +22,15 @@ bool CRobotManager::isConnected(int index)
   if((index >= numEntries()) || index < 0) {
     return false;
   }
-  return _connected[index];
+  if(_mobots[index] == NULL) {
+    return false;
+  }
+  return Mobot_isConnected((mobot_t*)_mobots[index]);
 }
 
 bool CRobotManager::isPlaying()
 {
   return _isPlaying;
-}
-
-void CRobotManager::setConnected(int index, bool connected)
-{
-  _connected[index] = connected;
 }
 
 int CRobotManager::connectIndex(int index)
@@ -54,18 +51,16 @@ int CRobotManager::connectIndex(int index)
   _mobots[index] = mobot;
   _connectedAddresses[numConnected()] = 
 	  _addresses[index];
-  _connected[index] = true;
   return err;
 }
 
 int CRobotManager::disconnect(int index)
 {
-  if(_connected[index] == false) {
+  if(_mobots[index] == NULL) {
     return -1;
   }
   Mobot_disconnect((mobot_t*)_mobots[index]);
   _mobots[index] = NULL;
-  _connected[index] = false;
   return 0;
 }
 
@@ -87,41 +82,14 @@ int CRobotManager::numConnected()
 {
   int num = 0, i;
   for(i = 0; i < MAX_CONNECTED; i++) {
-    if(_connected[i]) {
+    if(_mobots[i] == NULL) {
+      continue;
+    }
+    if(Mobot_isConnected((mobot_t*)_mobots[i])) {
       num++;
     }
   }
   return num;
-}
-
-int CRobotManager::availableIndexToIndex(int availableIndex)
-{
-	int index = 0;
-	int i;
-	if(availableIndex < 0 || availableIndex > numAvailable()) {
-		return -1;
-	}
-	for(index = 0, i = 0; i <= availableIndex; index++) {
-		if(_connected[index] == false) {
-			i++;
-		}
-	}
-	index--;
-	return index;
-}
-
-int CRobotManager::indexToConnectIndex(int index)
-{
-  if(_connected[index] == false) {
-    return -1;
-  }
-  int i, ci=0;
-  for(i = 0; i < index; i++) {
-    if(_connected[i]) {
-      ci++;
-    }
-  }
-  return ci;
 }
 
 int CRobotManager::numAvailable()
@@ -191,7 +159,17 @@ recordMobot_t* CRobotManager::getMobot(int connectIndex)
 	if(connectIndex < 0 || connectIndex >= numConnected()) {
 		return NULL;
 	}
-	return _mobots[connectIndex];
+  int i;
+  for(i = 0; i <= MAX_CONNECTED ; i++ ) {
+    if(_mobots[i] == NULL) {continue;}
+    if(Mobot_isConnected((mobot_t*)_mobots[i])) {
+      connectIndex--;
+    }
+    if(connectIndex < 0) {
+      break;
+    }
+  }
+	return _mobots[i];
 }
 
 string* CRobotManager::generateProgram(bool looped)

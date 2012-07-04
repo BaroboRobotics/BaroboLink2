@@ -315,6 +315,7 @@ void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_n
   static int selectedRobot = 0;
   int i;
   mobot_t* mobot;
+  refreshConnectDialog();
   /* If the teaching dialog gets selected, we should initialize all connected
    * Mobots to use our custom button handler. */
   if(page_num == 2) {
