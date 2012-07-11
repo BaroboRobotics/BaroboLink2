@@ -57,13 +57,13 @@ void initControlDialog(void)
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos4"));
   gtk_range_set_range(GTK_RANGE(w), -180, 180);
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed1"));
-  gtk_range_set_range(GTK_RANGE(w), 0, 100);
+  gtk_range_set_range(GTK_RANGE(w), 0, 120);
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed2"));
-  gtk_range_set_range(GTK_RANGE(w), 0, 100);
+  gtk_range_set_range(GTK_RANGE(w), 0, 120);
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed3"));
-  gtk_range_set_range(GTK_RANGE(w), 0, 100);
+  gtk_range_set_range(GTK_RANGE(w), 0, 120);
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed4"));
-  gtk_range_set_range(GTK_RANGE(w), 0, 100);
+  gtk_range_set_range(GTK_RANGE(w), 0, 120);
 
   /* Initialize gaits liststore */
   GtkTreeIter iter;
@@ -122,14 +122,14 @@ gboolean controllerHandlerTimeout(gpointer data)
     VSCALEHANDLER(4)
 #undef VSCALEHANDLER
     if(g_initSpeeds) {
-      Mobot_getJointSpeedRatios((mobot_t*)mobot, 
+      Mobot_getJointSpeeds((mobot_t*)mobot, 
           &angles[0], 
           &angles[1], 
           &angles[2], 
           &angles[3]);
 #define VSCALEHANDLER(n) \
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed" #n)); \
-      gtk_range_set_value(GTK_RANGE(w), angles[n-1] * 100.0);
+      gtk_range_set_value(GTK_RANGE(w), RAD2DEG(angles[n-1])); 
       VSCALEHANDLER(1)
         VSCALEHANDLER(2)
         VSCALEHANDLER(3)
@@ -217,8 +217,7 @@ int handlerZERO(void* arg)
 #define HANDLER_FORWARD(n) \
 int handlerJ##n##FORWARD(void* arg) \
 { \
-  Mobot_moveJointContinuousNB((mobot_t*)arg, ROBOT_JOINT##n, ROBOT_FORWARD); \
-  printf("handler forward\n"); \
+  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT##n, MOBOT_FORWARD); \
   return 0; \
 }
 HANDLER_FORWARD(1)
@@ -230,7 +229,7 @@ HANDLER_FORWARD(4)
 #define HANDLER_BACKWARD(n) \
 int handlerJ##n##BACK(void* arg) \
 { \
-  Mobot_moveJointContinuousNB((mobot_t*)arg, ROBOT_JOINT##n, ROBOT_BACKWARD); \
+  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT##n, MOBOT_BACKWARD); \
   return 0; \
 }
 HANDLER_BACKWARD(1)
@@ -242,7 +241,7 @@ HANDLER_BACKWARD(4)
 #define HANDLER_STOP(n) \
 int handlerJ##n##STOP(void* arg) \
 { \
-  Mobot_moveJointContinuousNB((mobot_t*)arg, ROBOT_JOINT##n, ROBOT_NEUTRAL); \
+  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT##n, MOBOT_NEUTRAL); \
   return 0; \
 }
 HANDLER_STOP(1)
@@ -289,10 +288,10 @@ int handlerSETSPEEDS(void* arg)
   GtkWidget *w;
 #define GETVALUESETSPEED(n) \
   if(g_speedEntryValuesValid[n-1]) { \
-    Mobot_setJointSpeedRatio(\
+    Mobot_setJointSpeed(\
       (mobot_t*)arg, \
-      ROBOT_JOINT##n, \
-      g_speedEntryValues[n-1]/100.0); \
+      MOBOT_JOINT##n, \
+      DEG2RAD(g_speedEntryValues[n-1])); \
   }
 
   GETVALUESETSPEED(1)
@@ -313,7 +312,7 @@ int handlerMOVE(void* arg)
   if(g_positionEntryValuesValid[n-1]) { \
     Mobot_moveJointNB(\
       (mobot_t*)arg, \
-      ROBOT_JOINT##n, \
+      MOBOT_JOINT##n, \
       DEG2RAD(g_positionEntryValues[n-1])); \
   }
 
@@ -335,7 +334,7 @@ int handlerMOVETO(void* arg)
   if(g_positionEntryValuesValid[n-1]) { \
     Mobot_moveJointToNB(\
       (mobot_t*)arg, \
-      ROBOT_JOINT##n, \
+      MOBOT_JOINT##n, \
       DEG2RAD(g_positionEntryValues[n-1])); \
   }
 
@@ -368,7 +367,7 @@ int handlerSPEED##n(void* arg) \
   /* Get the slider position */ \
   double value; \
   value = g_speedSliderValues[n-1]; \
-  Mobot_setJointSpeedRatio((mobot_t*)arg, ROBOT_JOINT##n, value/100.0); \
+  Mobot_setJointSpeed((mobot_t*)arg, MOBOT_JOINT##n, DEG2RAD(value)); \
   return 1; \
 }
 HANDLER_SPEED(1)
@@ -383,7 +382,7 @@ int handlerPOS##n(void*arg) \
   /* Get the slider position */ \
   double value; \
   value = g_positionSliderValues[n-1]; \
-  Mobot_moveJointToPIDNB((mobot_t*)arg, ROBOT_JOINT##n, DEG2RAD(value)); \
+  Mobot_driveJointToNB((mobot_t*)arg, MOBOT_JOINT##n, DEG2RAD(value)); \
   return 1; \
 }
 HANDLER_POS(1)

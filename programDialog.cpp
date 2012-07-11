@@ -207,7 +207,7 @@ void on_imagemenuitem_saveAs_activate(GtkWidget* widget, gpointer data)
   if (g_curFileName == NULL)
   {
     //gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), default_folder_for_saving);
-    gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), "Untitled document");
+    gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), "UntitledDocument");
   }
   else
     gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), g_curFileName);

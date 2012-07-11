@@ -118,7 +118,7 @@ void on_button_saveToProgram_clicked(GtkWidget*widget, gpointer data)
       GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
       NULL);
   gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), TRUE);
-  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), "Untitled document.cpp");
+  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), "UntitledDocument.cpp");
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
   {
     char *filename;
@@ -232,6 +232,12 @@ gboolean refreshTimeout(gpointer userdata)
   return false;
 }
 
+gboolean initPlayTimeout(gpointer userdata)
+{
+  on_button_playRecorded_clicked(NULL, NULL);
+  return false;
+}
+
 void on_mobotButtonPress(void* data, int button, int buttonDown)
 {
   /* Button A: Record Motion 
@@ -278,7 +284,7 @@ void on_mobotButtonPress(void* data, int button, int buttonDown)
       if(g_isPlaying) {
         g_haltPlayFlag = 1;
       } else {
-        on_button_playRecorded_clicked(NULL, NULL);
+        g_idle_add(initPlayTimeout, NULL);
       }
     }
     if(lastState == 0x03) {

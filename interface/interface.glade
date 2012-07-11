@@ -1677,6 +1677,18 @@ Button A and B together: Clear recorded motions</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <child>
+                                  <object class="GtkLabel" id="label29">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Joint Speed ([0, 120] deg/sec)</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <object class="GtkHBox" id="hbox8">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -1702,7 +1714,7 @@ Button A and B together: Clear recorded motions</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="inverted">True</property>
-                                            <property name="fill_level">100</property>
+                                            <property name="fill_level">120</property>
                                             <property name="round_digits">0</property>
                                             <property name="digits">0</property>
                                             <signal name="button-press-event" handler="on_vscale_motorspeed1_button_press_event" swapped="no"/>
@@ -1762,7 +1774,7 @@ Button A and B together: Clear recorded motions</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="inverted">True</property>
-                                            <property name="fill_level">100</property>
+                                            <property name="fill_level">120</property>
                                             <property name="round_digits">0</property>
                                             <property name="digits">0</property>
                                             <signal name="button-press-event" handler="on_vscale_motorspeed2_button_press_event" swapped="no"/>
@@ -1822,7 +1834,7 @@ Button A and B together: Clear recorded motions</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="inverted">True</property>
-                                            <property name="fill_level">100</property>
+                                            <property name="fill_level">120</property>
                                             <property name="round_digits">0</property>
                                             <property name="digits">0</property>
                                             <signal name="button-press-event" handler="on_vscale_motorspeed3_button_press_event" swapped="no"/>
@@ -1883,7 +1895,7 @@ Button A and B together: Clear recorded motions</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="inverted">True</property>
-                                            <property name="fill_level">100</property>
+                                            <property name="fill_level">120</property>
                                             <property name="round_digits">0</property>
                                             <property name="digits">0</property>
                                             <signal name="button-press-event" handler="on_vscale_motorspeed4_button_press_event" swapped="no"/>
@@ -1925,7 +1937,7 @@ Button A and B together: Clear recorded motions</property>
                                   <packing>
                                     <property name="expand">True</property>
                                     <property name="fill">True</property>
-                                    <property name="position">0</property>
+                                    <property name="position">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -1951,7 +1963,7 @@ Button A and B together: Clear recorded motions</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">False</property>
-                                    <property name="position">1</property>
+                                    <property name="position">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -1962,7 +1974,7 @@ Button A and B together: Clear recorded motions</property>
                           <object class="GtkLabel" id="label22">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">&lt;b&gt;Joint Speeds (0 - 100)&lt;/b&gt;</property>
+                            <property name="label" translatable="yes">&lt;b&gt;Joint Speed Control&lt;/b&gt;</property>
                             <property name="use_markup">True</property>
                           </object>
                         </child>
@@ -1988,6 +2000,18 @@ Button A and B together: Clear recorded motions</property>
                               <object class="GtkVBox" id="vbox12">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkLabel" id="label6">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Joint Angle ([-180, 180] degrees)</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
                                 <child>
                                   <object class="GtkTable" id="table4">
                                     <property name="visible">True</property>
@@ -2196,7 +2220,7 @@ Button A and B together: Clear recorded motions</property>
                                   <packing>
                                     <property name="expand">True</property>
                                     <property name="fill">True</property>
-                                    <property name="position">0</property>
+                                    <property name="position">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2206,7 +2230,7 @@ Button A and B together: Clear recorded motions</property>
                                     <property name="layout_style">spread</property>
                                     <child>
                                       <object class="GtkButton" id="button_move">
-                                        <property name="label" translatable="yes">move</property>
+                                        <property name="label" translatable="yes">Move</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
@@ -2221,7 +2245,7 @@ Button A and B together: Clear recorded motions</property>
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="button_moveTo">
-                                        <property name="label" translatable="yes">move to</property>
+                                        <property name="label" translatable="yes">Move To</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
@@ -2238,7 +2262,7 @@ Button A and B together: Clear recorded motions</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">False</property>
-                                    <property name="position">1</property>
+                                    <property name="position">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -2249,7 +2273,7 @@ Button A and B together: Clear recorded motions</property>
                           <object class="GtkLabel" id="label27">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">&lt;b&gt;Joint Positions&lt;/b&gt;</property>
+                            <property name="label" translatable="yes">&lt;b&gt;Joint Position Control&lt;/b&gt;</property>
                             <property name="use_markup">True</property>
                           </object>
                         </child>
