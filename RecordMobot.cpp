@@ -6,6 +6,8 @@
 #include <windows.h>
 #endif
 
+#define RAD2DEG(x) ((x)*180.0/M_PI)
+
 void RecordMobot_init(recordMobot_t* mobot, char *name)
 {
   Mobot_init((mobot_t*)mobot);
@@ -98,10 +100,10 @@ int RecordMobot_getMotionString(recordMobot_t* mobot, int index, char* buf)
     case MOTION_POS:
       sprintf(buf, "%s.moveToNB(%.2lf, %.2lf, %.2lf, %.2lf);",
           mobot->name,
-          mobot->motions[index]->data.pos[0],
-          mobot->motions[index]->data.pos[1],
-          mobot->motions[index]->data.pos[2],
-          mobot->motions[index]->data.pos[3] );
+          RAD2DEG(mobot->motions[index]->data.pos[0]),
+          RAD2DEG(mobot->motions[index]->data.pos[1]),
+          RAD2DEG(mobot->motions[index]->data.pos[2]),
+          RAD2DEG(mobot->motions[index]->data.pos[3]) );
       break;
     case MOTION_SLEEP:
       sprintf(buf, "msleep(%d);", (int)(mobot->motions[index]->data.sleepDuration * 1000));

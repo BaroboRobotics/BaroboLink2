@@ -43,7 +43,7 @@ int CRobotManager::connectIndex(int index)
   recordMobot_t *mobot = (recordMobot_t*)malloc(sizeof(recordMobot_t));
   RecordMobot_init(mobot, name);
   int err;
-  if(err = Mobot_connectWithAddress( (mobot_t*)mobot, getEntry(index), 1 )) {
+  if(err = RecordMobot_connectWithAddress( mobot, getEntry(index), 1 )) {
     return err;
   }
   /* Insert the newly connected robot to the bottom of the list. */
