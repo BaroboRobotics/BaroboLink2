@@ -296,6 +296,7 @@
                                     <property name="headers_clickable">False</property>
                                     <property name="reorderable">True</property>
                                     <property name="search_column">0</property>
+                                    <signal name="row-activated" handler="on_treeview_availableRobots_row_activated" swapped="no"/>
                                     <child>
                                       <object class="GtkTreeViewColumn" id="Addresses">
                                         <property name="sizing">autosize</property>

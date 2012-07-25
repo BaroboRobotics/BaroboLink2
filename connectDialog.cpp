@@ -86,15 +86,15 @@ void* connectThread(void* arg)
 
 gboolean progressBarConnectUpdate(gpointer data)
 {
-  static int counter = 0;
+  static int counter[30];
   static GtkListStore* liststore_available = GTK_LIST_STORE(
       gtk_builder_get_object(g_builder, "liststore_availableRobots"));
   GtkTreeIter iter;
   //GtkWidget* progressBarConnect = GTK_WIDGET(gtk_builder_get_object(g_builder, "progressbar_connect"));
   //GtkWidget* progressBarWindow = GTK_WIDGET(gtk_builder_get_object(g_builder, "window_connectProgress"));
   struct connectThreadArg_s* a;
-  counter++;
   a = (struct connectThreadArg_s*)data;
+  counter[a->connectIndex]++;
   if(a->connectionCompleted) {
     //gtk_widget_hide(progressBarWindow);
     /* Check the connection status return value */
@@ -136,6 +136,7 @@ gboolean progressBarConnectUpdate(gpointer data)
         GTK_WIDGET(gtk_builder_get_object(g_builder, "dialog_connectFailed")));
     }
     refreshConnectDialog();
+    free(a);
     return FALSE;
   } else {
     //gtk_progress_bar_pulse(GTK_PROGRESS_BAR(progressBarConnect));
@@ -150,7 +151,7 @@ gboolean progressBarConnectUpdate(gpointer data)
       return FALSE;
     }
 
-    if(counter % 2) {
+    if(counter[a->connectIndex] % 2) {
       gtk_list_store_set(liststore_available, &iter,
           0, 
           g_robotManager->getEntry(a->connectIndex),
@@ -208,13 +209,14 @@ void on_button_connect_connect_clicked(GtkWidget* widget, gpointer data)
       1, GTK_STOCK_CONNECT,
       -1 );
 
-  static struct connectThreadArg_s arg;
-  arg.connectIndex = i;
-  arg.connectionCompleted = 0;
+  struct connectThreadArg_s* arg;
+  arg = (struct connectThreadArg_s*)malloc(sizeof(struct connectThreadArg_s));
+  arg->connectIndex = i;
+  arg->connectionCompleted = 0;
   THREAD_T thread;
-  THREAD_CREATE(&thread, connectThread, &arg);
+  THREAD_CREATE(&thread, connectThread, arg);
   //gtk_widget_show(progressBarWindow);
-  g_timeout_add(500, progressBarConnectUpdate, &arg);
+  g_timeout_add(500, progressBarConnectUpdate, arg);
 }
 
 void on_button_connect_disconnect_clicked(GtkWidget* widget, gpointer data)
@@ -236,6 +238,45 @@ void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data)
 {
   GtkWidget* w = GTK_WIDGET(gtk_builder_get_object(g_builder, "dialog_connectFailed"));
   gtk_widget_hide(w);
+}
+
+void on_treeview_availableRobots_row_activated(GtkTreeView *treeview,
+                                              GtkTreePath *path,
+                                              GtkTreeViewColumn *col,
+                                              gpointer userdata)
+{
+  GtkTreeIter iter;
+  GtkTreeModel *model;
+
+  model = gtk_tree_view_get_model(treeview);
+  gtk_tree_model_get_iter(model, &iter, path);
+  gint* paths = gtk_tree_path_get_indices(path);
+  int i = paths[0];
+
+  /* Set the icon */
+  static GtkListStore* liststore_available = GTK_LIST_STORE(
+      gtk_builder_get_object(g_builder, "liststore_availableRobots"));
+  char buf[20];
+  sprintf(buf, "%d", i);
+  int rc = gtk_tree_model_get_iter_from_string(
+      GTK_TREE_MODEL(liststore_available),
+      &iter,
+      buf);
+  gtk_list_store_set(liststore_available, &iter,
+      0, 
+      g_robotManager->getEntry(i),
+      1, GTK_STOCK_CONNECT,
+      -1 );
+
+  /* Start the connection process */
+  struct connectThreadArg_s *arg;
+  arg = (struct connectThreadArg_s*)malloc(sizeof(struct connectThreadArg_s));
+  arg->connectIndex = i;
+  arg->connectionCompleted = 0;
+  THREAD_T thread;
+  THREAD_CREATE(&thread, connectThread, arg);
+  //gtk_widget_show(progressBarWindow);
+  g_timeout_add(500, progressBarConnectUpdate, arg);
 }
 
 void on_liststore_availableRobots_row_deleted(
