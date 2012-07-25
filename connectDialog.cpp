@@ -288,7 +288,7 @@ void refreshConnectDialog()
       gtk_list_store_set(liststore_available, &iter,
           0, 
           g_robotManager->getEntry(i),
-          1, GTK_STOCK_NO,
+          1, GTK_STOCK_DISCONNECT,
           -1 );
     }
   }
