@@ -4,6 +4,10 @@
 #include <gtk/gtk.h>
 #include "RobotManager.h"
 
+#ifdef _MSYS
+#include <windows.h>
+#endif
+
 #define PLAT_GTK 1
 #define GTK
 #include <Scintilla.h>
