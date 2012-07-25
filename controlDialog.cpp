@@ -382,7 +382,7 @@ int handlerPOS##n(void*arg) \
   /* Get the slider position */ \
   double value; \
   value = g_positionSliderValues[n-1]; \
-  Mobot_driveJointToNB((mobot_t*)arg, MOBOT_JOINT##n, DEG2RAD(value)); \
+  Mobot_driveJointToDirectNB((mobot_t*)arg, MOBOT_JOINT##n, DEG2RAD(value)); \
   return 1; \
 }
 HANDLER_POS(1)

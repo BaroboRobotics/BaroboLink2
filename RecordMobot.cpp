@@ -38,7 +38,7 @@ int RecordMobot_record(recordMobot_t* mobot)
 {
 	/* Get the robots positions */
 	double angles[4];
-	Mobot_getJointAnglesAbs((mobot_t*)mobot, &angles[0], &angles[1], &angles[2], &angles[3]);
+	Mobot_getJointAngles((mobot_t*)mobot, &angles[0], &angles[1], &angles[2], &angles[3]);
 	struct motion_s* motion;
 	motion = (struct motion_s*)malloc(sizeof(struct motion_s));
 	motion->motionType = MOTION_POS;
@@ -70,7 +70,7 @@ int RecordMobot_play(recordMobot_t* mobot, int index)
 		return -1;
 	}
 	if(mobot->motions[index]->motionType == MOTION_POS) {
-		return Mobot_moveToAbsNB( (mobot_t*)mobot,
+		return Mobot_moveToNB( (mobot_t*)mobot,
 			mobot->motions[index]->data.pos[0],
 			mobot->motions[index]->data.pos[1],
 			mobot->motions[index]->data.pos[2],
