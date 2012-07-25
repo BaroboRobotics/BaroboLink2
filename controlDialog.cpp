@@ -191,6 +191,7 @@ void* controllerHandlerThread(void* arg)
     /* Convert angles to degrees */
     int i;
     for(i = 0; i < 4; i++) {
+      g_positionValues[i] = normalizeAngleRad(g_positionValues[i]);
       g_positionValues[i] = RAD2DEG(g_positionValues[i]);
     }
     MUTEX_UNLOCK(&g_activeMobotLock);

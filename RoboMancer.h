@@ -157,6 +157,7 @@ G_MODULE_EXPORT void on_liststore_recordedMotions_row_inserted(
 
 /* Comms Engine */
 int initializeComms(void);
+double normalizeAngleRad(double radians);
 
 #ifdef __cplusplus
 }

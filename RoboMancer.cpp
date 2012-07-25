@@ -100,3 +100,13 @@ void on_aboutdialog_close(GtkDialog *dialog, gpointer user_data)
   gtk_widget_hide(GTK_WIDGET(dialog));
 }
 
+double normalizeAngleRad(double radians)
+{
+  while(radians > M_PI) {
+    radians -= 2*M_PI;
+  }
+  while(radians < -M_PI) {
+    radians += 2*M_PI;
+  }
+  return radians;
+}
