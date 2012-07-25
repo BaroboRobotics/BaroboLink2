@@ -86,12 +86,17 @@ void* connectThread(void* arg)
 
 gboolean progressBarConnectUpdate(gpointer data)
 {
-  GtkWidget* progressBarConnect = GTK_WIDGET(gtk_builder_get_object(g_builder, "progressbar_connect"));
-  GtkWidget* progressBarWindow = GTK_WIDGET(gtk_builder_get_object(g_builder, "window_connectProgress"));
+  static int counter = 0;
+  static GtkListStore* liststore_available = GTK_LIST_STORE(
+      gtk_builder_get_object(g_builder, "liststore_availableRobots"));
+  GtkTreeIter iter;
+  //GtkWidget* progressBarConnect = GTK_WIDGET(gtk_builder_get_object(g_builder, "progressbar_connect"));
+  //GtkWidget* progressBarWindow = GTK_WIDGET(gtk_builder_get_object(g_builder, "window_connectProgress"));
   struct connectThreadArg_s* a;
+  counter++;
   a = (struct connectThreadArg_s*)data;
   if(a->connectionCompleted) {
-    gtk_widget_hide(progressBarWindow);
+    //gtk_widget_hide(progressBarWindow);
     /* Check the connection status return value */
     GtkLabel* label = GTK_LABEL(gtk_builder_get_object(g_builder, "label_connectFailed"));
     switch(a->connectReturnVal) {
@@ -130,13 +135,34 @@ gboolean progressBarConnectUpdate(gpointer data)
       gtk_widget_show(
         GTK_WIDGET(gtk_builder_get_object(g_builder, "dialog_connectFailed")));
     }
-    if(a->connectReturnVal == 0) {
-      /* Connection Success */
-      refreshConnectDialog();
-    }
+    refreshConnectDialog();
     return FALSE;
   } else {
-    gtk_progress_bar_pulse(GTK_PROGRESS_BAR(progressBarConnect));
+    //gtk_progress_bar_pulse(GTK_PROGRESS_BAR(progressBarConnect));
+    char buf[20];
+    sprintf(buf, "%d", a->connectIndex);
+    int rc = gtk_tree_model_get_iter_from_string(
+        GTK_TREE_MODEL(liststore_available),
+        &iter,
+        buf);
+    if(!rc) {
+      /* Could not set iter for some reason... */
+      return FALSE;
+    }
+
+    if(counter % 2) {
+      gtk_list_store_set(liststore_available, &iter,
+          0, 
+          g_robotManager->getEntry(a->connectIndex),
+          1, GTK_STOCK_DISCONNECT,
+          -1 );
+    } else {
+      gtk_list_store_set(liststore_available, &iter,
+          0, 
+          g_robotManager->getEntry(a->connectIndex),
+          1, GTK_STOCK_CONNECT,
+          -1 );
+    }
     return TRUE;
   }
 }
@@ -165,13 +191,30 @@ void on_button_connect_connect_clicked(GtkWidget* widget, gpointer data)
   if(i < 0) {
     return;
   }
+
+  /* Set the icon */
+  static GtkListStore* liststore_available = GTK_LIST_STORE(
+      gtk_builder_get_object(g_builder, "liststore_availableRobots"));
+  GtkTreeIter iter;
+  char buf[20];
+  sprintf(buf, "%d", i);
+  int rc = gtk_tree_model_get_iter_from_string(
+      GTK_TREE_MODEL(liststore_available),
+      &iter,
+      buf);
+  gtk_list_store_set(liststore_available, &iter,
+      0, 
+      g_robotManager->getEntry(i),
+      1, GTK_STOCK_CONNECT,
+      -1 );
+
   static struct connectThreadArg_s arg;
   arg.connectIndex = i;
   arg.connectionCompleted = 0;
   THREAD_T thread;
   THREAD_CREATE(&thread, connectThread, &arg);
-  gtk_widget_show(progressBarWindow);
-  g_timeout_add(100, progressBarConnectUpdate, &arg);
+  //gtk_widget_show(progressBarWindow);
+  g_timeout_add(500, progressBarConnectUpdate, &arg);
 }
 
 void on_button_connect_disconnect_clicked(GtkWidget* widget, gpointer data)
