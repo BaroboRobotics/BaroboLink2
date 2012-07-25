@@ -15,6 +15,7 @@ class CRobotManager : public ConfigFile
   public:
     CRobotManager();
     ~CRobotManager();
+    int addEntry(const char* entry);
     bool isConnected(int index);
     bool isPlaying();
     int connectIndex(int index);
@@ -32,7 +33,6 @@ class CRobotManager : public ConfigFile
     recordMobot_t *_mobots[MAX_CONNECTED];
     /* _connectAddresses is an array of pointers to 
        ConfigFile::_addresses */
-    char *_connectedAddresses[MAX_CONNECTED];
 };
 
 #endif

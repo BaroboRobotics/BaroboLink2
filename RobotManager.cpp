@@ -8,7 +8,6 @@ CRobotManager::CRobotManager()
   int i;
   for(i = 0; i < MAX_CONNECTED; i++) {
     _mobots[i] = NULL;
-    _connectedAddresses[i] = NULL;
   }
   _isPlaying = false;
 }
@@ -26,6 +25,19 @@ bool CRobotManager::isConnected(int index)
     return false;
   }
   return Mobot_isConnected((mobot_t*)_mobots[index]);
+}
+
+int CRobotManager::addEntry(const char* entry)
+{
+  int rc;
+  if(rc = ConfigFile::addEntry(entry)) {
+    return rc;
+  }
+
+  /* Adjust the array of mobots */
+  for(int i = (numEntries()-1); i >= 0; i--) {
+    _mobots[i+1] = _mobots[i];
+  }
 }
 
 bool CRobotManager::isPlaying()
@@ -48,8 +60,6 @@ int CRobotManager::connectIndex(int index)
   }
   /* Insert the newly connected robot to the bottom of the list. */
   _mobots[index] = mobot;
-  _connectedAddresses[numConnected()] = 
-	  _addresses[index];
   return err;
 }
 
