@@ -187,13 +187,13 @@ void* controllerHandlerThread(void* arg)
         &g_positionValues[1],
         &g_positionValues[2],
         &g_positionValues[3]);
-    MUTEX_UNLOCK(&g_activeMobotLock);
     /* First, get motor position values */
     /* Convert angles to degrees */
     int i;
     for(i = 0; i < 4; i++) {
       g_positionValues[i] = RAD2DEG(g_positionValues[i]);
     }
+    MUTEX_UNLOCK(&g_activeMobotLock);
     /* Cycle through button handlers */
     TESTLOCK
     for(i = 0; i < NUM_BUTTONS; i++) {

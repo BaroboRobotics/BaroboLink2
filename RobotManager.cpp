@@ -94,7 +94,7 @@ int CRobotManager::numConnected()
     if(_mobots[i] == NULL) {
       continue;
     }
-    if(Mobot_isConnected((mobot_t*)_mobots[i])) {
+    if(_mobots[i] != NULL) {
       num++;
     }
   }
@@ -171,7 +171,7 @@ recordMobot_t* CRobotManager::getMobot(int connectIndex)
   int i;
   for(i = 0; i <= MAX_CONNECTED ; i++ ) {
     if(_mobots[i] == NULL) {continue;}
-    if(Mobot_isConnected((mobot_t*)_mobots[i])) {
+    if(_mobots[i] != NULL) {
       connectIndex--;
     }
     if(connectIndex < 0) {
