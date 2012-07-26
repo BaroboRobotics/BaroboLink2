@@ -124,6 +124,7 @@ int ConfigFile::remove(int index)
     _addresses[i-1] = _addresses[i];
   }
   _numEntries--;
+  return 0;
 }
 
 int ConfigFile::rename(const char* newName, int index)

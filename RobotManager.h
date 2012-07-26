@@ -16,6 +16,8 @@ class CRobotManager : public ConfigFile
     CRobotManager();
     ~CRobotManager();
     int addEntry(const char* entry);
+    void moveMobot(int destIndex, int srcIndex);
+    int insertEntry(const char* entry, int index);
     bool isConnected(int index);
     bool isPlaying();
     int connectIndex(int index);
@@ -24,13 +26,17 @@ class CRobotManager : public ConfigFile
     int numConnected();
     int numAvailable();
     void record();
+    int remove(int index);
+    void restoreSavedMobot(int index);
     void addDelay(double seconds);
     void play();
     recordMobot_t* getMobot(int connectIndex);
     string* generateProgram(bool looped = false);
     bool _isPlaying;
+    int _newDndIndex;
   private:
     recordMobot_t *_mobots[MAX_CONNECTED];
+    recordMobot_t *_tmpMobot;
     /* _connectAddresses is an array of pointers to 
        ConfigFile::_addresses */
 };
