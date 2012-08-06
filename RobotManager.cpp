@@ -246,8 +246,7 @@ string* CRobotManager::generateProgram(bool looped)
 
   /* Connect to each one */
   for(i = 0; i < numConnected(); i++) {
-    sprintf(tbuf, "    robot%d.connectWithAddress(\"%s\", 1);\n", i+1, 
-        RecordMobot_getAddress(getMobot(i)));
+    sprintf(tbuf, "    robot%d.connect();\n", i+1);
     buf.assign(tbuf);
     *program += buf;
   }
