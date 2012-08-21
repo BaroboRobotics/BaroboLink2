@@ -31,6 +31,7 @@ class CRobotManager : public ConfigFile
     void addDelay(double seconds);
     void play();
     recordMobot_t* getMobot(int connectIndex);
+    recordMobot_t* getMobotIndex(int index);
     string* generateProgram(bool looped = false);
     bool _isPlaying;
     int _newDndIndex;

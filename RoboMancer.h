@@ -50,6 +50,8 @@ G_MODULE_EXPORT void on_button_connect_moveDownAvailable_clicked(GtkWidget* widg
 G_MODULE_EXPORT void on_button_connect_connect_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_connect_disconnect_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_treeview_availableRobots_cursor_changed(GtkTreeView* tree_view, gpointer user_data);
 G_MODULE_EXPORT void on_treeview_availableRobots_row_activated(GtkTreeView *treeview,
                                               GtkTreePath *path,
                                               GtkTreeViewColumn *col,

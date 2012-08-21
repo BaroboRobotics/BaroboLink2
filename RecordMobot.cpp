@@ -11,6 +11,7 @@
 void RecordMobot_init(recordMobot_t* mobot, char *name)
 {
   Mobot_init((mobot_t*)mobot);
+  mobot->firmwareVersion = 0x0FFFFFFF;
   mobot->numMotions = 0;
   mobot->motions = (struct motion_s**)malloc(sizeof(struct motion_s*) * 100); 
   mobot->numMotionsAllocated = 100;
@@ -25,8 +26,13 @@ void RecordMobot_destroy(recordMobot_t* mobot)
 
 int RecordMobot_connectWithAddress(recordMobot_t* mobot, const char address[], int channel)
 {
+  int rc;
   strcpy(mobot->address, address);
-  return Mobot_connectWithAddress((mobot_t*)mobot, address, channel);
+  if(rc = Mobot_connectWithAddress((mobot_t*)mobot, address, channel)) {
+    return rc;
+  }
+  mobot->firmwareVersion = Mobot_getVersion((mobot_t*)mobot);
+  return 0;
 }
 
 const char* RecordMobot_getAddress(recordMobot_t* mobot)

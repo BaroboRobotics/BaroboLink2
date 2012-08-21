@@ -240,6 +240,27 @@ void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data)
   gtk_widget_hide(w);
 }
 
+void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data)
+{
+}
+
+void on_treeview_availableRobots_cursor_changed(GtkTreeView* tree_view, gpointer user_data)
+{
+  recordMobot_t* mobot;
+  GtkWidget *w = GTK_WIDGET(gtk_builder_get_object(g_builder, "button_updateFirmware"));
+  int index = getConnectSelectedIndex();
+  mobot = g_robotManager->getMobotIndex(index);
+  if(mobot == NULL) {
+    gtk_widget_set_sensitive(w, FALSE);
+    return;
+  }
+  if(mobot->firmwareVersion < Mobot_protocolVersion()) {
+    gtk_widget_set_sensitive(w, TRUE);
+  } else {
+    gtk_widget_set_sensitive(w, FALSE);
+  }
+}
+
 void on_treeview_availableRobots_row_activated(GtkTreeView *treeview,
                                               GtkTreePath *path,
                                               GtkTreeViewColumn *col,
@@ -370,6 +391,14 @@ void refreshConnectDialog()
           g_robotManager->getEntry(i),
           1, GTK_STOCK_YES,
           -1 );
+      /* Set the update progress bar data */
+      if(g_robotManager->getMobotIndex(i)->firmwareVersion < Mobot_protocolVersion()) {
+        gtk_list_store_set(liststore_available, &iter,
+            2, TRUE, 3, 0, -1);
+      } else {
+        gtk_list_store_set(liststore_available, &iter,
+            2, FALSE, 3, 0, -1);
+      }
     } else {
       gtk_list_store_set(liststore_available, &iter,
           0, 

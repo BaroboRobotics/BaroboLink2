@@ -226,6 +226,11 @@ recordMobot_t* CRobotManager::getMobot(int connectIndex)
 	return _mobots[i];
 }
 
+recordMobot_t* CRobotManager::getMobotIndex(int index)
+{
+  return _mobots[index];
+}
+
 string* CRobotManager::generateProgram(bool looped)
 {
   string buf;
