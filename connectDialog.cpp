@@ -240,10 +240,6 @@ void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data)
   gtk_widget_hide(w);
 }
 
-void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data)
-{
-}
-
 void on_treeview_availableRobots_cursor_changed(GtkTreeView* tree_view, gpointer user_data)
 {
   recordMobot_t* mobot;
@@ -392,6 +388,7 @@ void refreshConnectDialog()
           1, GTK_STOCK_YES,
           -1 );
       /* Set the update progress bar data */
+      printf("%d:%d\n", g_robotManager->getMobotIndex(i)->firmwareVersion, Mobot_protocolVersion());
       if(g_robotManager->getMobotIndex(i)->firmwareVersion < Mobot_protocolVersion()) {
         gtk_list_store_set(liststore_available, &iter,
             2, TRUE, 3, 0, -1);

@@ -37,7 +37,6 @@ extern HANDLE g_activeMobotLock;
 #else
 extern pthread_mutex_t g_activeMobotLock;
 #endif
-
 G_MODULE_EXPORT void on_imagemenuitem_about_activate(GtkWidget *w, gpointer data);
 G_MODULE_EXPORT void on_aboutdialog_response(GtkDialog *dialog, gint response_id, gpointer user_data);
 G_MODULE_EXPORT void on_aboutdialog_close(GtkDialog *dialog, gpointer user_data);
@@ -50,7 +49,6 @@ G_MODULE_EXPORT void on_button_connect_moveDownAvailable_clicked(GtkWidget* widg
 G_MODULE_EXPORT void on_button_connect_connect_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_connect_disconnect_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data);
-G_MODULE_EXPORT void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_treeview_availableRobots_cursor_changed(GtkTreeView* tree_view, gpointer user_data);
 G_MODULE_EXPORT void on_treeview_availableRobots_row_activated(GtkTreeView *treeview,
                                               GtkTreePath *path,
@@ -72,6 +70,11 @@ G_MODULE_EXPORT void on_liststore_availableRobots_row_changed(
     gpointer user_data);
 void refreshConnectDialog();
 int getConnectSelectedIndex();
+
+/* Reflashing Process */
+extern char g_reflashAddress[80];
+extern int g_reflashHWRev;
+G_MODULE_EXPORT void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data);
 
 /* Program Dialog */
 void initProgramDialog(void);
