@@ -57,7 +57,8 @@ am_RoboMancer_OBJECTS = commsHandler.$(OBJEXT) configFile.$(OBJEXT) \
 	connectDialog.$(OBJEXT) controlDialog.$(OBJEXT) \
 	programDialog.$(OBJEXT) RecordMobot.$(OBJEXT) \
 	RoboMancer.$(OBJEXT) RobotManager.$(OBJEXT) \
-	teachingDialog.$(OBJEXT) updateFirmware.$(OBJEXT)
+	teachingDialog.$(OBJEXT) updateFirmware.$(OBJEXT) \
+	libstkcomms.$(OBJEXT)
 RoboMancer_OBJECTS = $(am_RoboMancer_OBJECTS)
 am__DEPENDENCIES_1 =
 RoboMancer_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -212,7 +213,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
 AM_CPPFLAGS = $(DEPS_CFLAGS)
-RoboMancer_SOURCES = commsHandler.cpp  configFile.cpp  connectDialog.cpp  controlDialog.cpp  programDialog.cpp  RecordMobot.cpp  RoboMancer.cpp  RobotManager.cpp  teachingDialog.cpp updateFirmware.cpp
+RoboMancer_SOURCES = commsHandler.cpp  configFile.cpp  connectDialog.cpp  controlDialog.cpp  programDialog.cpp  RecordMobot.cpp  RoboMancer.cpp  RobotManager.cpp  teachingDialog.cpp updateFirmware.cpp libstkcomms.cpp
 RoboMancer_LDADD = $(DEPS_LIBS) 
 pkgdata_DATA = 16px_move_back.png  16px_move_forward.png  16px_stop.png  imobot_diagram.png  move_back.png  move_forward.png  rotate_left.png  rotate_right.png  stop.png interface/interface.glade
 all: config.h
@@ -325,6 +326,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/configFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/connectDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/controlDialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libstkcomms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/programDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/teachingDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/updateFirmware.Po@am__quote@
