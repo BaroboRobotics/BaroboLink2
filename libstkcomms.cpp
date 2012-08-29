@@ -17,6 +17,7 @@
 CStkComms::CStkComms()
 {
   _isConnected = false;
+  _programComplete = 0;
   MUTEX_NEW(_progressLock);
   MUTEX_INIT(_progressLock);
   COND_NEW(_progressCond);
@@ -172,18 +173,73 @@ int CStkComms::programAll(const char* hexFileName)
     return -1;
   }
   _progress = 1.1;
+  _programComplete = 1;
+  return 0;  
+}
+
+int CStkComms::programAll(const char* hexFileName, int hwRev)
+{
+  if(handshake()) {
+    THROW;
+    return -1;
+  }
+  if(setDevice()) {
+    THROW;
+    return -1;
+  }
+  if(setDeviceExt()) {
+    THROW;
+    return -1;
+  }
+  if(enterProgMode()) {
+    THROW;
+    return -1;
+  }
+  if(checkSignature()) {
+    THROW;
+    return -1;
+  }
+  /*
+  if(writeData(0x11, hwRev)) {
+    THROW;
+    return -1;
+  }
+  */
+  if(progFuses()) {
+    THROW;
+    return -1;
+  }
+  if(progHexFile(hexFileName)) {
+    THROW;
+    return -1;
+  }
+  if(checkFlash(hexFileName)) {
+    THROW;
+    return -1;
+  }
+  if(leaveProgMode()) {
+    THROW;
+    return -1;
+  }
+  _progress = 1.1;
+  _programComplete = 1;
   return 0;  
 }
 
 struct programAllThreadArg{
   const char* hexFileName;
   CStkComms* stkComms;
+  int hwRev;
 };
 
 void* programAllThread(void* arg)
 {
   programAllThreadArg *a = (programAllThreadArg*)arg;
-  a->stkComms->programAll(a->hexFileName);
+  if(a->hwRev == 0) {
+    a->stkComms->programAll(a->hexFileName);
+  } else {
+    a->stkComms->programAll(a->hexFileName, a->hwRev);
+  }
   return NULL;
 }
 
@@ -194,6 +250,20 @@ int CStkComms::programAllAsync(const char* hexFileName)
   a = (struct programAllThreadArg*)malloc(sizeof(struct programAllThreadArg));
   a->hexFileName = hexFileName;
   a->stkComms = this;
+  a->hwRev = 0;
+  _progress = 0.01;
+  THREAD_CREATE(&thread, programAllThread, a);
+  return 0;
+}
+
+int CStkComms::programAllAsync(const char* hexFileName, int hwRev)
+{
+  THREAD_T thread;
+  struct programAllThreadArg *a;
+  a = (struct programAllThreadArg*)malloc(sizeof(struct programAllThreadArg));
+  a->hexFileName = hexFileName;
+  a->stkComms = this;
+  a->hwRev = hwRev;
   _progress = 0.01;
   THREAD_CREATE(&thread, programAllThread, a);
   return 0;
@@ -631,7 +701,7 @@ int CStkComms::sendBytes(void* buf, size_t len)
     return -1;
   }
 
-#ifdef DEBUG
+#ifdef VERBOSE
   printf("SEND: ");
   for(int i = 0; i < len; i++) {
     printf("0x%02X ", ((uint8_t*)buf)[i]);
@@ -662,7 +732,7 @@ int CStkComms::recvBytes(uint8_t* buf, size_t expectedBytes, size_t size)
     }
     //usleep(100000);
   }
-#ifdef DEBUG
+#ifdef VERBOSE
   printf("Recv: ");
   for(int i = 0; i < len; i++) {
     printf("0x%02X ", ((uint8_t*)buf)[i]);
@@ -706,7 +776,9 @@ CHexFile::CHexFile()
 
 CHexFile::CHexFile(const char* filename)
 {
-  CHexFile();
+  _data = NULL;
+  _dataAllocSize = 0;
+  _len = 0;
   loadFile(filename);
 }
 
@@ -760,7 +832,7 @@ void CHexFile::realloc()
 
 void CHexFile::parseLine(const char* line)
 {
-  int byteCount;
+  int byteCount = 0;
   unsigned int address;
   int type;
   unsigned int value;

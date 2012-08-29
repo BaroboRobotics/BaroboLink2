@@ -35,8 +35,13 @@ class CStkComms
   int connect(const char addr[]);
   int setSocket(int socket);
   int programAll(const char* hexFileName);
+  int programAll(const char* hexFileName, int hwRev);
   int programAllAsync(const char* hexFileName);
+  int programAllAsync(const char* hexFileName, int hwRev);
   double getProgress();
+  inline int isProgramComplete() {
+    return _programComplete;
+  }
   int disconnect();
   int handshake();
   int setDevice(
@@ -82,6 +87,7 @@ class CStkComms
   private:
   int _socket;
   bool _isConnected;
+  int _programComplete;
 #ifndef _WIN32
   struct sockaddr_rc _addr;
 #else

@@ -85,10 +85,10 @@ gboolean reflashConnectTimeout(gpointer data)
     gtk_notebook_set_current_page(g_notebookRoot, 3);
     if(g_reflashHWRev == 3) {
       printf("Programming rev3...\n");
-      g_stkComms->programAllAsync("interface/rev3.hex");
+      g_stkComms->programAllAsync("interface/rev3.hex", 3);
     } else if (g_reflashHWRev == 4) {
       printf("Programming rev4...\n");
-      g_stkComms->programAllAsync("interface/rev4.hex");
+      g_stkComms->programAllAsync("interface/rev4.hex", 4);
     } else {
       fprintf(stderr, "Error: Invalid HW Rev detected.\n");
       return FALSE;
@@ -110,9 +110,12 @@ void on_button_reflashContinue_clicked(GtkWidget* widget, gpointer data)
    * no matter what because the Mobot library is currently hogging the
    * listening socket */
   THREAD_T connectThread;
+  /* Set the button insensitive */
+  gtk_widget_set_sensitive(widget, FALSE);
   gtk_widget_show(GTK_WIDGET(g_reflashConnectSpinner));
   gtk_spinner_start(g_reflashConnectSpinner);
   THREAD_CREATE(&connectThread, reflashConnectThread, NULL);
+  g_reflashConnectStatus = 1;
   g_timeout_add(500, reflashConnectTimeout, NULL);
   g_reflashProgressBar = GTK_PROGRESS_BAR(gtk_builder_get_object(g_builder, "progressbar_reflash"));
 }
@@ -120,7 +123,8 @@ void on_button_reflashContinue_clicked(GtkWidget* widget, gpointer data)
 gboolean updateProgrammingProgressTimeout(gpointer data)
 {
   double progress = g_stkComms->getProgress();
-  if(progress < 1) {
+  printf(".\n");
+  if(!g_stkComms->isProgramComplete()) {
     gtk_progress_bar_set_fraction(g_reflashProgressBar, progress);
     return TRUE;
   } else {
