@@ -75,6 +75,7 @@ int getConnectSelectedIndex();
 extern char g_reflashAddress[80];
 extern int g_reflashHWRev;
 G_MODULE_EXPORT void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_button_cancelFlash_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_reflashContinue_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_cancelFlash2_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_reflashOK_clicked(GtkWidget* widget, gpointer data);

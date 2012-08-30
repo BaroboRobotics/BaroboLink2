@@ -11,6 +11,7 @@ char g_reflashAddress[80];
 int g_reflashHWRev;
 CStkComms *g_stkComms;
 THREAD_T g_connectThread;
+int g_cancelListenButtonHWRev = 0;
 
 int g_reflashConnectStatus;
 /* g_reflashConnectStatus Status:
@@ -49,11 +50,21 @@ void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data)
   }
 }
 
+void on_button_cancelFlash_clicked(GtkWidget* widget, gpointer data)
+{
+  g_cancelListenButtonHWRev = 1;
+  gtk_notebook_set_current_page(g_notebookRoot, 0);
+}
+
 gboolean listenButtonHWRev(gpointer data)
 {
   /* Get the button voltage */
   double voltage;
   gboolean rc;
+  if(g_cancelListenButtonHWRev) {
+    g_cancelListenButtonHWRev = 0;
+    return FALSE;
+  }
   Mobot_getButtonVoltage((mobot_t*)g_reflashMobot, &voltage);
   if(ABS(voltage-5) < 0.1) {
     rc = TRUE;

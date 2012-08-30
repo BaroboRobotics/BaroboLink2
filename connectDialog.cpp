@@ -388,7 +388,7 @@ void refreshConnectDialog()
           1, GTK_STOCK_YES,
           -1 );
       /* Set the update progress bar data */
-      printf("%d:%d\n", g_robotManager->getMobotIndex(i)->firmwareVersion, Mobot_protocolVersion());
+      //printf("%d:%d\n", g_robotManager->getMobotIndex(i)->firmwareVersion, Mobot_protocolVersion());
       if(g_robotManager->getMobotIndex(i)->firmwareVersion < Mobot_protocolVersion()) {
         gtk_list_store_set(liststore_available, &iter,
             2, TRUE, 3, 0, -1);

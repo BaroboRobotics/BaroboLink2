@@ -6,7 +6,7 @@
 #include "command.h"
 #include "thread_macros.h"
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #define THROW throw

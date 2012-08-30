@@ -339,12 +339,11 @@
                                         <child>
                                           <object class="GtkTreeViewColumn" id="treeviewcolumn5">
                                             <child>
-                                              <object class="GtkCellRendererProgress" id="cellrendererprogress1">
+                                              <object class="GtkCellRendererText" id="cellrendererprogress1">
                                                 <property name="text">Firmware Update Available</property>
                                               </object>
                                               <attributes>
                                                 <attribute name="visible">2</attribute>
-                                                <attribute name="value">3</attribute>
                                               </attributes>
                                             </child>
                                           </object>
@@ -2514,56 +2513,64 @@ Button A and B together: Clear recorded motions</property>
               </packing>
             </child>
             <child>
-              <object class="GtkVBox" id="vbox15">
+              <object class="GtkAspectFrame" id="aspectframe1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">out</property>
                 <child>
-                  <object class="GtkLabel" id="label32">
+                  <object class="GtkVBox" id="vbox15">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="xalign">0.40000000596046448</property>
-                    <property name="yalign">0.40000000596046448</property>
-                    <property name="xpad">10</property>
-                    <property name="ypad">10</property>
-                    <property name="label" translatable="yes">Initiating the module reflashing process...
+                    <child>
+                      <object class="GtkLabel" id="label32">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">0.40000000596046448</property>
+                        <property name="yalign">0.40000000596046448</property>
+                        <property name="xpad">5</property>
+                        <property name="ypad">5</property>
+                        <property name="label" translatable="yes">Initiating the module reflashing process...
 
 To begin, please press the 'A' button on the module being reflashed. The process will continue once the button-press is detected, or you may click "Cancel" to cancel the entire process.</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkHButtonBox" id="hbuttonbox1">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="spacing">10</property>
-                    <property name="layout_style">end</property>
+                        <property name="wrap">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
                     <child>
-                      <object class="GtkButton" id="button_cancelFlash">
-                        <property name="label" translatable="yes">Cancel</property>
+                      <object class="GtkHButtonBox" id="hbuttonbox1">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
-                        <signal name="clicked" handler="on_button_cancelFlash2_clicked" swapped="no"/>
+                        <property name="can_focus">False</property>
+                        <property name="spacing">10</property>
+                        <property name="layout_style">end</property>
+                        <child>
+                          <object class="GtkButton" id="button_cancelFlash">
+                            <property name="label" translatable="yes">Cancel</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="use_action_appearance">False</property>
+                            <signal name="clicked" handler="on_button_cancelFlash_clicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">0</property>
+                        <property name="padding">7</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="padding">7</property>
-                    <property name="position">1</property>
-                  </packing>
                 </child>
               </object>
               <packing>
@@ -2582,35 +2589,22 @@ To begin, please press the 'A' button on the module being reflashed. The process
               </packing>
             </child>
             <child>
-              <object class="GtkVBox" id="vbox16">
+              <object class="GtkAspectFrame" id="aspectframe2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">out</property>
                 <child>
-                  <object class="GtkLabel" id="label34">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="xalign">0.40000000596046448</property>
-                    <property name="label" translatable="yes">Please switch the robot into "Programming Mode" by moving the power switch into the middle position. Click on the "Continue" button below to continue.</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkHButtonBox" id="hbuttonbox6">
+                  <object class="GtkVBox" id="vbox16">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkButton" id="button_reflashContinue">
-                        <property name="label" translatable="yes">Continue</property>
+                      <object class="GtkLabel" id="label34">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
-                        <signal name="clicked" handler="on_button_reflashContinue_clicked" swapped="no"/>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">0.40000000596046448</property>
+                        <property name="label" translatable="yes">Please switch the robot into "Programming Mode" by moving the power switch into the middle position. Click on the "Continue" button below to continue.</property>
+                        <property name="wrap">True</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -2618,50 +2612,71 @@ To begin, please press the 'A' button on the module being reflashed. The process
                         <property name="position">0</property>
                       </packing>
                     </child>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinner" id="spinner_reflashConnect">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkHButtonBox" id="hbuttonbox7">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="layout_style">end</property>
                     <child>
-                      <object class="GtkButton" id="button_cancelFlash2">
-                        <property name="label" translatable="yes">Cancel</property>
+                      <object class="GtkHButtonBox" id="hbuttonbox6">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
-                        <signal name="clicked" handler="on_button_reflashOK_clicked" swapped="no"/>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkButton" id="button_reflashContinue">
+                            <property name="label" translatable="yes">Continue</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="use_action_appearance">False</property>
+                            <signal name="clicked" handler="on_button_reflashContinue_clicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinner" id="spinner_reflashConnect">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkHButtonBox" id="hbuttonbox7">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="layout_style">end</property>
+                        <child>
+                          <object class="GtkButton" id="button_cancelFlash2">
+                            <property name="label" translatable="yes">Cancel</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="use_action_appearance">False</property>
+                            <signal name="clicked" handler="on_button_cancelFlash2_clicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">0</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">3</property>
-                  </packing>
                 </child>
               </object>
               <packing>
@@ -2680,35 +2695,43 @@ To begin, please press the 'A' button on the module being reflashed. The process
               </packing>
             </child>
             <child>
-              <object class="GtkVBox" id="vbox17">
+              <object class="GtkAspectFrame" id="aspectframe3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">out</property>
                 <child>
-                  <object class="GtkProgressBar" id="progressbar_reflash">
+                  <object class="GtkVBox" id="vbox17">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="padding">10</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="label36">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Switch the robot power switch to the "on" position. Programming will begin automatically.
+                    <child>
+                      <object class="GtkProgressBar" id="progressbar_reflash">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="padding">10</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label36">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Switch the robot power switch to the "on" position. Programming will begin automatically.
 
-Please do not disconnect or power the robot off while the programming is in progress. This dialog will automatically change once programming is complete.</property>
-                    <property name="wrap">True</property>
+Please do not disconnect or turn off the robot while the reflashing is in progress. This dialog will automatically change once reflashing is complete.</property>
+                        <property name="wrap">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
                 </child>
               </object>
               <packing>
@@ -2727,49 +2750,58 @@ Please do not disconnect or power the robot off while the programming is in prog
               </packing>
             </child>
             <child>
-              <object class="GtkVBox" id="vbox18">
+              <object class="GtkAspectFrame" id="aspectframe4">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">out</property>
                 <child>
-                  <object class="GtkLabel" id="label38">
+                  <object class="GtkVBox" id="vbox18">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Robot firmware has been upgraded successfully. 
+                    <child>
+                      <object class="GtkLabel" id="label38">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Robot firmware has been upgraded successfully. 
 
 Press "OK" to continue.</property>
-                    <property name="wrap">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkHButtonBox" id="hbuttonbox8">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="layout_style">end</property>
+                        <property name="wrap">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
                     <child>
-                      <object class="GtkButton" id="button_reflashOK">
-                        <property name="label" translatable="yes">OK</property>
+                      <object class="GtkHButtonBox" id="hbuttonbox8">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="layout_style">end</property>
+                        <child>
+                          <object class="GtkButton" id="button_reflashOK">
+                            <property name="label" translatable="yes">OK</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="use_action_appearance">False</property>
+                            <signal name="clicked" handler="on_button_reflashOK_clicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">0</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">1</property>
-                  </packing>
                 </child>
               </object>
               <packing>
