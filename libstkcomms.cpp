@@ -123,6 +123,11 @@ int CStkComms::connect(const char addr[])
   return 0;
 }
 
+int CStkComms::disconnect()
+{
+  close(_socket);
+}
+
 int CStkComms::setSocket(int socket)
 {
   int flags;
@@ -283,7 +288,6 @@ int CStkComms::handshake()
   uint8_t buf[10];
   int len;
   while(1) {
-    printf("Handshake...\n");
     buf[0] = Cmnd_STK_GET_SYNC;
     buf[1] = Sync_CRC_EOP;
     sendBytes(buf, 2);

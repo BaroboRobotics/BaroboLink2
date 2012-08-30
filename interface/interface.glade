@@ -235,6 +235,7 @@
           <object class="GtkNotebook" id="notebook_root">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="show_tabs">False</property>
             <property name="show_border">False</property>
             <child>
               <object class="GtkNotebook" id="notebook1">
@@ -2548,6 +2549,7 @@ To begin, please press the 'A' button on the module being reflashed. The process
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_action_appearance">False</property>
+                        <signal name="clicked" handler="on_button_cancelFlash2_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -2625,6 +2627,7 @@ To begin, please press the 'A' button on the module being reflashed. The process
                 </child>
                 <child>
                   <object class="GtkSpinner" id="spinner_reflashConnect">
+                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                   </object>
                   <packing>
@@ -2645,6 +2648,7 @@ To begin, please press the 'A' button on the module being reflashed. The process
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_action_appearance">False</property>
+                        <signal name="clicked" handler="on_button_reflashOK_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>

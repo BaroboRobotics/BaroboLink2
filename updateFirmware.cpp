@@ -10,6 +10,7 @@ int g_reflashMobotIndex;
 char g_reflashAddress[80];
 int g_reflashHWRev;
 CStkComms *g_stkComms;
+THREAD_T g_connectThread;
 
 int g_reflashConnectStatus;
 /* g_reflashConnectStatus Status:
@@ -98,6 +99,13 @@ gboolean reflashConnectTimeout(gpointer data)
   } else if (g_reflashConnectStatus == 1) {
     return TRUE;
   } else {
+    /* Connection failed? */
+    GtkWidget *cancelButton = (GTK_WIDGET(gtk_builder_get_object(g_builder, "button_cancelFlash2")));
+    gtk_widget_set_sensitive(cancelButton, TRUE);
+    gtk_button_set_label(GTK_BUTTON(cancelButton), "Connect failed. Retry?");
+    cancelButton = (GTK_WIDGET(gtk_builder_get_object(g_builder, "button_reflashContinue")));
+    gtk_widget_set_sensitive(cancelButton, TRUE);
+    gtk_spinner_stop(g_reflashConnectSpinner);
     return FALSE;
   }
 }
@@ -109,26 +117,42 @@ void on_button_reflashContinue_clicked(GtkWidget* widget, gpointer data)
   /* The robot should now be in "Programming" mode. We will need to reconnect
    * no matter what because the Mobot library is currently hogging the
    * listening socket */
-  THREAD_T connectThread;
   /* Set the button insensitive */
   gtk_widget_set_sensitive(widget, FALSE);
+  /* Set the cancel button to not-sensitive too */
+  GtkWidget *cancelButton = (GTK_WIDGET(gtk_builder_get_object(g_builder, "button_cancelFlash2")));
+  gtk_widget_set_sensitive(cancelButton, FALSE);
   gtk_widget_show(GTK_WIDGET(g_reflashConnectSpinner));
   gtk_spinner_start(g_reflashConnectSpinner);
-  THREAD_CREATE(&connectThread, reflashConnectThread, NULL);
+  THREAD_CREATE(&g_connectThread, reflashConnectThread, NULL);
   g_reflashConnectStatus = 1;
   g_timeout_add(500, reflashConnectTimeout, NULL);
   g_reflashProgressBar = GTK_PROGRESS_BAR(gtk_builder_get_object(g_builder, "progressbar_reflash"));
 }
 
+void on_button_cancelFlash2_clicked(GtkWidget* widget, gpointer data)
+{
+  /* If this button was clicked, just go back to the default page */
+  refreshConnectDialog();
+  gtk_notebook_set_current_page(g_notebookRoot, 0);
+}
+
 gboolean updateProgrammingProgressTimeout(gpointer data)
 {
   double progress = g_stkComms->getProgress();
-  printf(".\n");
   if(!g_stkComms->isProgramComplete()) {
     gtk_progress_bar_set_fraction(g_reflashProgressBar, progress);
     return TRUE;
   } else {
+    g_stkComms->disconnect();
     gtk_notebook_set_current_page(g_notebookRoot, 4);
     return FALSE;
   }
+}
+
+void on_button_reflashOK_clicked(GtkWidget* widget, gpointer data)
+{
+  /* Refresh the connect dialog and send the user back to the main page */
+  refreshConnectDialog();
+  gtk_notebook_set_current_page(g_notebookRoot, 0);
 }
