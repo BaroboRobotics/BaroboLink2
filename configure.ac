@@ -17,6 +17,8 @@ PKG_CHECK_MODULES([DEPS], [
                    gtk+-2.0 >= 2.20.0
                    gmodule-export-2.0 >= 2.20.0])
 AC_CHECK_LIB([mobot], [Mobot_init])
+LDFLAGS="$LDFLAGS -Llibstkcomms"
+AC_CHECK_LIB([stkcomms], [libstkcomms_is_present])
 
 AC_CANONICAL_HOST
 echo $host_os 

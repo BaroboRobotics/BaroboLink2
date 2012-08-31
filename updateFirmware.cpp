@@ -3,7 +3,7 @@
 #include <mobot.h>
 #include "RoboMancer.h"
 #include "RecordMobot.h"
-#include "libstkcomms.hpp"
+#include "libstkcomms/libstkcomms.hpp"
 
 recordMobot_t* g_reflashMobot;
 int g_reflashMobotIndex;

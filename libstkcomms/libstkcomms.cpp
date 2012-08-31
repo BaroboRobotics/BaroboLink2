@@ -4,7 +4,7 @@
 #include <sys/ioctl.h>
 #include "libstkcomms.hpp"
 #include "command.h"
-#include "thread_macros.h"
+#include "../thread_macros.h"
 
 //#define DEBUG
 
@@ -889,4 +889,8 @@ void CHexFile::parseLine(const char* line)
   checktest = (checktest ^ 0xFF) + 0x01;
   if(checktest != checksum) 
     THROW;
+}
+
+void libstkcomms_is_present(void)
+{
 }

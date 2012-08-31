@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/rfcomm.h>
-#include "thread_macros.h"
+#include "../thread_macros.h"
 
 
 class CHexFile
@@ -115,4 +115,9 @@ enum hexLineType_e
   HEXLINE_EXTENDEDLINEARADDR,
   HEXLINE_STARTLINEARADDR
 };
+
+extern "C" {
+  void libstkcomms_is_present(void);
+}
+
 #endif
