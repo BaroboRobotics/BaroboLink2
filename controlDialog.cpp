@@ -37,6 +37,16 @@ enum gaits_e{
   NUM_GAITS
 };
 
+double normalizeDeg(double deg) {
+  while(deg >= 180) {
+    deg -= 360;
+  }
+  while (deg < -180) {
+    deg += 360;
+  }
+  return deg;
+}
+
 void initControlDialog(void)
 {
 #define BUTTON(x) \
@@ -116,11 +126,15 @@ gboolean controllerHandlerTimeout(gpointer data)
     g_activeMobot = mobot;
     MUTEX_UNLOCK(&g_activeMobotLock);
   }
+  char buf[80];
 #define VSCALEHANDLER(n) \
   if(g_buttonState[S_POS##n] == 0) { \
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos" #n)); \
-    gtk_range_set_value(GTK_RANGE(w), g_positionValues[n-1]); \
-  }
+    gtk_range_set_value(GTK_RANGE(w), normalizeDeg(g_positionValues[n-1])); \
+  } \
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "label_motorPos" #n)); \
+  sprintf(buf, "%.2lf", g_positionValues[n-1]); \
+  gtk_label_set_text(GTK_LABEL(w), buf); 
   VSCALEHANDLER(1)
     VSCALEHANDLER(2)
     VSCALEHANDLER(3)
@@ -134,7 +148,10 @@ gboolean controllerHandlerTimeout(gpointer data)
           &angles[3]);
 #define VSCALEHANDLER(n) \
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed" #n)); \
-      gtk_range_set_value(GTK_RANGE(w), RAD2DEG(angles[n-1])); 
+      gtk_range_set_value(GTK_RANGE(w), RAD2DEG(angles[n-1]));  \
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "label_motorPos" #n)); \
+      sprintf(buf, "%.2lf", RAD2DEG(angles[n-1])); \
+      gtk_label_set_text(GTK_LABEL(w), buf);
       VSCALEHANDLER(1)
         VSCALEHANDLER(2)
         VSCALEHANDLER(3)

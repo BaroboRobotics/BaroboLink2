@@ -1431,7 +1431,7 @@
                                   <object class="GtkTable" id="table4">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="n_rows">3</property>
+                                    <property name="n_rows">4</property>
                                     <property name="n_columns">4</property>
                                     <child>
                                       <object class="GtkLabel" id="label23">
@@ -1493,12 +1493,13 @@
                                         <property name="can_focus">True</property>
                                         <property name="inverted">True</property>
                                         <property name="round_digits">1</property>
+                                        <property name="draw_value">False</property>
                                         <signal name="button-press-event" handler="on_vscale_motorPos1_button_press_event" swapped="no"/>
                                         <signal name="button-release-event" handler="on_vscale_motorPos1_button_release_event" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="top_attach">1</property>
-                                        <property name="bottom_attach">2</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="bottom_attach">3</property>
                                         <property name="x_options">GTK_FILL</property>
                                       </packing>
                                     </child>
@@ -1508,14 +1509,15 @@
                                         <property name="can_focus">True</property>
                                         <property name="inverted">True</property>
                                         <property name="round_digits">1</property>
+                                        <property name="draw_value">False</property>
                                         <signal name="button-press-event" handler="on_vscale_motorPos2_button_press_event" swapped="no"/>
                                         <signal name="button-release-event" handler="on_vscale_motorPos2_button_release_event" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="right_attach">2</property>
-                                        <property name="top_attach">1</property>
-                                        <property name="bottom_attach">2</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="bottom_attach">3</property>
                                         <property name="x_options">GTK_FILL</property>
                                       </packing>
                                     </child>
@@ -1525,14 +1527,15 @@
                                         <property name="can_focus">True</property>
                                         <property name="inverted">True</property>
                                         <property name="round_digits">1</property>
+                                        <property name="draw_value">False</property>
                                         <signal name="button-press-event" handler="on_vscale_motorPos3_button_press_event" swapped="no"/>
                                         <signal name="button-release-event" handler="on_vscale_motorPos3_button_release_event" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
                                         <property name="right_attach">3</property>
-                                        <property name="top_attach">1</property>
-                                        <property name="bottom_attach">2</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="bottom_attach">3</property>
                                         <property name="x_options">GTK_FILL</property>
                                       </packing>
                                     </child>
@@ -1542,14 +1545,15 @@
                                         <property name="can_focus">True</property>
                                         <property name="inverted">True</property>
                                         <property name="round_digits">1</property>
+                                        <property name="draw_value">False</property>
                                         <signal name="button-press-event" handler="on_vscale_motorPos4_button_press_event" swapped="no"/>
                                         <signal name="button-release-event" handler="on_vscale_motorPos4_button_release_event" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">3</property>
                                         <property name="right_attach">4</property>
-                                        <property name="top_attach">1</property>
-                                        <property name="bottom_attach">2</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="bottom_attach">3</property>
                                         <property name="x_options">GTK_FILL</property>
                                       </packing>
                                     </child>
@@ -1566,8 +1570,8 @@
                                         <property name="secondary_icon_sensitive">True</property>
                                       </object>
                                       <packing>
-                                        <property name="top_attach">2</property>
-                                        <property name="bottom_attach">3</property>
+                                        <property name="top_attach">3</property>
+                                        <property name="bottom_attach">4</property>
                                         <property name="y_options"></property>
                                       </packing>
                                     </child>
@@ -1586,8 +1590,8 @@
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="right_attach">2</property>
-                                        <property name="top_attach">2</property>
-                                        <property name="bottom_attach">3</property>
+                                        <property name="top_attach">3</property>
+                                        <property name="bottom_attach">4</property>
                                         <property name="y_options"></property>
                                       </packing>
                                     </child>
@@ -1606,8 +1610,8 @@
                                       <packing>
                                         <property name="left_attach">2</property>
                                         <property name="right_attach">3</property>
-                                        <property name="top_attach">2</property>
-                                        <property name="bottom_attach">3</property>
+                                        <property name="top_attach">3</property>
+                                        <property name="bottom_attach">4</property>
                                         <property name="y_options"></property>
                                       </packing>
                                     </child>
@@ -1626,8 +1630,70 @@
                                       <packing>
                                         <property name="left_attach">3</property>
                                         <property name="right_attach">4</property>
-                                        <property name="top_attach">2</property>
-                                        <property name="bottom_attach">3</property>
+                                        <property name="top_attach">3</property>
+                                        <property name="bottom_attach">4</property>
+                                        <property name="y_options"></property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="label_motorPos1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="ypad">2</property>
+                                        <property name="label" translatable="yes">0.0</property>
+                                      </object>
+                                      <packing>
+                                        <property name="top_attach">1</property>
+                                        <property name="bottom_attach">2</property>
+                                        <property name="x_options"></property>
+                                        <property name="y_options"></property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="label_motorPos2">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="ypad">2</property>
+                                        <property name="label" translatable="yes">0.0</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="right_attach">2</property>
+                                        <property name="top_attach">1</property>
+                                        <property name="bottom_attach">2</property>
+                                        <property name="x_options"></property>
+                                        <property name="y_options"></property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="label_motorPos3">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="ypad">2</property>
+                                        <property name="label" translatable="yes">0.0</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="right_attach">3</property>
+                                        <property name="top_attach">1</property>
+                                        <property name="bottom_attach">2</property>
+                                        <property name="x_options"></property>
+                                        <property name="y_options"></property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="label_motorPos4">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="ypad">2</property>
+                                        <property name="label" translatable="yes">0.0</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">3</property>
+                                        <property name="right_attach">4</property>
+                                        <property name="top_attach">1</property>
+                                        <property name="bottom_attach">2</property>
+                                        <property name="x_options"></property>
                                         <property name="y_options"></property>
                                       </packing>
                                     </child>
