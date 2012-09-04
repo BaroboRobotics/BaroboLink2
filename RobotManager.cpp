@@ -72,7 +72,7 @@ int CRobotManager::connectIndex(int index)
     return 0;
   }
   char name[80];
-  sprintf(name, "robot%d", numConnected()+1);
+  sprintf(name, "mobot%d", numConnected()+1);
   recordMobot_t *mobot = (recordMobot_t*)malloc(sizeof(recordMobot_t));
   RecordMobot_init(mobot, name);
   int err;
@@ -239,14 +239,14 @@ string* CRobotManager::generateProgram(bool looped)
 
   /* Declare the appropiate number of CMobot variables */
   for(i = 0; i < numConnected(); i++) {
-    sprintf(tbuf, "    CMobot robot%d;\n", i+1);
+    sprintf(tbuf, "    CMobot mobot%d;\n", i+1);
     buf.assign(tbuf);
     *program += buf;
   }
 
   /* Connect to each one */
   for(i = 0; i < numConnected(); i++) {
-    sprintf(tbuf, "    robot%d.connect();\n", i+1);
+    sprintf(tbuf, "    mobot%d.connect();\n", i+1);
     buf.assign(tbuf);
     *program += buf;
   }
@@ -284,7 +284,7 @@ string* CRobotManager::generateProgram(bool looped)
         if(RecordMobot_getMotionType(getMobot(j), i) == MOTION_SLEEP) {
           break;
         }
-        sprintf(tbuf, "robot%d.moveWait();\n", j+1);
+        sprintf(tbuf, "mobot%d.moveWait();\n", j+1);
         buf.assign(tbuf);
         if(looped) *program += "    ";
         *program += buf;
