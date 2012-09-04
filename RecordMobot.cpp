@@ -208,3 +208,9 @@ int RecordMobot_swapMotion(recordMobot_t* mobot, int index1, int index2)
   mobot->motions[index2] = tmp;
   return 0;
 }
+
+void RecordMobot_setName(recordMobot_t* mobot, const char* name)
+{
+  strncpy(mobot->name, name, 78);
+  mobot->name[79] = '\0';
+}
