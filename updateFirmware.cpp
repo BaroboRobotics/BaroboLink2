@@ -92,6 +92,7 @@ void* reflashConnectThread(void* arg)
 
 gboolean reflashConnectTimeout(gpointer data) 
 {
+  GtkWidget *continueButton = GTK_WIDGET(data);
   if(g_reflashConnectStatus == 3) {
     /* Switch the root notebook to the next page */
     gtk_notebook_set_current_page(g_notebookRoot, 3);
@@ -103,9 +104,11 @@ gboolean reflashConnectTimeout(gpointer data)
       g_stkComms->programAllAsync("interface/rev4.hex", 4);
     } else {
       fprintf(stderr, "Error: Invalid HW Rev detected.\n");
+      gtk_widget_set_sensitive(continueButton, TRUE);
       return FALSE;
     }
     g_timeout_add(500, updateProgrammingProgressTimeout, NULL);
+    gtk_widget_set_sensitive(continueButton, TRUE);
     return FALSE;
   } else if (g_reflashConnectStatus == 1) {
     return TRUE;
@@ -117,6 +120,7 @@ gboolean reflashConnectTimeout(gpointer data)
     cancelButton = (GTK_WIDGET(gtk_builder_get_object(g_builder, "button_reflashContinue")));
     gtk_widget_set_sensitive(cancelButton, TRUE);
     gtk_spinner_stop(g_reflashConnectSpinner);
+    gtk_widget_set_sensitive(continueButton, TRUE);
     return FALSE;
   }
 }
@@ -137,7 +141,7 @@ void on_button_reflashContinue_clicked(GtkWidget* widget, gpointer data)
   gtk_spinner_start(g_reflashConnectSpinner);
   THREAD_CREATE(&g_connectThread, reflashConnectThread, NULL);
   g_reflashConnectStatus = 1;
-  g_timeout_add(500, reflashConnectTimeout, NULL);
+  g_timeout_add(500, reflashConnectTimeout, widget);
   g_reflashProgressBar = GTK_PROGRESS_BAR(gtk_builder_get_object(g_builder, "progressbar_reflash"));
 }
 
