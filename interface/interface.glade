@@ -2720,7 +2720,7 @@ To begin, please press the 'A' button on the module being reflashed. The process
                       <object class="GtkLabel" id="label36">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Switch the robot power switch to the "on" position. Programming will begin automatically.
+                        <property name="label" translatable="yes">Switch the robot power switch to the "Run" position. Programming will begin automatically.
 
 Please do not disconnect or turn off the robot while the reflashing is in progress. This dialog will automatically change once reflashing is complete.</property>
                         <property name="wrap">True</property>

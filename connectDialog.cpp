@@ -252,8 +252,10 @@ void on_treeview_availableRobots_cursor_changed(GtkTreeView* tree_view, gpointer
   }
   if(mobot->firmwareVersion < Mobot_protocolVersion()) {
     gtk_widget_set_sensitive(w, TRUE);
+    gtk_button_set_label(GTK_BUTTON(w), "Update Firmware");
   } else {
-    gtk_widget_set_sensitive(w, FALSE);
+    gtk_widget_set_sensitive(w, TRUE);
+    gtk_button_set_label(GTK_BUTTON(w), "Force Update");
   }
 }
 
