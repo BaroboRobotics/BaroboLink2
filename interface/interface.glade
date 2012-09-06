@@ -2238,9 +2238,9 @@
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">The buttons on the Mobot perform special actions when using the Pose Teaching Dialog.  
 
-Button A: Record the current pose.  
+Button A: Record Pose
 Button B: Play / Stop 
-Button A and B together: Clear recorded motions</property>
+Button A and B together: Clear Recorded Poses</property>
                               </object>
                             </child>
                           </object>
@@ -2274,7 +2274,7 @@ Button A and B together: Clear recorded motions</property>
                             <property name="search_column">0</property>
                             <child>
                               <object class="GtkTreeViewColumn" id="treeviewcolumn2">
-                                <property name="title" translatable="yes">Recorded Motions</property>
+                                <property name="title" translatable="yes">Recorded Poses</property>
                                 <property name="reorderable">True</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="cellrenderertext_recordedMotionName">
@@ -2326,7 +2326,7 @@ Button A and B together: Clear recorded motions</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="button_recordPos">
-                                <property name="label" translatable="yes">Record Positions</property>
+                                <property name="label" translatable="yes">Record Pose</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -2364,6 +2364,7 @@ Button A and B together: Clear recorded motions</property>
                                     <property name="can_focus">True</property>
                                     <property name="invisible_char">●</property>
                                     <property name="width_chars">4</property>
+                                    <property name="text" translatable="yes">0.5</property>
                                     <property name="invisible_char_set">True</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
@@ -2385,7 +2386,7 @@ Button A and B together: Clear recorded motions</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="button_deleteRecordedPos">
-                                <property name="label" translatable="yes">Delete Selected Position</property>
+                                <property name="label" translatable="yes">Delete Selected Pose</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -2400,7 +2401,7 @@ Button A and B together: Clear recorded motions</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="button_clearRecordedPositions">
-                                <property name="label" translatable="yes">Clear All Poses</property>
+                                <property name="label" translatable="yes">Clear Recorded Poses</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
