@@ -17,57 +17,14 @@ void on_button_connect_addRobot_clicked(GtkWidget* widget, gpointer data)
 
 void on_button_connect_remove_clicked(GtkWidget* widget, gpointer data)
 {
-  int i = getConnectSelectedIndex();
-  if(i < 0) return;
-  g_robotManager->remove(i);
-  g_robotManager->write();
-  refreshConnectDialog();
-  /* Select the next mobot automatically */
-  GtkTreePath* treePath;
-  GtkTreeView* availableBots = 
-      GTK_TREE_VIEW(gtk_builder_get_object(g_builder, "treeview_availableRobots"));
-  treePath = gtk_tree_path_new_from_indices(i, -1);
-  //gtk_tree_view_row_activated(availableBots, treePath, column);
-  GtkTreeSelection* selection = gtk_tree_view_get_selection(availableBots);
-  gtk_tree_selection_select_path(selection, treePath);
 }
 
 void on_button_connect_moveUpAvailable_clicked(GtkWidget* widget, gpointer data)
 {
-  int i = getConnectSelectedIndex();
-  if(i < 1) {
-    return;
-  }
-  g_robotManager->moveEntryUp(i);
-  g_robotManager->write();
-  refreshConnectDialog();
-  /* Select the moved index */
-  GtkTreePath* treePath;
-  GtkTreeView* availableBots = 
-      GTK_TREE_VIEW(gtk_builder_get_object(g_builder, "treeview_availableRobots"));
-  treePath = gtk_tree_path_new_from_indices(i-1, -1);
-  //gtk_tree_view_row_activated(availableBots, treePath, column);
-  GtkTreeSelection* selection = gtk_tree_view_get_selection(availableBots);
-  gtk_tree_selection_select_path(selection, treePath);
 }
 
 void on_button_connect_moveDownAvailable_clicked(GtkWidget* widget, gpointer data)
 {
-  int i = getConnectSelectedIndex();
-  if(i < 0) {
-    return;
-  }
-  g_robotManager->moveEntryDown(i);
-  g_robotManager->write();
-  refreshConnectDialog();
-  /* Select the moved index */
-  GtkTreePath* treePath;
-  GtkTreeView* availableBots = 
-      GTK_TREE_VIEW(gtk_builder_get_object(g_builder, "treeview_availableRobots"));
-  treePath = gtk_tree_path_new_from_indices(i+1, -1);
-  //gtk_tree_view_row_activated(availableBots, treePath, column);
-  GtkTreeSelection* selection = gtk_tree_view_get_selection(availableBots);
-  gtk_tree_selection_select_path(selection, treePath);
 }
 
 struct connectThreadArg_s {
@@ -86,6 +43,7 @@ void* connectThread(void* arg)
 
 gboolean progressBarConnectUpdate(gpointer data)
 {
+#if 0
   static int counter[30];
   static GtkListStore* liststore_available = GTK_LIST_STORE(
       gtk_builder_get_object(g_builder, "liststore_availableRobots"));
@@ -166,25 +124,13 @@ gboolean progressBarConnectUpdate(gpointer data)
     }
     return TRUE;
   }
-}
-
-int getConnectSelectedIndex()
-{
-  /* Get the index and/or text */
-  GtkWidget* view =  GTK_WIDGET(gtk_builder_get_object(g_builder, "treeview_availableRobots"));
-  GtkTreeModel* model = GTK_TREE_MODEL(gtk_builder_get_object(g_builder, "liststore_availableRobots"));
-  GtkTreeSelection* selection = gtk_tree_view_get_selection((GTK_TREE_VIEW(view)));
-  GList* list = gtk_tree_selection_get_selected_rows(selection, &model);
-  if(list == NULL) return -1;
-  gint* paths = gtk_tree_path_get_indices((GtkTreePath*)list->data);
-  int i = paths[0];
-  g_list_foreach(list, (GFunc) gtk_tree_path_free, NULL);
-  g_list_free(list);
-  return i;
+#endif
+  return FALSE;
 }
 
 void on_button_connect_connect_clicked(GtkWidget* widget, gpointer data)
 {
+#if 0
   GtkWidget* progressBarWindow = GTK_WIDGET(gtk_builder_get_object(g_builder, "window_connectProgress"));
   GtkWidget* progressBarConnect = GTK_WIDGET(gtk_builder_get_object(g_builder, "progressbar_connect"));
   /* Get the index and/or text */
@@ -217,10 +163,12 @@ void on_button_connect_connect_clicked(GtkWidget* widget, gpointer data)
   THREAD_CREATE(&thread, connectThread, arg);
   //gtk_widget_show(progressBarWindow);
   g_timeout_add(500, progressBarConnectUpdate, arg);
+#endif
 }
 
 void on_button_connect_disconnect_clicked(GtkWidget* widget, gpointer data)
 {
+#if 0
   int i = getConnectSelectedIndex();
   if(i < 0) {
     return;
@@ -232,6 +180,7 @@ void on_button_connect_disconnect_clicked(GtkWidget* widget, gpointer data)
   g_activeMobot = NULL;
   MUTEX_UNLOCK(&g_activeMobotLock);
   refreshConnectDialog();
+#endif
 }
 
 void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data)
@@ -240,126 +189,49 @@ void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data)
   gtk_widget_hide(w);
 }
 
-void on_treeview_availableRobots_cursor_changed(GtkTreeView* tree_view, gpointer user_data)
-{
-  recordMobot_t* mobot;
-  GtkWidget *w = GTK_WIDGET(gtk_builder_get_object(g_builder, "button_updateFirmware"));
-  int index = getConnectSelectedIndex();
-  mobot = g_robotManager->getMobotIndex(index);
-  if(mobot == NULL) {
-    gtk_widget_set_sensitive(w, FALSE);
-    return;
-  }
-  if(mobot->firmwareVersion < Mobot_protocolVersion()) {
-    gtk_widget_set_sensitive(w, TRUE);
-    gtk_button_set_label(GTK_BUTTON(w), "Update Firmware");
-  } else {
-    gtk_widget_set_sensitive(w, TRUE);
-    gtk_button_set_label(GTK_BUTTON(w), "Force Update");
-  }
-}
-
-void on_treeview_availableRobots_row_activated(GtkTreeView *treeview,
-                                              GtkTreePath *path,
-                                              GtkTreeViewColumn *col,
-                                              gpointer userdata)
-{
-  GtkTreeIter iter;
-  GtkTreeModel *model;
-
-  model = gtk_tree_view_get_model(treeview);
-  gtk_tree_model_get_iter(model, &iter, path);
-  gint* paths = gtk_tree_path_get_indices(path);
-  int i = paths[0];
-
-  /* Set the icon */
-  static GtkListStore* liststore_available = GTK_LIST_STORE(
-      gtk_builder_get_object(g_builder, "liststore_availableRobots"));
-  char buf[20];
-  sprintf(buf, "%d", i);
-  int rc = gtk_tree_model_get_iter_from_string(
-      GTK_TREE_MODEL(liststore_available),
-      &iter,
-      buf);
-  gtk_list_store_set(liststore_available, &iter,
-      0, 
-      g_robotManager->getEntry(i),
-      1, GTK_STOCK_CONNECT,
-      -1 );
-
-  /* Start the connection process */
-  struct connectThreadArg_s *arg;
-  arg = (struct connectThreadArg_s*)malloc(sizeof(struct connectThreadArg_s));
-  arg->connectIndex = i;
-  arg->connectionCompleted = 0;
-  THREAD_T thread;
-  THREAD_CREATE(&thread, connectThread, arg);
-  //gtk_widget_show(progressBarWindow);
-  g_timeout_add(500, progressBarConnectUpdate, arg);
-}
-
-void on_liststore_availableRobots_row_deleted(
-    GtkTreeModel* model,
-    GtkTreePath* path,
-    gpointer user_data)
-{
-  
-  gint* indices;
-  int depth, index;
-  if(g_dndConnect) {
-    indices = gtk_tree_path_get_indices_with_depth(path, &depth);
-    index = indices[0];
-    g_robotManager->moveMobot(g_robotManager->_newDndIndex, index);
-    g_robotManager->remove(index);
-    g_robotManager->write();
-  }
-}
-
-void on_liststore_availableRobots_row_inserted(
-    GtkTreeModel* model,
-    GtkTreePath* path,
-    GtkTreeIter* iter,
-    gpointer user_data)
-{
-  gint* indices;
-  int depth, index;
-  if(g_dndConnect) {
-    /* Get the text entry from the liststore */
-    gchar* addr;
-    indices = gtk_tree_path_get_indices_with_depth(path, &depth);
-    index = indices[0];
-    gtk_tree_model_get(model, iter, 0, &addr, -1);
-    if(addr == NULL) {
-      addr = strdup("00:00:00:00:00:00");
-    }
-    g_robotManager->insertEntry(addr, index);
-    g_robotManager->_newDndIndex = index;
-    free(addr);
-    g_robotManager->write();
-  }
-}
-
-void on_liststore_availableRobots_row_changed(
-    GtkTreeModel* model,
-    GtkTreePath* path,
-    GtkTreeIter* iter,
-    gpointer user_data)
-{
-  gint* indices;
-  int depth, index;
-  /* Get the new value */
-  gchar* addr;
-  gtk_tree_model_get(model, iter, 0, &addr, -1);
-  if(addr == NULL) {
-    return;
-  }
-  indices = gtk_tree_path_get_indices_with_depth(path, &depth);
-  index = indices[0];
-  g_robotManager->rename(addr, index);
-}
-
 void refreshConnectDialog()
 {
+  /* Create the GtkTable */
+  GtkWidget *rootTable = gtk_table_new(
+      g_robotManager->numEntries()*2,
+      5,
+      FALSE);
+  /* For each Mobot entry, we need to compose a set of child widgets and attach
+   * them to the right places on the grid */
+  int i;
+  GtkWidget *w;
+  for(i = 0; i < g_robotManager->numEntries(); i++) {
+    /* Make a new label for the entry */
+    w = gtk_label_new(g_robotManager->getEntry(i));
+    gtk_widget_show(w);
+    gtk_table_attach( GTK_TABLE(rootTable),
+        w,
+        0, 1,
+        i*2, (i*2)+2,
+        GTK_FILL, GTK_FILL,
+        2, 2);
+    /* Add some spinners for each one */
+    w = gtk_spinner_new();
+    gtk_widget_show(w);
+    gtk_table_attach( GTK_TABLE(rootTable),
+        w,
+        1, 2,
+        i*2, (i*2)+2,
+        GTK_FILL, GTK_FILL,
+        2, 2);
+    w = gtk_button_new_with_label("Connect");
+    gtk_widget_show(w);
+    gtk_table_attach( GTK_TABLE(rootTable),
+        w,
+        2, 3,
+        i*2, (i*2)+2,
+        GTK_FILL, GTK_FILL,
+        2, 2);
+  }
+  GtkWidget *layout = GTK_WIDGET(gtk_builder_get_object(g_builder, "layout_connectDialog"));
+  gtk_layout_put(GTK_LAYOUT(layout), rootTable, 0, 0);
+  gtk_widget_show(rootTable);
+#if 0
   static GtkListStore* liststore_available = GTK_LIST_STORE(
       gtk_builder_get_object(g_builder, "liststore_availableRobots"));
   static GtkListStore* liststore_connected = GTK_LIST_STORE(
@@ -416,4 +288,5 @@ void refreshConnectDialog()
   }
   */
   g_dndConnect = true;
+#endif
 }
