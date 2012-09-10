@@ -311,14 +311,12 @@
                                   <object class="GtkScrolledWindow" id="scrolledwindow2">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="hadjustment">adjustment1</property>
-                                    <property name="vadjustment">adjustment2</property>
+                                    <property name="hscrollbar_policy">automatic</property>
+                                    <property name="vscrollbar_policy">automatic</property>
                                     <child>
                                       <object class="GtkLayout" id="layout_connectDialog">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="hadjustment">adjustment1</property>
-                                        <property name="vadjustment">adjustment2</property>
                                       </object>
                                     </child>
                                   </object>

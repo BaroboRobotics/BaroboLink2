@@ -193,8 +193,8 @@ void refreshConnectDialog()
 {
   /* Create the GtkTable */
   GtkWidget *rootTable = gtk_table_new(
-      g_robotManager->numEntries()*2,
-      5,
+      g_robotManager->numEntries()*3,
+      6,
       FALSE);
   /* For each Mobot entry, we need to compose a set of child widgets and attach
    * them to the right places on the grid */
@@ -206,29 +206,69 @@ void refreshConnectDialog()
     gtk_widget_show(w);
     gtk_table_attach( GTK_TABLE(rootTable),
         w,
-        0, 1,
-        i*2, (i*2)+2,
+        0, 1, //columns
+        i*3, (i*3)+2, //rows
         GTK_FILL, GTK_FILL,
         2, 2);
-    /* Add some spinners for each one */
-    w = gtk_spinner_new();
+    /* Add an image denoting connection status for each one */
+    w = gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON);
     gtk_widget_show(w);
     gtk_table_attach( GTK_TABLE(rootTable),
         w,
         1, 2,
-        i*2, (i*2)+2,
+        i*3, (i*3)+2,
         GTK_FILL, GTK_FILL,
         2, 2);
+    /* Add connect button */
     w = gtk_button_new_with_label("Connect");
     gtk_widget_show(w);
     gtk_table_attach( GTK_TABLE(rootTable),
         w,
         2, 3,
-        i*2, (i*2)+2,
+        i*3, (i*3)+2,
+        GTK_FILL, GTK_FILL,
+        2, 2);
+    /* Add remove button */
+    w = gtk_button_new_with_label("Remove");
+    gtk_widget_show(w);
+    gtk_table_attach( GTK_TABLE(rootTable),
+        w,
+        3, 4,
+        i*3, (i*3)+2,
+        GTK_FILL, GTK_FILL,
+        2, 2);
+    /* Add move-up button */
+    w = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
+    gtk_widget_show(w);
+    gtk_table_attach( GTK_TABLE(rootTable),
+        w,
+        4, 5,
+        i*3, (i*3)+1,
+        GTK_FILL, GTK_FILL,
+        2, 2);
+    /* Add move-down button */
+    w = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
+    gtk_widget_show(w);
+    gtk_table_attach( GTK_TABLE(rootTable),
+        w,
+        4, 5,
+        (i*3)+1, (i*3)+2,
+        GTK_FILL, GTK_FILL,
+        2, 2);
+    /* Add a horizontal separator */
+    w = gtk_hseparator_new();
+    gtk_widget_show(w);
+    gtk_table_attach( GTK_TABLE(rootTable),
+        w,
+        0, 5,
+        i*3+2, (i*3)+3,
         GTK_FILL, GTK_FILL,
         2, 2);
   }
+  GtkRequisition sizeRequest;
+  gtk_widget_size_request(rootTable, &sizeRequest);
   GtkWidget *layout = GTK_WIDGET(gtk_builder_get_object(g_builder, "layout_connectDialog"));
+  gtk_layout_set_size(GTK_LAYOUT(layout), sizeRequest.width, sizeRequest.height);
   gtk_layout_put(GTK_LAYOUT(layout), rootTable, 0, 0);
   gtk_widget_show(rootTable);
 #if 0

@@ -8,6 +8,7 @@ CRobotManager::CRobotManager()
   int i;
   for(i = 0; i < MAX_CONNECTED; i++) {
     _mobots[i] = NULL;
+    _mobotStatus[i] = RM_NOT_CONNECTED;
   }
   _isPlaying = false;
 }

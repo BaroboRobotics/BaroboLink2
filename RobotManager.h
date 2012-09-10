@@ -10,6 +10,12 @@
 
 #define MAX_CONNECTED 100
 using namespace std;
+
+typedef enum connectStatus_e {
+  RM_NOT_CONNECTED,
+  RM_CONNECTING,
+  RM_CONNECTED } connectStatus_t;
+
 class CRobotManager : public ConfigFile
 {
   public:
@@ -38,6 +44,7 @@ class CRobotManager : public ConfigFile
   private:
     recordMobot_t *_mobots[MAX_CONNECTED];
     recordMobot_t *_tmpMobot;
+    connectStatus_t _mobotStatus[MAX_CONNECTED];
     /* _connectAddresses is an array of pointers to 
        ConfigFile::_addresses */
 };
