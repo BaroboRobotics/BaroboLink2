@@ -43,7 +43,6 @@ void* connectThread(void* arg)
 
 gboolean progressBarConnectUpdate(gpointer data)
 {
-#if 0
   static int counter[30];
   static GtkListStore* liststore_available = GTK_LIST_STORE(
       gtk_builder_get_object(g_builder, "liststore_availableRobots"));
@@ -124,8 +123,47 @@ gboolean progressBarConnectUpdate(gpointer data)
     }
     return TRUE;
   }
-#endif
   return FALSE;
+}
+
+gboolean connectDialogPulse(gpointer data)
+{
+  refreshConnectDialog();
+  return TRUE;
+}
+
+void on_button_Connect_clicked(GtkWidget* w, gpointer data)
+{
+  int index = (int)data;
+  struct connectThreadArg_s* arg;
+  arg = (struct connectThreadArg_s*)malloc(sizeof(struct connectThreadArg_s));
+  arg->connectIndex = index;
+  arg->connectionCompleted = 0;
+  gtk_widget_set_sensitive(w, FALSE);
+  THREAD_T thread;
+  THREAD_CREATE(&thread, connectThread, arg);
+  g_timeout_add(500, progressBarConnectUpdate, arg);
+}
+
+void on_button_Disconnect_clicked(GtkWidget* w, gpointer data)
+{
+  int index = (int) data;
+  /* We have to lock the controlDialog locks first to make sure we don't screw
+   * up their data. */
+  MUTEX_LOCK(&g_activeMobotLock);
+  g_robotManager->disconnect( index );
+  g_activeMobot = NULL;
+  MUTEX_UNLOCK(&g_activeMobotLock);
+  refreshConnectDialog();
+}
+
+void on_button_Remove_clicked(GtkWidget* w, gpointer data)
+{
+  int index = (int) data;
+  /* First, make sure the robot is disconnected */
+  g_robotManager->disconnect(index);
+  g_robotManager->remove(index);
+  refreshConnectDialog();
 }
 
 void on_button_connect_connect_clicked(GtkWidget* widget, gpointer data)
@@ -192,7 +230,11 @@ void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data)
 void refreshConnectDialog()
 {
   /* Create the GtkTable */
-  GtkWidget *rootTable = gtk_table_new(
+  static GtkWidget *rootTable = NULL;
+  if(rootTable != NULL) {
+    gtk_widget_destroy(rootTable);
+  }
+  rootTable = gtk_table_new(
       g_robotManager->numEntries()*3,
       6,
       FALSE);
@@ -210,24 +252,104 @@ void refreshConnectDialog()
         i*3, (i*3)+2, //rows
         GTK_FILL, GTK_FILL,
         2, 2);
-    /* Add an image denoting connection status for each one */
-    w = gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON);
-    gtk_widget_show(w);
-    gtk_table_attach( GTK_TABLE(rootTable),
-        w,
-        1, 2,
-        i*3, (i*3)+2,
-        GTK_FILL, GTK_FILL,
-        2, 2);
-    /* Add connect button */
-    w = gtk_button_new_with_label("Connect");
-    gtk_widget_show(w);
-    gtk_table_attach( GTK_TABLE(rootTable),
-        w,
-        2, 3,
-        i*3, (i*3)+2,
-        GTK_FILL, GTK_FILL,
-        2, 2);
+    /* Add connect/connecting/disconnect button */
+    recordMobot_t* mobot;
+    if(mobot = g_robotManager->getMobotIndex(i)) {
+      switch(mobot->connectStatus) {
+        case RMOBOT_NOT_CONNECTED:
+          w = gtk_button_new_with_label("Connect");
+          gtk_widget_show(w);
+          gtk_table_attach( GTK_TABLE(rootTable),
+              w,
+              2, 3,
+              i*3, (i*3)+2,
+              GTK_FILL, GTK_FILL,
+              2, 2);
+          /* Attach the connect/disconnect button signal handler */
+          g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(on_button_Connect_clicked), (void*)i);
+          /* Add an image denoting connection status for each one */
+          w = gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON);
+          gtk_widget_show(w);
+          gtk_table_attach( GTK_TABLE(rootTable),
+              w,
+              1, 2,
+              i*3, (i*3)+2,
+              GTK_FILL, GTK_FILL,
+              2, 2);
+          break;
+        case RMOBOT_CONNECTING:
+          w = gtk_button_new_with_label("Connecting...");
+          gtk_widget_show(w);
+          gtk_widget_set_sensitive(w, FALSE);
+          gtk_table_attach( GTK_TABLE(rootTable),
+              w,
+              2, 3,
+              i*3, (i*3)+2,
+              GTK_FILL, GTK_FILL,
+              2, 2);
+          /* Add an image denoting connection status for each one */
+          w = gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON);
+          gtk_widget_show(w);
+          gtk_table_attach( GTK_TABLE(rootTable),
+              w,
+              1, 2,
+              i*3, (i*3)+2,
+              GTK_FILL, GTK_FILL,
+              2, 2);
+          break;
+        case RMOBOT_CONNECTED:
+          w = gtk_button_new_with_label("Disconnect");
+          gtk_widget_show(w);
+          gtk_table_attach( GTK_TABLE(rootTable),
+              w,
+              2, 3,
+              i*3, (i*3)+2,
+              GTK_FILL, GTK_FILL,
+              2, 2);
+          /* Attach the connect/disconnect button signal handler */
+          g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(on_button_Disconnect_clicked), (void*)i);
+          /* Add an image denoting connection status for each one */
+          w = gtk_image_new_from_stock(GTK_STOCK_YES, GTK_ICON_SIZE_BUTTON);
+          gtk_widget_show(w);
+          gtk_table_attach( GTK_TABLE(rootTable),
+              w,
+              1, 2,
+              i*3, (i*3)+2,
+              GTK_FILL, GTK_FILL,
+              2, 2);
+          break;
+        default:
+          w = gtk_button_new_with_label("Meh?");
+          gtk_widget_show(w);
+          gtk_table_attach( GTK_TABLE(rootTable),
+              w,
+              2, 3,
+              i*3, (i*3)+2,
+              GTK_FILL, GTK_FILL,
+              2, 2);
+          break;
+      }
+    } else {
+      w = gtk_button_new_with_label("Connect");
+      gtk_widget_show(w);
+      gtk_table_attach( GTK_TABLE(rootTable),
+          w,
+          2, 3,
+          i*3, (i*3)+2,
+          GTK_FILL, GTK_FILL,
+          2, 2);
+      /* Attach the connect/disconnect button signal handler */
+      g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(on_button_Connect_clicked), (void*)i);
+      /* Add an image denoting connection status for each one */
+      w = gtk_image_new_from_stock(GTK_STOCK_NO, GTK_ICON_SIZE_BUTTON);
+      gtk_widget_show(w);
+      gtk_table_attach( GTK_TABLE(rootTable),
+          w,
+          1, 2,
+          i*3, (i*3)+2,
+          GTK_FILL, GTK_FILL,
+          2, 2);
+    }
     /* Add remove button */
     w = gtk_button_new_with_label("Remove");
     gtk_widget_show(w);
@@ -237,6 +359,7 @@ void refreshConnectDialog()
         i*3, (i*3)+2,
         GTK_FILL, GTK_FILL,
         2, 2);
+    g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(on_button_Remove_clicked), (void*)i);
     /* Add move-up button */
     w = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
     gtk_widget_show(w);
@@ -271,7 +394,8 @@ void refreshConnectDialog()
   gtk_layout_set_size(GTK_LAYOUT(layout), sizeRequest.width, sizeRequest.height);
   gtk_layout_put(GTK_LAYOUT(layout), rootTable, 0, 0);
   gtk_widget_show(rootTable);
-#if 0
+
+  /* Refresh the list stores, etc. */
   static GtkListStore* liststore_available = GTK_LIST_STORE(
       gtk_builder_get_object(g_builder, "liststore_availableRobots"));
   static GtkListStore* liststore_connected = GTK_LIST_STORE(
@@ -283,7 +407,6 @@ void refreshConnectDialog()
   gtk_list_store_clear(liststore_connected);
 
   /* Populate the widgets */
-  int i;
   GtkTreeIter iter;
   GtkTreeIter connectedIter;
   for(i = 0; i < g_robotManager->numEntries(); i++) {
@@ -328,5 +451,5 @@ void refreshConnectDialog()
   }
   */
   g_dndConnect = true;
-#endif
 }
+

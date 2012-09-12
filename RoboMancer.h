@@ -49,7 +49,11 @@ G_MODULE_EXPORT void on_button_connect_moveDownAvailable_clicked(GtkWidget* widg
 G_MODULE_EXPORT void on_button_connect_connect_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_connect_disconnect_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_connectFailedOk_clicked(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_button_Connect_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_Disconnect_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_Remove_clicked(GtkWidget* w, gpointer data);
 void refreshConnectDialog();
+gboolean connectDialogPulse(gpointer data);
 
 /* Reflashing Process */
 extern char g_reflashAddress[80];

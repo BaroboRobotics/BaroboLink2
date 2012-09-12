@@ -52,6 +52,7 @@ void initialize()
   g_robotManager->read( Mobot_getConfigFilePath() );
 
   refreshConnectDialog();
+  //g_timeout_add(1000, connectDialogPulse, NULL);
 
   /* Add Scintilla */
   g_scieditor = scintilla_new();

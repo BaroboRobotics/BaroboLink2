@@ -8,7 +8,6 @@ CRobotManager::CRobotManager()
   int i;
   for(i = 0; i < MAX_CONNECTED; i++) {
     _mobots[i] = NULL;
-    _mobotStatus[i] = RM_NOT_CONNECTED;
   }
   _isPlaying = false;
 }
@@ -74,14 +73,15 @@ int CRobotManager::connectIndex(int index)
   }
   char name[80];
   sprintf(name, "mobot%d", numConnected()+1);
-  recordMobot_t *mobot = (recordMobot_t*)malloc(sizeof(recordMobot_t));
-  RecordMobot_init(mobot, name);
+  if(_mobots[index] == NULL) {
+    recordMobot_t *mobot = (recordMobot_t*)malloc(sizeof(recordMobot_t));
+    _mobots[index] = mobot;
+  }
+  RecordMobot_init(_mobots[index], name);
   int err;
-  if(err = RecordMobot_connectWithAddress( mobot, getEntry(index), 1 )) {
+  if(err = RecordMobot_connectWithAddress( _mobots[index], getEntry(index), 1 )) {
     return err;
   }
-  /* Insert the newly connected robot to the bottom of the list. */
-  _mobots[index] = mobot;
   return err;
 }
 
@@ -91,6 +91,7 @@ int CRobotManager::disconnect(int index)
     return -1;
   }
   Mobot_disconnect((mobot_t*)_mobots[index]);
+  //free(_mobots[index]);
   _mobots[index] = NULL;
   return 0;
 }

@@ -48,6 +48,13 @@ private:
 };
 #endif
 
+typedef enum recordMobotConnectStatus_e
+{
+  RMOBOT_NOT_CONNECTED,
+  RMOBOT_CONNECTING,
+  RMOBOT_CONNECTED
+} recordMobotConnectStatus_t;
+
 typedef struct recordMobot_s
 {
   mobot_t mobot;
@@ -58,6 +65,7 @@ typedef struct recordMobot_s
   char address[80];
   bool bound; /* Is the mobot bound via external TCP socket? */
   int firmwareVersion;
+  recordMobotConnectStatus_t connectStatus;
 } recordMobot_t;
 
 #ifdef __cplusplus
@@ -79,6 +87,7 @@ int RecordMobot_clearAllMotions(recordMobot_t* mobot);
 int RecordMobot_moveMotion(recordMobot_t* mobot, int fromindex, int toindex);
 int RecordMobot_swapMotion(recordMobot_t* mobot, int index1, int index2);
 void RecordMobot_setName(recordMobot_t* mobot, const char* name);
+recordMobotConnectStatus_t RecordMobot_connectStatus(recordMobot_t* mobot);
 #ifdef __cplusplus
 }
 #endif

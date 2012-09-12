@@ -16,6 +16,7 @@ void RecordMobot_init(recordMobot_t* mobot, char *name)
   mobot->motions = (struct motion_s**)malloc(sizeof(struct motion_s*) * 100); 
   mobot->numMotionsAllocated = 100;
   mobot->bound = false;
+  mobot->connectStatus = RMOBOT_NOT_CONNECTED;
   strcpy(mobot->name, name);
 }
 
@@ -28,10 +29,13 @@ int RecordMobot_connectWithAddress(recordMobot_t* mobot, const char address[], i
 {
   int rc;
   strcpy(mobot->address, address);
+  mobot->connectStatus = RMOBOT_CONNECTING;
   if(rc = Mobot_connectWithAddress((mobot_t*)mobot, address, channel)) {
+    mobot->connectStatus = RMOBOT_NOT_CONNECTED;
     return rc;
   }
   mobot->firmwareVersion = Mobot_getVersion((mobot_t*)mobot);
+    mobot->connectStatus = RMOBOT_CONNECTED;
   return 0;
 }
 
@@ -213,4 +217,9 @@ void RecordMobot_setName(recordMobot_t* mobot, const char* name)
 {
   strncpy(mobot->name, name, 78);
   mobot->name[79] = '\0';
+}
+
+recordMobotConnectStatus_t RecordMobot_connectStatus(recordMobot_t* mobot)
+{
+  return mobot->connectStatus;
 }
