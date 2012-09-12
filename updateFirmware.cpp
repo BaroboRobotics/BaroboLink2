@@ -27,9 +27,8 @@ gboolean updateProgrammingProgressTimeout(gpointer data);
 
 void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data)
 {
-#if 0
   /* Try and grab the HW rev number from the robot */
-  int index = getConnectSelectedIndex();
+  int index = (int)data;
   recordMobot_t* mobot = g_robotManager->getMobotIndex(index);
   if(mobot == NULL) {
     return;
@@ -51,7 +50,6 @@ void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data)
     gtk_notebook_set_current_page(g_notebookRoot, 2);
   }
   */
-#endif
 }
 
 void on_button_cancelFlash_clicked(GtkWidget* widget, gpointer data)

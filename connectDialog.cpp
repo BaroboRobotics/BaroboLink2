@@ -253,7 +253,7 @@ void refreshConnectDialog()
   }
   rootTable = gtk_table_new(
       g_robotManager->numEntries()*3,
-      6,
+      7,
       FALSE);
   /* For each Mobot entry, we need to compose a set of child widgets and attach
    * them to the right places on the grid */
@@ -397,12 +397,25 @@ void refreshConnectDialog()
         GTK_FILL, GTK_FILL,
         2, 2);
     g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(on_button_MoveDown_clicked), (void*)i);
+    /* Maybe add an "Upgrade Firmware" button */
+    if( (g_robotManager->getMobotIndex(i) != NULL) &&
+        (g_robotManager->getMobotIndex(i)->firmwareVersion < Mobot_protocolVersion()) ) {
+      w = gtk_button_new_with_label("Upgrade\nFirmware");
+      gtk_widget_show(w);
+      gtk_table_attach( GTK_TABLE(rootTable),
+          w,
+          5, 6,
+          i*3, (i*3)+2,
+          GTK_FILL, GTK_FILL,
+          2, 2);
+      g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(on_button_updateFirmware_clicked), (void*)i);
+    }
     /* Add a horizontal separator */
     w = gtk_hseparator_new();
     gtk_widget_show(w);
     gtk_table_attach( GTK_TABLE(rootTable),
         w,
-        0, 5,
+        0, 6,
         i*3+2, (i*3)+3,
         GTK_FILL, GTK_FILL,
         2, 2);
