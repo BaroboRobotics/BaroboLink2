@@ -46,6 +46,34 @@ void CRobotManager::moveMobot(int destIndex, int srcIndex)
   _mobots[srcIndex] = NULL;
 }
 
+int CRobotManager::moveEntryUp(int index)
+{
+  int rc;
+  if(rc = ConfigFile::moveEntryUp(index)) {
+    return rc;
+  }
+  /* Just swap the data of this entry with the one above it */
+  recordMobot_t* tmp;
+  tmp = _mobots[index-1];
+  _mobots[index-1] = _mobots[index];
+  _mobots[index] = tmp;
+  return 0;
+}
+
+int CRobotManager::moveEntryDown(int index)
+{
+  int rc;
+  if(rc = ConfigFile::moveEntryDown(index)) {
+    return rc;
+  }
+  /* Swap with entry below */
+  recordMobot_t *tmp;
+  tmp = _mobots[index+1];
+  _mobots[index+1] = _mobots[index];
+  _mobots[index] = tmp;
+  return 0;
+}
+
 int CRobotManager::insertEntry(const char* entry, int index)
 {
   int rc;

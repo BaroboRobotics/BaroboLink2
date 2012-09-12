@@ -163,6 +163,23 @@ void on_button_Remove_clicked(GtkWidget* w, gpointer data)
   /* First, make sure the robot is disconnected */
   g_robotManager->disconnect(index);
   g_robotManager->remove(index);
+  g_robotManager->write();
+  refreshConnectDialog();
+}
+
+void on_button_MoveUp_clicked(GtkWidget* w, gpointer data)
+{
+  int index = (int)data;
+  g_robotManager->moveEntryUp(index);
+  g_robotManager->write();
+  refreshConnectDialog();
+}
+
+void on_button_MoveDown_clicked(GtkWidget* w, gpointer data)
+{
+  int index = (int)data;
+  g_robotManager->moveEntryDown(index);
+  g_robotManager->write();
   refreshConnectDialog();
 }
 
@@ -369,6 +386,7 @@ void refreshConnectDialog()
         i*3, (i*3)+1,
         GTK_FILL, GTK_FILL,
         2, 2);
+    g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(on_button_MoveUp_clicked), (void*)i);
     /* Add move-down button */
     w = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
     gtk_widget_show(w);
@@ -378,6 +396,7 @@ void refreshConnectDialog()
         (i*3)+1, (i*3)+2,
         GTK_FILL, GTK_FILL,
         2, 2);
+    g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(on_button_MoveDown_clicked), (void*)i);
     /* Add a horizontal separator */
     w = gtk_hseparator_new();
     gtk_widget_show(w);

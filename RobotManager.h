@@ -18,6 +18,8 @@ class CRobotManager : public ConfigFile
     ~CRobotManager();
     int addEntry(const char* entry);
     void moveMobot(int destIndex, int srcIndex);
+    int moveEntryUp(int index);
+    int moveEntryDown(int index);
     int insertEntry(const char* entry, int index);
     bool isConnected(int index);
     bool isPlaying();

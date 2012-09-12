@@ -52,6 +52,8 @@ G_MODULE_EXPORT void on_button_connectFailedOk_clicked(GtkWidget* widget, gpoint
 G_MODULE_EXPORT void on_button_Connect_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_Disconnect_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_Remove_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_MoveDown_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_MoveUp_clicked(GtkWidget* w, gpointer data);
 void refreshConnectDialog();
 gboolean connectDialogPulse(gpointer data);
 
