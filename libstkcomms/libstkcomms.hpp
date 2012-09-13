@@ -8,7 +8,6 @@
 #include <bluetooth/rfcomm.h>
 #else
 #include <winsock2.h>
-#include <Ws2bth.h>
 //#include <winsock2.h>
 typedef unsigned char uint8_t;
 #define uint16_t UINT16
@@ -51,9 +50,7 @@ class CStkComms
   int programAllAsync(const char* hexFileName);
   int programAllAsync(const char* hexFileName, int hwRev);
   double getProgress();
-  inline int isProgramComplete() {
-    return _programComplete;
-  }
+  int isProgramComplete();
   int disconnect();
   int handshake();
   int setDevice(
@@ -96,6 +93,7 @@ class CStkComms
   int checkPage(CHexFile* hexfile, uint16_t address, uint16_t size = 0x80);
   int universal(uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4);
 
+#ifdef BUILD_CSTKCOMMS
   private:
   int _socket;
   bool _isConnected;
@@ -116,6 +114,7 @@ class CStkComms
   int recvBytes(uint8_t* buf, size_t size);
 
   int setdtr(int on);
+#endif
 };
 
 enum hexLineType_e

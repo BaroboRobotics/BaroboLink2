@@ -2,6 +2,7 @@
 #include <gtk/gtk.h>
 #include "RoboMancer.h"
 #include "thread_macros.h"
+#include "mobot.h"
 
 char g_tmpBuf[80];
 bool g_dndConnect = true;

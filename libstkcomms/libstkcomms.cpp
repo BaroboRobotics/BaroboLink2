@@ -4,6 +4,9 @@
 #include <stdio.h>
 #ifndef _WIN32
 #include <sys/ioctl.h>
+#else
+#include <winsock2.h>
+#include <Ws2bth.h>
 #endif
 #include "libstkcomms.hpp"
 #include "command.h"
@@ -297,6 +300,10 @@ double CStkComms::getProgress()
   progress = _progress;
   MUTEX_UNLOCK(_progressLock);
   return progress;
+}
+
+int CStkComms::isProgramComplete() {
+  return _programComplete;
 }
 
 int CStkComms::handshake()
