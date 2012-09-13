@@ -20,34 +20,35 @@
 #define THROW
 #endif
 
-CStkComms::CStkComms()
+int stkComms_init(stkComms_t* comms)
 {
-  _isConnected = false;
-  _programComplete = 0;
-  MUTEX_NEW(_progressLock);
-  MUTEX_INIT(_progressLock);
-  COND_NEW(_progressCond);
-  COND_INIT(_progressCond);
+  comms->isConnected = false;
+  comms->programComplete = 0;
+  MUTEX_NEW(comms->progressLock);
+  MUTEX_INIT(comms->progressLock);
+  COND_NEW(comms->progressCond);
+  COND_INIT(comms->progressCond);
+  return 0;
 }
 
-CStkComms::~CStkComms()
+int stkComms_destroy(stkComms_t* comms)
 {
-  free(_progressLock);
-  free(_progressCond);
+  free(comms->progressLock);
+  free(comms->progressCond);
 }
 
-int CStkComms::connect(const char addr[])
+int stkComms_connect(stkComms_t* comms, const char addr[])
 {
   int err = 0;
   int flags;
 #ifndef _WIN32
-  _socket = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
+  comms->socket = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
 #else
-  _socket = socket(AF_BTH, SOCK_STREAM, BTHPROTO_RFCOMM);
+  comms->socket = socket(AF_BTH, SOCK_STREAM, BTHPROTO_RFCOMM);
 #endif
 
 #ifdef _WIN32
-  if(_socket == INVALID_SOCKET) {
+  if(comms->socket == INVALID_SOCKET) {
     err = WSAGetLastError();
     printf("Could not bind to socket. Error %d\n", err);
     if(err == 10047) {
@@ -57,20 +58,20 @@ int CStkComms::connect(const char addr[])
     }
   }
 #else
-  if(_socket == -1) {
+  if(comms->socket == -1) {
     fprintf(stderr, "Could not bind to socket. %d\n", errno);
     return -1;
   }
 #endif
   // set the connection parameters (who to connect to)
 #ifndef _WIN32
-  _addr.rc_family = AF_BLUETOOTH;
-  _addr.rc_channel = (uint8_t) 1;
-  str2ba( addr, &_addr.rc_bdaddr );
+  comms->addr.rc_family = AF_BLUETOOTH;
+  comms->addr.rc_channel = (uint8_t) 1;
+  str2ba( addr, &comms->addr.rc_bdaddr );
 #else
-  _addr.addressFamily = AF_BTH;
-  str2ba( addr, (bdaddr_t*)&_addr.btAddr);
-  _addr.port = 1;
+  comms->addr.addressFamily = AF_BTH;
+  str2ba( addr, (bdaddr_t*)&comms->addr.btAddr);
+  comms->addr.port = 1;
 #endif
 
   // connect to server
@@ -81,9 +82,9 @@ int CStkComms::connect(const char addr[])
     if(tries > 2) {
       break;
     }
-    status = ::connect(_socket, (const struct sockaddr *)&_addr, sizeof(_addr));
+    status = ::connect(comms->socket, (const struct sockaddr *)&comms->addr, sizeof(comms->addr));
     if(status == 0) {
-      _isConnected = 1;
+      comms->isConnected = 1;
     } 
     tries++;
   }
@@ -122,205 +123,71 @@ int CStkComms::connect(const char addr[])
   }
   /* Make the socket non-blocking */
 #ifndef _WIN32
-  flags = fcntl(_socket, F_GETFL, 0);
-  fcntl(_socket, F_SETFL, flags | O_NONBLOCK);
-  setdtr(1);
+  flags = fcntl(comms->socket, F_GETFL, 0);
+  fcntl(comms->socket, F_SETFL, flags | O_NONBLOCK);
+  stkComms_setdtr(comms, 1);
   sleep(1);
-  setdtr(0);
+  stkComms_setdtr(comms, 0);
 #else
-  ioctlsocket(_socket, FIONBIO, (u_long*)1);
+  ioctlsocket(comms->socket, FIONBIO, (u_long*)1);
 #endif
   return 0;
 }
 
-int CStkComms::disconnect()
+int stkComms_disconnect(stkComms_t* comms)
 {
 #ifndef _WIN32
-  return close(_socket);
+  return close(comms->socket);
 #else
-  return closesocket(_socket);
+  return closesocket(comms->socket);
 #endif
 }
 
-int CStkComms::setSocket(int socket)
+int stkComms_setSocket(stkComms_t* comms, int socket)
 {
   int flags;
-  _socket = socket;
+  comms->socket = socket;
   /* Make the socket non-blocking */
 #ifndef _WIN32
-  flags = fcntl(_socket, F_GETFL, 0);
-  fcntl(_socket, F_SETFL, flags | O_NONBLOCK);
+  flags = fcntl(comms->socket, F_GETFL, 0);
+  fcntl(comms->socket, F_SETFL, flags | O_NONBLOCK);
 #else
-  ioctlsocket(_socket, FIONBIO, (u_long*)1);
+  ioctlsocket(comms->socket, FIONBIO, (u_long*)1);
 #endif
-  _isConnected = 1;
+  comms->isConnected = 1;
 
   return 0;
 }
 
-int CStkComms::programAll(const char* hexFileName)
-{
-  if(handshake()) {
-    THROW;
-    return -1;
-  }
-  if(setDevice()) {
-    THROW;
-    return -1;
-  }
-  if(setDeviceExt()) {
-    THROW;
-    return -1;
-  }
-  if(enterProgMode()) {
-    THROW;
-    return -1;
-  }
-  if(checkSignature()) {
-    THROW;
-    return -1;
-  }
-  if(progFuses()) {
-    THROW;
-    return -1;
-  }
-  if(progHexFile(hexFileName)) {
-    THROW;
-    return -1;
-  }
-  if(checkFlash(hexFileName)) {
-    THROW;
-    return -1;
-  }
-  if(leaveProgMode()) {
-    THROW;
-    return -1;
-  }
-  _progress = 1.1;
-  _programComplete = 1;
-  return 0;  
-}
-
-int CStkComms::programAll(const char* hexFileName, int hwRev)
-{
-  if(handshake()) {
-    THROW;
-    return -1;
-  }
-  if(setDevice()) {
-    THROW;
-    return -1;
-  }
-  if(setDeviceExt()) {
-    THROW;
-    return -1;
-  }
-  if(enterProgMode()) {
-    THROW;
-    return -1;
-  }
-  if(checkSignature()) {
-    THROW;
-    return -1;
-  }
-  /*
-  if(writeData(0x11, hwRev)) {
-    THROW;
-    return -1;
-  }
-  */
-  if(progFuses()) {
-    THROW;
-    return -1;
-  }
-  if(progHexFile(hexFileName)) {
-    THROW;
-    return -1;
-  }
-  if(checkFlash(hexFileName)) {
-    THROW;
-    return -1;
-  }
-  if(leaveProgMode()) {
-    THROW;
-    return -1;
-  }
-  _progress = 1.1;
-  _programComplete = 1;
-  return 0;  
-}
-
-struct programAllThreadArg{
-  const char* hexFileName;
-  CStkComms* stkComms;
-  int hwRev;
-};
-
-void* programAllThread(void* arg)
-{
-  programAllThreadArg *a = (programAllThreadArg*)arg;
-  if(a->hwRev == 0) {
-    a->stkComms->programAll(a->hexFileName);
-  } else {
-    a->stkComms->programAll(a->hexFileName, a->hwRev);
-  }
-  return NULL;
-}
-
-int CStkComms::programAllAsync(const char* hexFileName)
-{
-  THREAD_T thread;
-  struct programAllThreadArg *a;
-  a = (struct programAllThreadArg*)malloc(sizeof(struct programAllThreadArg));
-  a->hexFileName = hexFileName;
-  a->stkComms = this;
-  a->hwRev = 0;
-  _progress = 0.01;
-  THREAD_CREATE(&thread, programAllThread, a);
-  return 0;
-}
-
-int CStkComms::programAllAsync(const char* hexFileName, int hwRev)
-{
-  THREAD_T thread;
-  struct programAllThreadArg *a;
-  a = (struct programAllThreadArg*)malloc(sizeof(struct programAllThreadArg));
-  a->hexFileName = hexFileName;
-  a->stkComms = this;
-  a->hwRev = hwRev;
-  _progress = 0.01;
-  THREAD_CREATE(&thread, programAllThread, a);
-  return 0;
-}
-
-double CStkComms::getProgress()
+double stkComms_getProgress(stkComms_t* comms)
 {
   double progress;
-  MUTEX_LOCK(_progressLock);
-  progress = _progress;
-  MUTEX_UNLOCK(_progressLock);
+  MUTEX_LOCK(comms->progressLock);
+  progress = comms->progress;
+  MUTEX_UNLOCK(comms->progressLock);
   return progress;
 }
 
-int CStkComms::isProgramComplete() {
-  return _programComplete;
+int stkComms_isProgramComplete(stkComms_t* comms) 
+{
+  return comms->programComplete;
 }
 
-int CStkComms::handshake()
+int stkComms_handshake(stkComms_t* comms)
 {
   uint8_t buf[10];
   int len;
   while(1) {
     buf[0] = Cmnd_STK_GET_SYNC;
     buf[1] = Sync_CRC_EOP;
-    sendBytes(buf, 2);
+    stkComms_sendBytes(comms, buf, 2);
     /* Wait a second and try to read */
 #ifndef _WIN32
     sleep(1);
 #else
     Sleep(1000);
 #endif
-    len = recvBytes(buf, 10);
+    len = stkComms_recvBytes2(comms, buf, 10);
     if(len == 2) {break;}
   }
   if(len == 2 && buf[0] == Resp_STK_INSYNC )
@@ -329,7 +196,8 @@ int CStkComms::handshake()
   return -1;
 }
 
-int CStkComms::setDevice(
+int stkComms_setDevice(
+      stkComms_t* comms,
       uint8_t     DeviceCode,
       uint8_t     Revision,
       uint8_t     progtype,
@@ -375,10 +243,10 @@ int CStkComms::setDevice(
   buf[20] =      flashsize1;
   buf[21] = Sync_CRC_EOP;
   int rc;
-  if(rc = sendBytes(buf, 22)) {
+  if(rc = stkComms_sendBytes(comms, buf, 22)) {
     THROW;
   }
-  rc = recvBytes(buf, 2, 25);
+  rc = stkComms_recvBytes(comms, buf, 2, 25);
   if(rc != 2) {
     THROW;
   }
@@ -391,7 +259,8 @@ int CStkComms::setDevice(
   return 0;
 }
 
-int CStkComms::setDeviceExt(
+int stkComms_setDeviceExt(
+      stkComms_t* comms,
       uint8_t    commandsize,
       uint8_t    eeprompagesize,
       uint8_t    signalpagel,
@@ -407,11 +276,11 @@ int CStkComms::setDeviceExt(
   buf[5] = resetdisable;
   buf[6] = Sync_CRC_EOP;
   int rc;
-  if(rc = sendBytes(buf, 7)) {
+  if(rc = stkComms_sendBytes(comms, buf, 7)) {
     THROW;
     return rc;
   }
-  rc = recvBytes(buf, 2, 10);
+  rc = stkComms_recvBytes(comms, buf, 2, 10);
   if(rc != 2) {
     THROW;
     return -1;
@@ -427,16 +296,16 @@ int CStkComms::setDeviceExt(
   return 0;
 }
 
-int CStkComms::enterProgMode()
+int stkComms_enterProgMode(stkComms_t* comms)
 {
   uint8_t buf[10];
   buf[0] = Cmnd_STK_ENTER_PROGMODE;
   buf[1] = Sync_CRC_EOP;
   int rc;
-  if(rc = sendBytes(buf, 2)) {
+  if(rc = stkComms_sendBytes(comms, buf, 2)) {
     return rc;
   }
-  rc = recvBytes(buf, 2, 10);
+  rc = stkComms_recvBytes(comms, buf, 2, 10);
   if(rc != 2) {
     return -1;
   }
@@ -449,16 +318,16 @@ int CStkComms::enterProgMode()
   return 0;
 }
 
-int CStkComms::leaveProgMode()
+int stkComms_leaveProgMode(stkComms_t* comms)
 {
   uint8_t buf[10];
   buf[0] = Cmnd_STK_LEAVE_PROGMODE;
   buf[1] = Sync_CRC_EOP;
   int rc;
-  if(rc = sendBytes(buf, 2)) {
+  if(rc = stkComms_sendBytes(comms, buf, 2)) {
     return rc;
   }
-  rc = recvBytes(buf, 2, 10);
+  rc = stkComms_recvBytes(comms, buf, 2, 10);
   if(rc != 2) {
     return -1;
   }
@@ -471,16 +340,16 @@ int CStkComms::leaveProgMode()
   return 0;
 }
 
-int CStkComms::checkSignature()
+int stkComms_checkSignature(stkComms_t* comms)
 {
   uint8_t buf[10];
   buf[0] = Cmnd_STK_READ_SIGN;
   buf[1] = Sync_CRC_EOP;
   int rc;
-  if(rc = sendBytes(buf, 2)) {
+  if(rc = stkComms_sendBytes(comms, buf, 2)) {
     return rc;
   }
-  rc = recvBytes(buf, 5, 10);
+  rc = stkComms_recvBytes(comms, buf, 5, 10);
   if(rc != 5) {
     return -1;
   }
@@ -490,18 +359,18 @@ int CStkComms::checkSignature()
   if(buf[4] != Resp_STK_OK) {
     return -1;
   }
-  memcpy(&_signature[0], &buf[1], 3);
+  memcpy(&comms->signature[0], &buf[1], 3);
   buf[0] = 0x1e;
   buf[1] = 0x95;
   buf[2] = 0x0f;
-  if(memcmp(_signature, buf, 3)) {
+  if(memcmp(comms->signature, buf, 3)) {
     fprintf(stderr, "Device Signature incorrect.\n");
     return -1;
   }
   return 0;
 }
 
-int CStkComms::loadAddress(uint16_t address)
+int stkComms_loadAddress(stkComms_t* comms, uint16_t address)
 {
   uint8_t buf[10];
   buf[0] = Cmnd_STK_LOAD_ADDRESS;
@@ -509,11 +378,11 @@ int CStkComms::loadAddress(uint16_t address)
   buf[2] = address>>8;
   buf[3] = Sync_CRC_EOP;
   int rc;
-  if(rc = sendBytes(buf, 4))
+  if(rc = stkComms_sendBytes(comms, buf, 4))
   {
     return -1;
   }
-  rc = recvBytes(buf, 2, 4);
+  rc = stkComms_recvBytes(comms, buf, 2, 4);
   if(rc != 2)
   {
     THROW;
@@ -530,7 +399,7 @@ int CStkComms::loadAddress(uint16_t address)
   return 0;
 }
 
-int CStkComms::progHexFile(const char* filename)
+int stkComms_progHexFile(stkComms_t* comms, const char* filename)
 {
   CHexFile *file = new CHexFile(filename);
   uint16_t pageSize = 128;
@@ -540,7 +409,7 @@ int CStkComms::progHexFile(const char* filename)
   uint16_t address = 0; // The address adresses 2-byte locations
   while(address*2 < file->len())
   {
-    loadAddress(address);
+    stkComms_loadAddress(comms, address);
     for(
         i = 0; 
         (i < pageSize) && ((address*2 + i) < file->len()); 
@@ -548,20 +417,20 @@ int CStkComms::progHexFile(const char* filename)
     {
       buf[i] = file->getByte(address*2 + i);
     }
-    progPage(buf, i);
+    stkComms_progPage(comms, buf, i);
     address += pageSize/2;
     /* Update the progress tracker */
-    MUTEX_LOCK(_progressLock);
-    _progress = 0.5 * ((double)address*2) / (double)file->len();
-    COND_SIGNAL(_progressCond);
-    MUTEX_UNLOCK(_progressLock);
+    MUTEX_LOCK(comms->progressLock);
+    comms->progress = 0.5 * ((double)address*2) / (double)file->len();
+    COND_SIGNAL(comms->progressCond);
+    MUTEX_UNLOCK(comms->progressLock);
   }
   delete file;
   delete[] buf;
   return 0;
 }
 
-int CStkComms::checkFlash(const char* filename)
+int stkComms_checkFlash(stkComms_t* comms, const char* filename)
 {
   CHexFile *hf = new CHexFile(filename);
   int i;
@@ -569,29 +438,29 @@ int CStkComms::checkFlash(const char* filename)
   uint16_t pageSize = 0x80;
   for(i = 0; i*2 < hf->len(); i += addrIncr)
   {
-    if(checkPage(hf, i, i*2+pageSize > hf->len()? hf->len() - i*2 : pageSize))
+    if(stkComms_checkPage(comms, hf, i, i*2+pageSize > hf->len()? hf->len() - i*2 : pageSize))
     {
       THROW;
       return -1;
     }
     /* Update the progress tracker */
-    MUTEX_LOCK(_progressLock);
-    _progress = 0.5 + 0.5 * ((double)i*2) / (double)hf->len();
-    COND_SIGNAL(_progressCond);
-    MUTEX_UNLOCK(_progressLock);
+    MUTEX_LOCK(comms->progressLock);
+    comms->progress = 0.5 + 0.5 * ((double)i*2) / (double)hf->len();
+    COND_SIGNAL(comms->progressCond);
+    MUTEX_UNLOCK(comms->progressLock);
   }
-  MUTEX_LOCK(_progressLock);
-  _progress = 1;
-  COND_SIGNAL(_progressCond);
-  MUTEX_UNLOCK(_progressLock);
+  MUTEX_LOCK(comms->progressLock);
+  comms->progress = 1;
+  COND_SIGNAL(comms->progressCond);
+  MUTEX_UNLOCK(comms->progressLock);
   return 0;
 }
 
-int CStkComms::checkPage(CHexFile* hexfile, uint16_t address, uint16_t size)
+int stkComms_checkPage(stkComms_t* comms, CHexFile* hexfile, uint16_t address, uint16_t size)
 {
   /* First, load the address */
   int rc;
-  if(rc = loadAddress(address)) {
+  if(rc = stkComms_loadAddress(comms, address)) {
     THROW;
     return rc;
   }
@@ -602,9 +471,9 @@ int CStkComms::checkPage(CHexFile* hexfile, uint16_t address, uint16_t size)
   buf[2] = size & 0xFF;
   buf[3] = 'F';
   buf[4] = Sync_CRC_EOP;
-  sendBytes(buf, 5);
+  stkComms_sendBytes(comms, buf, 5);
   /* Now, get the data */
-  rc = recvBytes(buf, size+2, size+10);
+  rc = stkComms_recvBytes(comms, buf, size+2, size+10);
   if(rc != size+2) {
     THROW;
     delete[] buf;
@@ -624,7 +493,7 @@ int CStkComms::checkPage(CHexFile* hexfile, uint16_t address, uint16_t size)
   return 0;
 }
 
-int CStkComms::progPage(uint8_t* data, uint16_t size)
+int stkComms_progPage(stkComms_t* comms, uint8_t* data, uint16_t size)
 {
   uint8_t *buf = new uint8_t[size + 10];
   buf[0] = Cmnd_STK_PROG_PAGE;
@@ -634,10 +503,10 @@ int CStkComms::progPage(uint8_t* data, uint16_t size)
   memcpy(&buf[4], data, size);
   buf[size+4] = Sync_CRC_EOP;
   int rc;
-  if(rc = sendBytes(buf, size+5)) {
+  if(rc = stkComms_sendBytes(comms, buf, size+5)) {
     return rc;
   }
-  rc = recvBytes(buf, 2, size);
+  rc = stkComms_recvBytes(comms, buf, 2, size);
   if(rc != 2) {
     return -1;
   }
@@ -650,30 +519,30 @@ int CStkComms::progPage(uint8_t* data, uint16_t size)
   return 0;
 }
 
-int CStkComms::progFuses()
+int stkComms_progFuses(stkComms_t* comms)
 {
-  universal( 0xa0 , 0x03 , 0xfc , 0x00 );
-  universal( 0xa0 , 0x03 , 0xfd , 0x00 );
-  universal( 0xa0 , 0x03 , 0xfe , 0x00 );
-  universal( 0xa0 , 0x03 , 0xff , 0x00 );
+  stkComms_universal( comms, 0xa0 , 0x03 , 0xfc , 0x00 );
+  stkComms_universal( comms, 0xa0 , 0x03 , 0xfd , 0x00 );
+  stkComms_universal( comms, 0xa0 , 0x03 , 0xfe , 0x00 );
+  stkComms_universal( comms, 0xa0 , 0x03 , 0xff , 0x00 );
   return 0;
 }
 
-int CStkComms::readData(uint16_t address, uint8_t *byte)
+int stkComms_readData(stkComms_t* comms, uint16_t address, uint8_t *byte)
 {
   int rc;
-  if(rc = loadAddress(address)) {
+  if(rc = stkComms_loadAddress(comms, address)) {
     THROW;
     return -1;
   }
   uint8_t buf[10];
   buf[0] = Cmnd_STK_READ_DATA;
   buf[1] = Sync_CRC_EOP;
-  if(rc = sendBytes(buf, 2)) {
+  if(rc = stkComms_sendBytes(comms, buf, 2)) {
     THROW;
     return -1;
   }
-  rc = recvBytes(buf, 3, 10);
+  rc = stkComms_recvBytes(comms, buf, 3, 10);
   if(rc != 3) {
     THROW;
     return -1;
@@ -682,10 +551,10 @@ int CStkComms::readData(uint16_t address, uint8_t *byte)
   return 0;
 }
 
-int CStkComms::writeData(uint16_t address, uint8_t byte)
+int stkComms_writeData(stkComms_t* comms, uint16_t address, uint8_t byte)
 {
   int rc;
-  if(rc = loadAddress(address)) {
+  if(rc = stkComms_loadAddress(comms, address)) {
     THROW;
     return -1;
   }
@@ -693,11 +562,11 @@ int CStkComms::writeData(uint16_t address, uint8_t byte)
   buf[0] = Cmnd_STK_PROG_DATA;
   buf[1] = byte;
   buf[2] = Sync_CRC_EOP;
-  if(rc = sendBytes(buf, 3)) {
+  if(rc = stkComms_sendBytes(comms, buf, 3)) {
     THROW;
     return -1;
   }
-  rc = recvBytes(buf, 2, 10);
+  rc = stkComms_recvBytes(comms, buf, 2, 10);
   if(rc != 2) {
     THROW;
     return -1;
@@ -705,7 +574,7 @@ int CStkComms::writeData(uint16_t address, uint8_t byte)
   return 0;
 }
 
-int CStkComms::universal(uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4)
+int stkComms_universal(stkComms_t* comms, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4)
 {
   uint8_t buf[10];
   buf[0] = Cmnd_STK_UNIVERSAL;
@@ -715,10 +584,10 @@ int CStkComms::universal(uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t by
   buf[4] = byte4;
   buf[5] = Sync_CRC_EOP;
   int rc;
-  if(rc = sendBytes(buf, 6)) {
+  if(rc = stkComms_sendBytes(comms, buf, 6)) {
     return rc;
   }
-  rc = recvBytes(buf, 3, 10);
+  rc = stkComms_recvBytes(comms, buf, 3, 10);
   if(rc != 3) {
     THROW;
     return rc;
@@ -726,9 +595,9 @@ int CStkComms::universal(uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t by
   return 0;
 }
 
-int CStkComms::sendBytes(void* buf, size_t len)
+int stkComms_sendBytes(stkComms_t* comms, void* buf, size_t len)
 {
-  if(!_isConnected) {
+  if(!comms->isConnected) {
     return -1;
   }
 
@@ -740,12 +609,12 @@ int CStkComms::sendBytes(void* buf, size_t len)
   printf("\n");
 #endif
 #ifndef _WIN32
-  if(write(_socket, buf, len) == -1) {
+  if(write(comms->socket, buf, len) == -1) {
     perror("Write error");
     return -1;
   } 
 #else
-  if(send(_socket, (const char*)buf, len, 0) == -1) {
+  if(send(comms->socket, (const char*)buf, len, 0) == -1) {
     perror("Write error");
     return -1;
   } 
@@ -753,7 +622,7 @@ int CStkComms::sendBytes(void* buf, size_t len)
   return 0;
 }
 
-int CStkComms::recvBytes(uint8_t* buf, size_t expectedBytes, size_t size)
+int stkComms_recvBytes(stkComms_t* comms, uint8_t* buf, size_t expectedBytes, size_t size)
 {
   int len = 0;
   int rc;
@@ -761,9 +630,9 @@ int CStkComms::recvBytes(uint8_t* buf, size_t expectedBytes, size_t size)
   
   while(len < expectedBytes) {
 #ifndef _WIN32
-    rc = read(_socket, mybuf, size);
+    rc = read(comms->socket, mybuf, size);
 #else
-    rc = recvfrom(_socket, (char*)mybuf, 1, 0, (struct sockaddr*)0, 0);
+    rc = recvfrom(comms->socket, (char*)mybuf, 1, 0, (struct sockaddr*)0, 0);
 #endif
     if(rc > 0) {
       memcpy(&buf[len], mybuf, rc);
@@ -785,12 +654,12 @@ int CStkComms::recvBytes(uint8_t* buf, size_t expectedBytes, size_t size)
   return len;
 }
 
-int CStkComms::recvBytes(uint8_t* buf, size_t size)
+int stkComms_recvBytes2(stkComms_t* comms, uint8_t* buf, size_t size)
 {
   int len = 0;
   
 #ifndef _WIN32
-  len = read(_socket, buf, size);
+  len = read(comms->socket, buf, size);
 #else
 
 #endif
@@ -804,142 +673,18 @@ int CStkComms::recvBytes(uint8_t* buf, size_t size)
   return len;
 }
 
-int CStkComms::setdtr (int on)
+int stkComms_setdtr (stkComms_t* comms, int on)
 {
 #ifndef _WIN32
   int controlbits = TIOCM_DTR;
   if(on)
-    return(ioctl(_socket, TIOCMBIC, &controlbits));
+    return(ioctl(comms->socket, TIOCMBIC, &controlbits));
   else
-    return(ioctl(_socket, TIOCMBIS, &controlbits));
+    return(ioctl(comms->socket, TIOCMBIS, &controlbits));
 #else
   return 0;
 #endif
 } 
-
-CHexFile::CHexFile()
-{
-  _data = NULL;
-  _dataAllocSize = 0;
-  _len = 0;
-}
-
-CHexFile::CHexFile(const char* filename)
-{
-  _data = NULL;
-  _dataAllocSize = 0;
-  _len = 0;
-  loadFile(filename);
-}
-
-CHexFile::~CHexFile()
-{
-  if(_data) {
-    delete[] _data;
-  }
-  _dataAllocSize = 0;
-  _len = 0;
-}
-
-uint8_t CHexFile::getByte(int index)
-{
-  if((index < 0) || (index >= _len)) {
-    THROW;
-  }
-  return _data[index];
-}
-
-int CHexFile::loadFile(const char* filename)
-{
-  FILE* fp = fopen(filename, "r");
-  if(fp == NULL) {
-    return -1;
-  }
-  char buf[128];
-  char *str;
-  str = fgets(buf, 128, fp);
-  while(str != NULL) {
-    parseLine(str);
-    str = fgets(buf, 128, fp);
-  }
-  fclose(fp);
-  return 0;
-}
-
-void CHexFile::realloc()
-{
-  int incrSize = 256;
-  if(_dataAllocSize == 0) {
-    _data = new uint8_t[incrSize];
-  } else {
-    uint8_t* newData = new uint8_t[incrSize + _dataAllocSize];
-    memcpy(newData, _data, _len);
-    delete[] _data;
-    _data = newData;
-  }
-  _dataAllocSize += incrSize;
-}
-
-void CHexFile::parseLine(const char* line)
-{
-  int byteCount = 0;
-  unsigned int address;
-  int type;
-  unsigned int value;
-  unsigned int checksum;
-  const char* str;
-  int i;
-  // Data format taken from http://en.wikipedia.org/wiki/Intel_HEX
-  // Ensure that the first character is a ':'
-  if(line[0] != ':') {
-    THROW;
-  }
-  char buf[10];
-  // Get the first two hex chars
-  memset(buf, 0, sizeof(char)*10);
-  strncpy(buf, &line[1], 2);
-  sscanf(buf, "%x", &byteCount);
-  // Get the next four hex chars 
-  memset(buf, 0, sizeof(char)*10);
-  strncpy(buf, &line[3], 4);
-  sscanf(buf, "%x", &address);
-  // Next two chars are the type
-  memset(buf, 0, sizeof(char)*10);
-  strncpy(buf, &line[7], 2);
-  sscanf(buf, "%x", &type);
-
-  /* Now we need to check the type. If the type is data, make sure we have
-   * enough space in our buffer and read the data */
-  if(type != HEXLINE_DATA) {
-    return;
-  }
-
-  /* Check size */
-  while(_len + byteCount >= _dataAllocSize) {
-    realloc();
-  }
-  uint8_t checktest = 0;
-  checktest = byteCount + (uint8_t)(address>>8) + (uint8_t)(address&0xFF) + (uint8_t)type;
-  memset(buf, 0, sizeof(char)*10);
-  str = &line[9];
-  for(i = 0; i < byteCount; i++) {
-    strncpy(buf, str, 2);
-    sscanf(buf, "%x", &value);
-    _data[_len] = value;
-    checktest += value;
-    _len++;
-    str += 2;
-  }
-  sscanf(str, "%x", &checksum);
-  // 2's complement the checktest 
-  checktest = (checktest ^ 0xFF) + 0x01;
-  if(checktest != checksum) 
-    THROW;
-}
-
-void libstkcomms_is_present(void)
-{
-}
 
 #ifdef _WIN32
 void baswap(bdaddr_t *dst, const bdaddr_t *src)

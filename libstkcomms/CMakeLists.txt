@@ -9,14 +9,17 @@ project(LIBSTKCOMMS)
 if(CMAKE_HOST_WIN32)
 	add_library(stkcomms STATIC
 	  libstkcomms.cpp
+    libstkcomms++.cpp
 	  )
 	add_definitions(-DBUILD_CSTKCOMMS)
 	target_link_libraries(stkcomms Ws2_32)
   set_target_properties(stkcomms PROPERTIES COMPILE_FLAGS "/GS-")
 elseif(CMAKE_HOST_APPLE)
   set(CMAKE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+	add_definitions(-DBUILD_CSTKCOMMS)
   add_library(stkcomms STATIC
 	  libstkcomms.cpp
+	  libstkcomms++.cpp
 	  )
 	target_link_libraries(stkcomms pthread)
   set_target_properties(stkcomms PROPERTIES
@@ -25,8 +28,10 @@ elseif(CMAKE_HOST_APPLE)
           LIBRARY DESTINATION lib)
   install(FILES libstkcomms.hpp DESTINATION include)
 else(CMAKE_HOST_WIN32)
+	add_definitions(-DBUILD_CSTKCOMMS)
   add_library(stkcomms STATIC
 	  libstkcomms.cpp
+	  libstkcomms++.cpp
 	  )
   #target_link_libraries(stkcomms bluetooth pthread rt)
   install(TARGETS stkcomms 

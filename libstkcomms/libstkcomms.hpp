@@ -1,5 +1,5 @@
-#ifndef _LIBSTKCOMMS_H_
-#define _LIBSTKCOMMS_H_
+#ifndef _LIBSTKCOMMS_HPP_
+#define _LIBSTKCOMMS_HPP_
 #ifndef _WIN32
 #include <unistd.h>
 #include <sys/types.h>
@@ -18,6 +18,7 @@ void baswap(bdaddr_t *dst, const bdaddr_t *src);
 int str2ba(const char *str, bdaddr_t *ba);
 #endif
 #include "../thread_macros.h"
+#include "libstkcomms.h"
 
 class CHexFile
 {
@@ -92,29 +93,13 @@ class CStkComms
   int checkFlash(const char* filename);
   int checkPage(CHexFile* hexfile, uint16_t address, uint16_t size = 0x80);
   int universal(uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4);
-
-#ifdef BUILD_CSTKCOMMS
-  private:
-  int _socket;
-  bool _isConnected;
-  int _programComplete;
-#ifndef _WIN32
-  struct sockaddr_rc _addr;
-#else
-  SOCKADDR_BTH _addr;
-#endif
-  uint8_t _signature[3];
-
-  MUTEX_T* _progressLock;
-  COND_T* _progressCond;
-  double _progress;
-
   int sendBytes(void* buf, size_t len);
+  int setdtr (int on);
   int recvBytes(uint8_t* buf, size_t expectedBytes, size_t size);
   int recvBytes(uint8_t* buf, size_t size);
 
-  int setdtr(int on);
-#endif
+  private:
+  struct stkComms_s* _comms;
 };
 
 enum hexLineType_e
