@@ -400,7 +400,12 @@ void refreshConnectDialog()
     /* Maybe add an "Upgrade Firmware" button */
     if( (g_robotManager->getMobotIndex(i) != NULL) &&
         (g_robotManager->getMobotIndex(i)->firmwareVersion < Mobot_protocolVersion()) ) {
+      GdkColor color;
+      gdk_color_parse("yellow", &color);
       w = gtk_button_new_with_label("Upgrade\nFirmware");
+      gtk_widget_modify_bg(w, GTK_STATE_NORMAL, &color);
+      gdk_color_parse("#FFFF22", &color);
+      gtk_widget_modify_bg(w, GTK_STATE_PRELIGHT, &color);
       gtk_widget_show(w);
       gtk_table_attach( GTK_TABLE(rootTable),
           w,
