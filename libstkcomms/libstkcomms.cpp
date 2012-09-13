@@ -5,6 +5,7 @@
 #ifndef _WIN32
 #include <sys/ioctl.h>
 #else
+#pragma comment(lib, "ws2_32.lib")
 #include <winsock2.h>
 #include <Ws2bth.h>
 #endif
@@ -19,6 +20,13 @@
 #else
 #define THROW
 #endif
+
+stkComms_t* stkComms_new()
+{
+	stkComms_t* comms;
+	comms = (stkComms_t*)malloc(sizeof(stkComms_t));
+	return comms;
+}
 
 int stkComms_init(stkComms_t* comms)
 {
@@ -35,6 +43,7 @@ int stkComms_destroy(stkComms_t* comms)
 {
   free(comms->progressLock);
   free(comms->progressCond);
+  return 0;
 }
 
 int stkComms_connect(stkComms_t* comms, const char addr[])
@@ -168,9 +177,19 @@ double stkComms_getProgress(stkComms_t* comms)
   return progress;
 }
 
+void stkComms_setProgress(stkComms_t* comms, double progress)
+{
+	comms->progress = progress;
+}
+
 int stkComms_isProgramComplete(stkComms_t* comms) 
 {
   return comms->programComplete;
+}
+
+void stkComms_setProgramComplete(stkComms_t* comms, int complete)
+{
+	comms->programComplete = complete;
 }
 
 int stkComms_handshake(stkComms_t* comms)

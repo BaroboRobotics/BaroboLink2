@@ -9,7 +9,6 @@ project(LIBSTKCOMMS)
 if(CMAKE_HOST_WIN32)
 	add_library(stkcomms STATIC
 	  libstkcomms.cpp
-    libstkcomms++.cpp
 	  )
 	add_definitions(-DBUILD_CSTKCOMMS)
 	target_link_libraries(stkcomms Ws2_32)

@@ -11,41 +11,53 @@
 //#include <winsock2.h>
 typedef unsigned char uint8_t;
 #define uint16_t UINT16
+/*
 typedef struct bdaddr_s {
   UINT8 b[6];
 } bdaddr_t;
+*/
 void baswap(bdaddr_t *dst, const bdaddr_t *src);
 int str2ba(const char *str, bdaddr_t *ba);
 #endif
 #include "../thread_macros.h"
 
+#ifdef BUILD_CSTKCOMMS
 typedef struct stkComms_s
 {
   int socket;
   int isConnected;
   int programComplete;
-#ifndef _WIN32
-  struct sockaddr_rc addr;
-#else
-  SOCKADDR_BTH addr;
-#endif
   uint8_t signature[3];
 
   MUTEX_T* progressLock;
   COND_T* progressCond;
   double progress;
 
+#if !defined (_MSYS)
+#ifndef _WIN32
+  struct sockaddr_rc addr;
+#else
+  SOCKADDR_BTH addr;
+#endif
+#endif
 } stkComms_t;
+#else
+struct stkComms_s;
+typedef struct stkComms_s stkComms_t;
+#endif
 
 class CHexFile;
 extern "C" {
+stkComms_t* stkComms_new();
 int stkComms_init(stkComms_t* comms);
 int stkComms_destroy(stkComms_t* comms);
 int stkComms_connect(stkComms_t* comms, const char addr[]);
 int stkComms_disconnect(stkComms_t* comms);
 int stkComms_setSocket(stkComms_t* comms, int socket);
 double stkComms_getProgress(stkComms_t* comms);
+void stkComms_setProgress(stkComms_t* comms, double progress);
 int stkComms_isProgramComplete(stkComms_t* comms); 
+void stkComms_setProgramComplete(stkComms_t* comms, int complete);
 int stkComms_handshake(stkComms_t* comms);
 int stkComms_setDevice(
       stkComms_t* comms,

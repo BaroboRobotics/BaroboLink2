@@ -2,11 +2,13 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
-#ifndef _WIN32
-#include <sys/ioctl.h>
-#else
+#if defined (_WIN32)
 #include <winsock2.h>
 #include <Ws2bth.h>
+#elif defined (_MSYS)
+#include <winsock2.h>
+#else
+#include <sys/ioctl.h>
 #endif
 #include "libstkcomms.hpp"
 #include "libstkcomms.h"
@@ -23,7 +25,7 @@
 
 CStkComms::CStkComms()
 {
-  _comms = (stkComms_t*)malloc(sizeof(stkComms_t));
+  _comms = stkComms_new();
   stkComms_init(_comms);
 }
 
@@ -85,8 +87,8 @@ int CStkComms::programAll(const char* hexFileName)
     THROW;
     return -1;
   }
-  _comms->progress = 1.1;
-  _comms->programComplete = 1;
+	stkComms_setProgress(_comms, 1.1);
+	stkComms_setProgramComplete(_comms, 1);
   return 0;  
 }
 
@@ -134,8 +136,8 @@ int CStkComms::programAll(const char* hexFileName, int hwRev)
     THROW;
     return -1;
   }
-  _comms->progress = 1.1;
-  _comms->programComplete = 1;
+	stkComms_setProgress(_comms, 1.1);
+	stkComms_setProgramComplete(_comms, 1);
   return 0;  
 }
 
@@ -164,7 +166,7 @@ int CStkComms::programAllAsync(const char* hexFileName)
   a->hexFileName = hexFileName;
   a->stkComms = this;
   a->hwRev = 0;
-  _comms->progress = 0.01;
+	stkComms_setProgress(_comms, 0.01);
   THREAD_CREATE(&thread, programAllThread, a);
   return 0;
 }
@@ -177,7 +179,7 @@ int CStkComms::programAllAsync(const char* hexFileName, int hwRev)
   a->hexFileName = hexFileName;
   a->stkComms = this;
   a->hwRev = hwRev;
-  _comms->progress = 0.01;
+	stkComms_setProgress(_comms, 0.01);
   THREAD_CREATE(&thread, programAllThread, a);
   return 0;
 }
