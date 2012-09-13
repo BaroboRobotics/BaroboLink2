@@ -46,6 +46,17 @@ struct stkComms_s;
 typedef struct stkComms_s stkComms_t;
 #endif
 
+#ifdef BUILD_CSTKCOMMS
+typedef struct hexFile_s
+{
+    uint8_t *data;
+    int dataAllocSize;
+    int len;
+} hexFile_t;
+#else
+struct hexFile_s;
+typedef struct hexFile_s hexFile_t;
+#endif
 class CHexFile;
 extern "C" {
 stkComms_t* stkComms_new();
@@ -107,6 +118,17 @@ int stkComms_recvBytes(stkComms_t* comms, uint8_t* buf, size_t expectedBytes, si
 int stkComms_recvBytes2(stkComms_t* comms, uint8_t* buf, size_t size);
 
 void libstkcomms_is_present(void);
+
+
+hexFile_t* hexFile_new();
+int hexFile_init(hexFile_t* hf);
+int hexFile_init2(hexFile_t* hf, const char* filename);
+int hexFile_destroy(hexFile_t* hf);
+uint8_t hexFile_getByte(hexFile_t* hf, int index);
+int hexFile_loadFile(hexFile_t* hf, const char* filename);
+int hexFile_len(hexFile_t* hf); 
+void hexFile_realloc(hexFile_t* hf);
+void hexFile_parseLine(hexFile_t* hf, const char* line);
 }
 
 #endif

@@ -734,3 +734,138 @@ int str2ba(const char *str, bdaddr_t *ba)
 	return 0;
 }
 #endif
+
+hexFile_t* hexFile_new()
+{
+  hexFile_t* hf;
+  hf = (hexFile_t*)malloc(sizeof(hexFile_t));
+  return hf;
+}
+
+int hexFile_init(hexFile_t* hf)
+{
+  hf->data = NULL;
+  hf->dataAllocSize = 0;
+  hf->len = 0;
+  return 0;
+}
+
+int hexFile_init2(hexFile_t* hf, const char* filename)
+{
+  hf->data = NULL;
+  hf->dataAllocSize = 0;
+  hf->len = 0;
+  hexFile_loadFile(hf, filename);
+  return 0;
+}
+
+int hexFile_destroy(hexFile_t* hf)
+{
+  if(hf->data) {
+    delete[] hf->data;
+  }
+  hf->dataAllocSize = 0;
+  hf->len = 0;
+  return 0;
+}
+
+uint8_t hexFile_getByte(hexFile_t* hf, int index)
+{
+  if((index < 0) || (index >= hf->len)) {
+    THROW;
+  }
+  return hf->data[index];
+}
+
+int hexFile_loadFile(hexFile_t* hf, const char* filename)
+{
+  FILE* fp = fopen(filename, "r");
+  if(fp == NULL) {
+    return -1;
+  }
+  char buf[128];
+  char *str;
+  str = fgets(buf, 128, fp);
+  while(str != NULL) {
+    hexFile_parseLine(hf, str);
+    str = fgets(buf, 128, fp);
+  }
+  fclose(fp);
+  return 0;
+}
+
+int hexFile_len(hexFile_t* hf) 
+{
+  return hf->len;
+}
+
+void hexFile_realloc(hexFile_t* hf)
+{
+  int incrSize = 256;
+  if(hf->dataAllocSize == 0) {
+    hf->data = new uint8_t[incrSize];
+  } else {
+    uint8_t* newData = new uint8_t[incrSize + hf->dataAllocSize];
+    memcpy(newData, hf->data, hf->len);
+    delete[] hf->data;
+    hf->data = newData;
+  }
+  hf->dataAllocSize += incrSize;
+}
+
+void hexFile_parseLine(hexFile_t* hf, const char* line)
+{
+  int byteCount = 0;
+  unsigned int address;
+  int type;
+  unsigned int value;
+  unsigned int checksum;
+  const char* str;
+  int i;
+  // Data format taken from http://en.wikipedia.org/wiki/Intel_HEX
+  // Ensure that the first character is a ':'
+  if(line[0] != ':') {
+    THROW;
+  }
+  char buf[10];
+  // Get the first two hex chars
+  memset(buf, 0, sizeof(char)*10);
+  strncpy(buf, &line[1], 2);
+  sscanf(buf, "%x", &byteCount);
+  // Get the next four hex chars 
+  memset(buf, 0, sizeof(char)*10);
+  strncpy(buf, &line[3], 4);
+  sscanf(buf, "%x", &address);
+  // Next two chars are the type
+  memset(buf, 0, sizeof(char)*10);
+  strncpy(buf, &line[7], 2);
+  sscanf(buf, "%x", &type);
+
+  /* Now we need to check the type. If the type is data, make sure we have
+   * enough space in our buffer and read the data */
+  if(type != HEXLINE_DATA) {
+    return;
+  }
+
+  /* Check size */
+  while(hf->len + byteCount >= hf->dataAllocSize) {
+    hexFile_realloc(hf);
+  }
+  uint8_t checktest = 0;
+  checktest = byteCount + (uint8_t)(address>>8) + (uint8_t)(address&0xFF) + (uint8_t)type;
+  memset(buf, 0, sizeof(char)*10);
+  str = &line[9];
+  for(i = 0; i < byteCount; i++) {
+    strncpy(buf, str, 2);
+    sscanf(buf, "%x", &value);
+    hf->data[hf->len] = value;
+    checktest += value;
+    hf->len++;
+    str += 2;
+  }
+  sscanf(str, "%x", &checksum);
+  // 2's complement the checktest 
+  checktest = (checktest ^ 0xFF) + 0x01;
+  if(checktest != checksum) 
+    THROW;
+}

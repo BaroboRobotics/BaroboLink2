@@ -26,15 +26,11 @@ class CHexFile
     CHexFile();
     CHexFile(const char* filename);
     int loadFile(const char* filename);
-    inline int len() {
-      return _len;
-    }
+    int len();
     ~CHexFile();
     uint8_t getByte(int index);
   private:
-    uint8_t *_data;
-    int _dataAllocSize;
-    int _len;
+    hexFile_t* _hf;
     void realloc();
     void parseLine(const char* line);
 };

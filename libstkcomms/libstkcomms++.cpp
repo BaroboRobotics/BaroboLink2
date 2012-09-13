@@ -344,122 +344,44 @@ int CStkComms::setdtr (int on)
 
 CHexFile::CHexFile()
 {
-  _data = NULL;
-  _dataAllocSize = 0;
-  _len = 0;
+  _hf = hexFile_new();
+  hexFile_init(_hf);
 }
 
 CHexFile::CHexFile(const char* filename)
 {
-  _data = NULL;
-  _dataAllocSize = 0;
-  _len = 0;
-  loadFile(filename);
+  _hf = hexFile_new();
+  hexFile_init2(_hf, filename);
 }
 
 CHexFile::~CHexFile()
 {
-  if(_data) {
-    delete[] _data;
-  }
-  _dataAllocSize = 0;
-  _len = 0;
+  hexFile_destroy(_hf);
 }
 
 uint8_t CHexFile::getByte(int index)
 {
-  if((index < 0) || (index >= _len)) {
-    THROW;
-  }
-  return _data[index];
+  return hexFile_getByte(_hf, index);
 }
 
 int CHexFile::loadFile(const char* filename)
 {
-  FILE* fp = fopen(filename, "r");
-  if(fp == NULL) {
-    return -1;
-  }
-  char buf[128];
-  char *str;
-  str = fgets(buf, 128, fp);
-  while(str != NULL) {
-    parseLine(str);
-    str = fgets(buf, 128, fp);
-  }
-  fclose(fp);
-  return 0;
+  return hexFile_loadFile(_hf, filename);
+}
+
+int CHexFile::len()
+{
+  return hexFile_len(_hf);
 }
 
 void CHexFile::realloc()
 {
-  int incrSize = 256;
-  if(_dataAllocSize == 0) {
-    _data = new uint8_t[incrSize];
-  } else {
-    uint8_t* newData = new uint8_t[incrSize + _dataAllocSize];
-    memcpy(newData, _data, _len);
-    delete[] _data;
-    _data = newData;
-  }
-  _dataAllocSize += incrSize;
+  return hexFile_realloc(_hf);
 }
 
 void CHexFile::parseLine(const char* line)
 {
-  int byteCount = 0;
-  unsigned int address;
-  int type;
-  unsigned int value;
-  unsigned int checksum;
-  const char* str;
-  int i;
-  // Data format taken from http://en.wikipedia.org/wiki/Intel_HEX
-  // Ensure that the first character is a ':'
-  if(line[0] != ':') {
-    THROW;
-  }
-  char buf[10];
-  // Get the first two hex chars
-  memset(buf, 0, sizeof(char)*10);
-  strncpy(buf, &line[1], 2);
-  sscanf(buf, "%x", &byteCount);
-  // Get the next four hex chars 
-  memset(buf, 0, sizeof(char)*10);
-  strncpy(buf, &line[3], 4);
-  sscanf(buf, "%x", &address);
-  // Next two chars are the type
-  memset(buf, 0, sizeof(char)*10);
-  strncpy(buf, &line[7], 2);
-  sscanf(buf, "%x", &type);
-
-  /* Now we need to check the type. If the type is data, make sure we have
-   * enough space in our buffer and read the data */
-  if(type != HEXLINE_DATA) {
-    return;
-  }
-
-  /* Check size */
-  while(_len + byteCount >= _dataAllocSize) {
-    realloc();
-  }
-  uint8_t checktest = 0;
-  checktest = byteCount + (uint8_t)(address>>8) + (uint8_t)(address&0xFF) + (uint8_t)type;
-  memset(buf, 0, sizeof(char)*10);
-  str = &line[9];
-  for(i = 0; i < byteCount; i++) {
-    strncpy(buf, str, 2);
-    sscanf(buf, "%x", &value);
-    _data[_len] = value;
-    checktest += value;
-    _len++;
-    str += 2;
-  }
-  sscanf(str, "%x", &checksum);
-  // 2's complement the checktest 
-  checktest = (checktest ^ 0xFF) + 0x01;
-  if(checktest != checksum) 
-    THROW;
+  hexFile_parseLine(_hf, line);
 }
 
 void libstkcomms_is_present(void)
