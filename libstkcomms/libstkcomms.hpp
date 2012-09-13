@@ -1,12 +1,23 @@
 #ifndef _LIBSTKCOMMS_H_
 #define _LIBSTKCOMMS_H_
+#ifndef _WIN32
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/rfcomm.h>
+#else
+#include <winsock2.h>
+//#include <winsock2.h>
+typedef unsigned char uint8_t;
+#define uint16_t UINT16
+typedef struct bdaddr_s {
+  UINT8 b[6];
+} bdaddr_t;
+void baswap(bdaddr_t *dst, const bdaddr_t *src);
+int str2ba(const char *str, bdaddr_t *ba);
+#endif
 #include "../thread_macros.h"
-
 
 class CHexFile
 {
@@ -39,9 +50,7 @@ class CStkComms
   int programAllAsync(const char* hexFileName);
   int programAllAsync(const char* hexFileName, int hwRev);
   double getProgress();
-  inline int isProgramComplete() {
-    return _programComplete;
-  }
+  int isProgramComplete();
   int disconnect();
   int handshake();
   int setDevice(
@@ -84,6 +93,7 @@ class CStkComms
   int checkPage(CHexFile* hexfile, uint16_t address, uint16_t size = 0x80);
   int universal(uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4);
 
+#ifdef BUILD_CSTKCOMMS
   private:
   int _socket;
   bool _isConnected;
@@ -104,6 +114,7 @@ class CStkComms
   int recvBytes(uint8_t* buf, size_t size);
 
   int setdtr(int on);
+#endif
 };
 
 enum hexLineType_e

@@ -10,6 +10,7 @@ if(CMAKE_HOST_WIN32)
 	add_library(stkcomms STATIC
 	  libstkcomms.cpp
 	  )
+	add_definitions(-DBUILD_CSTKCOMMS)
 	target_link_libraries(stkcomms Ws2_32)
   set_target_properties(stkcomms PROPERTIES COMPILE_FLAGS "/GS-")
 elseif(CMAKE_HOST_APPLE)
