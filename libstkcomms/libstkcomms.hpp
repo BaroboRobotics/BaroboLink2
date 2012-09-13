@@ -1,12 +1,24 @@
 #ifndef _LIBSTKCOMMS_H_
 #define _LIBSTKCOMMS_H_
+#ifndef _WIN32
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/rfcomm.h>
+#else
+#include <winsock2.h>
+#include <Ws2bth.h>
+//#include <winsock2.h>
+typedef unsigned char uint8_t;
+#define uint16_t UINT16
+typedef struct bdaddr_s {
+  UINT8 b[6];
+} bdaddr_t;
+void baswap(bdaddr_t *dst, const bdaddr_t *src);
+int str2ba(const char *str, bdaddr_t *ba);
+#endif
 #include "../thread_macros.h"
-
 
 class CHexFile
 {

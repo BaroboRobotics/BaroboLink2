@@ -1,7 +1,10 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdio.h>
+#ifndef _WIN32
 #include <sys/ioctl.h>
+#endif
 #include "libstkcomms.hpp"
 #include "command.h"
 #include "../thread_macros.h"
@@ -41,7 +44,7 @@ int CStkComms::connect(const char addr[])
 #endif
 
 #ifdef _WIN32
-  if(comms->socket == INVALID_SOCKET) {
+  if(_socket == INVALID_SOCKET) {
     err = WSAGetLastError();
     printf("Could not bind to socket. Error %d\n", err);
     if(err == 10047) {
@@ -63,8 +66,8 @@ int CStkComms::connect(const char addr[])
   str2ba( addr, &_addr.rc_bdaddr );
 #else
   _addr.addressFamily = AF_BTH;
-  str2ba( address, (bdaddr_t*)&_addr.btAddr);
-  _addr.port = channel;
+  str2ba( addr, (bdaddr_t*)&_addr.btAddr);
+  _addr.port = 1;
 #endif
 
   // connect to server
@@ -115,17 +118,25 @@ int CStkComms::connect(const char addr[])
     return err;
   }
   /* Make the socket non-blocking */
+#ifndef _WIN32
   flags = fcntl(_socket, F_GETFL, 0);
   fcntl(_socket, F_SETFL, flags | O_NONBLOCK);
   setdtr(1);
   sleep(1);
   setdtr(0);
+#else
+  ioctlsocket(_socket, FIONBIO, (u_long*)1);
+#endif
   return 0;
 }
 
 int CStkComms::disconnect()
 {
-  close(_socket);
+#ifndef _WIN32
+  return close(_socket);
+#else
+  return closesocket(_socket);
+#endif
 }
 
 int CStkComms::setSocket(int socket)
@@ -133,9 +144,14 @@ int CStkComms::setSocket(int socket)
   int flags;
   _socket = socket;
   /* Make the socket non-blocking */
+#ifndef _WIN32
   flags = fcntl(_socket, F_GETFL, 0);
   fcntl(_socket, F_SETFL, flags | O_NONBLOCK);
+#else
+  ioctlsocket(_socket, FIONBIO, (u_long*)1);
+#endif
   _isConnected = 1;
+
   return 0;
 }
 
@@ -292,7 +308,11 @@ int CStkComms::handshake()
     buf[1] = Sync_CRC_EOP;
     sendBytes(buf, 2);
     /* Wait a second and try to read */
+#ifndef _WIN32
     sleep(1);
+#else
+    Sleep(1000);
+#endif
     len = recvBytes(buf, 10);
     if(len == 2) {break;}
   }
@@ -712,10 +732,17 @@ int CStkComms::sendBytes(void* buf, size_t len)
   }
   printf("\n");
 #endif
+#ifndef _WIN32
   if(write(_socket, buf, len) == -1) {
     perror("Write error");
     return -1;
   } 
+#else
+  if(send(_socket, (const char*)buf, len, 0) == -1) {
+    perror("Write error");
+    return -1;
+  } 
+#endif
   return 0;
 }
 
@@ -726,7 +753,11 @@ int CStkComms::recvBytes(uint8_t* buf, size_t expectedBytes, size_t size)
   uint8_t *mybuf = new uint8_t[size];
   
   while(len < expectedBytes) {
+#ifndef _WIN32
     rc = read(_socket, mybuf, size);
+#else
+    rc = recvfrom(_socket, (char*)mybuf, 1, 0, (struct sockaddr*)0, 0);
+#endif
     if(rc > 0) {
       memcpy(&buf[len], mybuf, rc);
       len += rc;
@@ -751,7 +782,11 @@ int CStkComms::recvBytes(uint8_t* buf, size_t size)
 {
   int len = 0;
   
+#ifndef _WIN32
   len = read(_socket, buf, size);
+#else
+
+#endif
 #ifdef DEBUG
   printf("Recv: ");
   for(int i = 0; i < len; i++) {
@@ -764,11 +799,15 @@ int CStkComms::recvBytes(uint8_t* buf, size_t size)
 
 int CStkComms::setdtr (int on)
 {
+#ifndef _WIN32
   int controlbits = TIOCM_DTR;
   if(on)
     return(ioctl(_socket, TIOCMBIC, &controlbits));
   else
     return(ioctl(_socket, TIOCMBIS, &controlbits));
+#else
+  return 0;
+#endif
 } 
 
 CHexFile::CHexFile()
@@ -894,3 +933,33 @@ void CHexFile::parseLine(const char* line)
 void libstkcomms_is_present(void)
 {
 }
+
+#ifdef _WIN32
+void baswap(bdaddr_t *dst, const bdaddr_t *src)
+{
+	register unsigned char *d = (unsigned char *) dst;
+	register const unsigned char *s = (const unsigned char *) src;
+	register int i;
+
+	for (i = 0; i < 6; i++)
+		d[i] = s[5-i];
+}
+
+int str2ba(const char *str, bdaddr_t *ba)
+{
+	UINT8 b[6];
+	const char *ptr = str;
+	int i;
+
+	for (i = 0; i < 6; i++) {
+		b[i] = (UINT8) strtol(ptr, NULL, 16);
+		if (i != 5 && !(ptr = strchr(ptr, ':')))
+			ptr = ":00:00:00:00:00";
+		ptr++;
+	}
+
+	baswap(ba, (bdaddr_t *) b);
+
+	return 0;
+}
+#endif
