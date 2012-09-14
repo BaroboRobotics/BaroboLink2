@@ -9,10 +9,10 @@
 #include "RobotManager.h"
 #ifdef __MACH__
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <gtk-mac-integration.h>
 #endif
+#include <sys/stat.h>
 
 GtkBuilder *g_builder;
 GtkWidget *g_window;
