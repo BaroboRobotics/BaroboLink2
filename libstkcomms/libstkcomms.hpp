@@ -31,8 +31,8 @@ class CHexFile
     int len();
     ~CHexFile();
     uint8_t getByte(int index);
-  private:
     hexFile_t* _hf;
+  private:
     void realloc();
     void parseLine(const char* line);
 };

@@ -303,7 +303,7 @@ int CStkComms::checkFlash(const char* filename)
 
 int CStkComms::checkPage(CHexFile* hexfile, uint16_t address, uint16_t size)
 {
-  return stkComms_checkPage(_comms, hexfile, address, size);
+  return stkComms_checkPage(_comms, hexfile->_hf, address, size);
 }
 
 int CStkComms::progPage(uint8_t* data, uint16_t size)

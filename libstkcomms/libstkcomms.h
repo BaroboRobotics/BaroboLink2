@@ -39,10 +39,12 @@ typedef struct stkComms_s
   char* lockfileName;
 
 #if !defined (_MSYS)
-#ifndef _WIN32
-  struct sockaddr_rc addr;
-#else
+#ifdef _WIN32
   SOCKADDR_BTH addr;
+#elif defined __MACH__
+  void* addr;
+#else
+  struct sockaddr_rc addr;
 #endif
 #endif
 } stkComms_t;
