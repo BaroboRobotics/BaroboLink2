@@ -194,6 +194,11 @@ void* controllerHandlerThread(void* arg)
     }
     MUTEX_UNLOCK(&g_activeMobotLock);
 
+#ifdef __MACH__
+#undef THREAD_YIELD
+#define THREAD_YIELD()
+#endif
+
 #define TESTLOCK \
     THREAD_YIELD(); \
     MUTEX_LOCK(&g_activeMobotLock); \

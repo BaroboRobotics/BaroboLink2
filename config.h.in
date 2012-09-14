@@ -15,9 +15,6 @@
 /* Define to 1 if you have the `scintilla' library (-lscintilla). */
 #undef HAVE_LIBSCINTILLA
 
-/* Define to 1 if you have the `stkcomms' library (-lstkcomms). */
-#undef HAVE_LIBSTKCOMMS
-
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 

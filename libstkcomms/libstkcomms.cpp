@@ -205,7 +205,12 @@ int stkComms_connectWithTTY(stkComms_t* comms, const char* ttyfilename)
     return -1;
   }
   comms->isConnected = 1;
-  if(status) return status;
+  /* Make the socket non-blocking */
+#ifndef _WIN32
+  unsigned int flags;
+  flags = fcntl(comms->socket, F_GETFL, 0);
+  fcntl(comms->socket, F_SETFL, flags | O_NONBLOCK);
+#endif
   /* Finished connecting. Create the lockfile. */
   lockfile = fopen(lockfileName, "w");
   if(lockfile == NULL) {
@@ -220,10 +225,19 @@ int stkComms_connectWithTTY(stkComms_t* comms, const char* ttyfilename)
 
 int stkComms_disconnect(stkComms_t* comms)
 {
+#ifdef __MACH__
+  if(comms->lockfileName != NULL) {
+    unlink(comms->lockfileName);
+    free(comms->lockfileName);
+    comms->lockfileName = NULL;
+  }
+  return close(comms->socket);
+#else
 #ifndef _WIN32
   return close(comms->socket);
 #else
   return closesocket(comms->socket);
+#endif
 #endif
 }
 
