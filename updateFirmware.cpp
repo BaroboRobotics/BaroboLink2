@@ -99,10 +99,8 @@ gboolean reflashConnectTimeout(gpointer data)
     /* Switch the root notebook to the next page */
     gtk_notebook_set_current_page(g_notebookRoot, 3);
     if(g_reflashHWRev == 3) {
-      printf("Programming rev3...\n");
       g_stkComms->programAllAsync("interface/rev3.hex", 3);
     } else if (g_reflashHWRev == 4) {
-      printf("Programming rev4...\n");
       g_stkComms->programAllAsync("interface/rev4.hex", 4);
     } else {
       fprintf(stderr, "Error: Invalid HW Rev detected.\n");

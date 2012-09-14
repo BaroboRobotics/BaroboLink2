@@ -200,7 +200,6 @@ int stkComms_handshake(stkComms_t* comms)
   uint8_t buf[10];
   int len;
   while(1) {
-    printf("handshake...\n");
     buf[0] = Cmnd_STK_GET_SYNC;
     buf[1] = Sync_CRC_EOP;
     stkComms_sendBytes(comms, buf, 2);
