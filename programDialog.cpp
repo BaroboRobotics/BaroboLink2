@@ -26,6 +26,13 @@ bool g_reexportFlag = false;
 
 void initProgramDialog(void)
 {
+  /* First, make sure there actually is a programming dialog */
+  GtkWidget *w;
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "notebook1"));
+  int numPages = gtk_notebook_get_n_pages(GTK_NOTEBOOK(w));
+  if(numPages == 3) {
+    return;
+  }
   /* Attach signal handlers */
   g_signal_connect(G_OBJECT(g_scieditor), SCINTILLA_NOTIFY, G_CALLBACK(on_scintilla_notify), NULL);
   /* Set a monospace font */

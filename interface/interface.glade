@@ -136,9 +136,6 @@
         <col id="4" translatable="yes"></col>
       </row>
     </data>
-    <signal name="row-deleted" handler="on_liststore_availableRobots_row_deleted" swapped="no"/>
-    <signal name="row-changed" handler="on_liststore_availableRobots_row_changed" swapped="no"/>
-    <signal name="row-inserted" handler="on_liststore_availableRobots_row_inserted" swapped="no"/>
   </object>
   <object class="GtkListStore" id="liststore_connectedRobots">
     <columns>
