@@ -13,13 +13,12 @@
 #include "command.h"
 #include "../thread_macros.h"
 
-//#define DEBUG
 
-#ifdef DEBUG
-#define THROW throw
-#else
+//#ifdef DEBUG
+//#define THROW throw
+//#else
 #define THROW
-#endif
+//#endif
 
 stkComms_t* stkComms_new()
 {
@@ -138,7 +137,11 @@ int stkComms_connect(stkComms_t* comms, const char addr[])
   sleep(1);
   stkComms_setdtr(comms, 0);
 #else
-  ioctlsocket(comms->socket, FIONBIO, (u_long*)1);
+  u_long val = 1;
+  err = ioctlsocket(comms->socket, FIONBIO, &val);
+  if(err) {
+    printf("ioctlsocket failed %d\n", WSAGetLastError());
+  }
 #endif
   return 0;
 }
@@ -197,6 +200,7 @@ int stkComms_handshake(stkComms_t* comms)
   uint8_t buf[10];
   int len;
   while(1) {
+    printf("handshake...\n");
     buf[0] = Cmnd_STK_GET_SYNC;
     buf[1] = Sync_CRC_EOP;
     stkComms_sendBytes(comms, buf, 2);
@@ -421,7 +425,7 @@ int stkComms_loadAddress(stkComms_t* comms, uint16_t address)
 int stkComms_progHexFile(stkComms_t* comms, const char* filename)
 {
   hexFile_t* file = hexFile_new();
-  hexFile_init(file);
+  hexFile_init2(file, filename);
   uint16_t pageSize = 128;
   int i;
   /* Program the file one 128-byte page at a time */
@@ -454,7 +458,7 @@ int stkComms_progHexFile(stkComms_t* comms, const char* filename)
 int stkComms_checkFlash(stkComms_t* comms, const char* filename)
 {
   hexFile_t* hf = hexFile_new();
-  hexFile_init(hf);
+  hexFile_init2(hf, filename);
   int i;
   uint16_t addrIncr = 0x40;
   uint16_t pageSize = 0x80;
@@ -654,7 +658,7 @@ int stkComms_recvBytes(stkComms_t* comms, uint8_t* buf, size_t expectedBytes, si
 #ifndef _WIN32
     rc = read(comms->socket, mybuf, size);
 #else
-    rc = recvfrom(comms->socket, (char*)mybuf, 1, 0, (struct sockaddr*)0, 0);
+    rc = recvfrom(comms->socket, (char*)mybuf, size, 0, (struct sockaddr*)0, 0);
 #endif
     if(rc > 0) {
       memcpy(&buf[len], mybuf, rc);
@@ -683,8 +687,9 @@ int stkComms_recvBytes2(stkComms_t* comms, uint8_t* buf, size_t size)
 #ifndef _WIN32
   len = read(comms->socket, buf, size);
 #else
-
+  len = recvfrom(comms->socket, (char*)buf, size, 0, (struct sockaddr*)0, 0);
 #endif
+
 #ifdef DEBUG
   printf("Recv: ");
   for(int i = 0; i < len; i++) {

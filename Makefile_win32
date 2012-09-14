@@ -50,7 +50,7 @@ libstkcomms++.o:libstkcomms/libstkcomms++.cpp
 libinterface.a:interface.o
 	ar rcs libinterface.a interface.o
 
-RoboMancer:$(OBJS) libstkcomms++.o $(HEADERS) libinterface.a libmobot.a 
+RoboMancer:$(OBJS) libstkcomms++.o $(HEADERS) libinterface.a libmobot.a libstkcomms/libstkcomms.a
 	$(CC) -v $(OBJS) libstkcomms++.o $(LIBS) -o RoboMancer
 
 clean:
