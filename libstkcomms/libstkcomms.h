@@ -105,7 +105,7 @@ int stkComms_checkSignature(stkComms_t* comms);
 int stkComms_loadAddress(stkComms_t* comms, uint16_t address);
 int stkComms_progHexFile(stkComms_t* comms, const char* filename);
 int stkComms_checkFlash(stkComms_t* comms, const char* filename);
-int stkComms_checkPage(stkComms_t* comms, CHexFile* hexfile, uint16_t address, uint16_t size);
+int stkComms_checkPage(stkComms_t* comms, hexFile_t* hexfile, uint16_t address, uint16_t size);
 int stkComms_progPage(stkComms_t* comms, uint8_t* data, uint16_t size);
 int stkComms_progFuses(stkComms_t* comms);
 int stkComms_readData(stkComms_t* comms, uint16_t address, uint8_t *byte);

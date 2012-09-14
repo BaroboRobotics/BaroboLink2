@@ -420,51 +420,54 @@ int stkComms_loadAddress(stkComms_t* comms, uint16_t address)
 
 int stkComms_progHexFile(stkComms_t* comms, const char* filename)
 {
-  CHexFile *file = new CHexFile(filename);
+  hexFile_t* file = hexFile_new();
+  hexFile_init(file);
   uint16_t pageSize = 128;
   int i;
   /* Program the file one 128-byte page at a time */
-  uint8_t* buf = new uint8_t[pageSize + 10];
+  uint8_t* buf = (uint8_t*)malloc(sizeof(uint8_t)*(pageSize + 10));
   uint16_t address = 0; // The address adresses 2-byte locations
-  while(address*2 < file->len())
+  while(address*2 < hexFile_len(file))
   {
     stkComms_loadAddress(comms, address);
     for(
         i = 0; 
-        (i < pageSize) && ((address*2 + i) < file->len()); 
+        (i < pageSize) && ((address*2 + i) < hexFile_len(file)); 
         i++) 
     {
-      buf[i] = file->getByte(address*2 + i);
+      buf[i] = hexFile_getByte(file, (address*2 + i));
     }
     stkComms_progPage(comms, buf, i);
     address += pageSize/2;
     /* Update the progress tracker */
     MUTEX_LOCK(comms->progressLock);
-    comms->progress = 0.5 * ((double)address*2) / (double)file->len();
+    comms->progress = 0.5 * ((double)address*2) / (double)hexFile_len(file);
     COND_SIGNAL(comms->progressCond);
     MUTEX_UNLOCK(comms->progressLock);
   }
-  delete file;
-  delete[] buf;
+  hexFile_destroy(file);
+  free(file);
+  free(buf);
   return 0;
 }
 
 int stkComms_checkFlash(stkComms_t* comms, const char* filename)
 {
-  CHexFile *hf = new CHexFile(filename);
+  hexFile_t* hf = hexFile_new();
+  hexFile_init(hf);
   int i;
   uint16_t addrIncr = 0x40;
   uint16_t pageSize = 0x80;
-  for(i = 0; i*2 < hf->len(); i += addrIncr)
+  for(i = 0; i*2 < hexFile_len(hf); i += addrIncr)
   {
-    if(stkComms_checkPage(comms, hf, i, i*2+pageSize > hf->len()? hf->len() - i*2 : pageSize))
+    if(stkComms_checkPage(comms, hf, i, i*2+pageSize > hexFile_len(hf)? hexFile_len(hf) - i*2 : pageSize))
     {
       THROW;
       return -1;
     }
     /* Update the progress tracker */
     MUTEX_LOCK(comms->progressLock);
-    comms->progress = 0.5 + 0.5 * ((double)i*2) / (double)hf->len();
+    comms->progress = 0.5 + 0.5 * ((double)i*2) / (double)hexFile_len(hf);
     COND_SIGNAL(comms->progressCond);
     MUTEX_UNLOCK(comms->progressLock);
   }
@@ -475,7 +478,7 @@ int stkComms_checkFlash(stkComms_t* comms, const char* filename)
   return 0;
 }
 
-int stkComms_checkPage(stkComms_t* comms, CHexFile* hexfile, uint16_t address, uint16_t size)
+int stkComms_checkPage(stkComms_t* comms, hexFile_t* hexfile, uint16_t address, uint16_t size)
 {
   /* First, load the address */
   int rc;
@@ -483,7 +486,7 @@ int stkComms_checkPage(stkComms_t* comms, CHexFile* hexfile, uint16_t address, u
     THROW;
     return rc;
   }
-  uint8_t* buf = new uint8_t[size+10];
+  uint8_t* buf = (uint8_t*)malloc(sizeof(uint8_t)*(size+10));
   /* Send the "Get Page" command */
   buf[0] = Cmnd_STK_READ_PAGE;
   buf[1] = size >> 8;
@@ -495,26 +498,26 @@ int stkComms_checkPage(stkComms_t* comms, CHexFile* hexfile, uint16_t address, u
   rc = stkComms_recvBytes(comms, buf, size+2, size+10);
   if(rc != size+2) {
     THROW;
-    delete[] buf;
+    free(buf);
     return -1;
   }
   /* Compare with the hex file */
   int i, startIndex;
   startIndex = address*2;
   for(i = 0; i < size; i++) {
-    if(hexfile->getByte(startIndex+i) != buf[i+1]) {
+    if(hexFile_getByte(hexfile, (startIndex+i)) != buf[i+1]) {
       THROW;
-      delete[] buf;
+      free(buf);
       return -1;
     }
   }
-  delete[] buf;
+  free(buf);
   return 0;
 }
 
 int stkComms_progPage(stkComms_t* comms, uint8_t* data, uint16_t size)
 {
-  uint8_t *buf = new uint8_t[size + 10];
+  uint8_t *buf = (uint8_t*)malloc(sizeof(uint8_t)*(size + 10));
   buf[0] = Cmnd_STK_PROG_PAGE;
   buf[1] = size >> 8;
   buf[2] = size & 0xFF;
@@ -645,7 +648,7 @@ int stkComms_recvBytes(stkComms_t* comms, uint8_t* buf, size_t expectedBytes, si
 {
   int len = 0;
   int rc;
-  uint8_t *mybuf = new uint8_t[size];
+  uint8_t *mybuf = (uint8_t*)malloc(size*sizeof(uint8_t));
   
   while(len < expectedBytes) {
 #ifndef _WIN32
@@ -669,7 +672,7 @@ int stkComms_recvBytes(stkComms_t* comms, uint8_t* buf, size_t expectedBytes, si
   }
   printf("\n");
 #endif
-  delete[] mybuf;
+  free (mybuf);
   return len;
 }
 
@@ -762,7 +765,7 @@ int hexFile_init2(hexFile_t* hf, const char* filename)
 int hexFile_destroy(hexFile_t* hf)
 {
   if(hf->data) {
-    delete[] hf->data;
+    free(hf->data);
   }
   hf->dataAllocSize = 0;
   hf->len = 0;
@@ -803,11 +806,11 @@ void hexFile_realloc(hexFile_t* hf)
 {
   int incrSize = 256;
   if(hf->dataAllocSize == 0) {
-    hf->data = new uint8_t[incrSize];
+    hf->data = (uint8_t*)malloc(sizeof(uint8_t)*incrSize);
   } else {
-    uint8_t* newData = new uint8_t[incrSize + hf->dataAllocSize];
+    uint8_t* newData = (uint8_t*)malloc(sizeof(uint8_t)*(incrSize + hf->dataAllocSize));
     memcpy(newData, hf->data, hf->len);
-    delete[] hf->data;
+    free(hf->data);
     hf->data = newData;
   }
   hf->dataAllocSize += incrSize;
