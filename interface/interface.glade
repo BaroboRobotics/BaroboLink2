@@ -433,7 +433,7 @@
                             </child>
                             <child>
                               <object class="GtkButton" id="button_moveToZero">
-                                <property name="label" translatable="yes">Move To Zero</property>
+                                <property name="label" translatable="yes">Reset To Zero</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -2446,7 +2446,7 @@ To begin, please press the 'A' button on the module being reflashed. The process
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="xalign">0.40000000596046448</property>
-                        <property name="label" translatable="yes">Please switch the robot into "Programming Mode" by moving the power switch into the middle position. Click on the "Continue" button below to continue.</property>
+                        <property name="label" translatable="yes">Please switch the robot into programming mode by moving the power switch into the middle position, marked "PROG". Click on the "Continue" button below to continue.</property>
                         <property name="wrap">True</property>
                       </object>
                       <packing>
