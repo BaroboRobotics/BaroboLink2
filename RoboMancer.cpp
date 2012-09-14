@@ -54,15 +54,6 @@ void initialize()
   refreshConnectDialog();
   //g_timeout_add(1000, connectDialogPulse, NULL);
 
-  /* Add Scintilla */
-  g_scieditor = scintilla_new();
-  g_sci = SCINTILLA(g_scieditor);
-  GtkWidget *container = GTK_WIDGET(gtk_builder_get_object(g_builder, "alignment2"));
-  gtk_container_add(GTK_CONTAINER(container), g_scieditor);
-  scintilla_set_id(g_sci, 0);
-  //gtk_widget_set_usize(g_scieditor, 100, 300);
-  gtk_widget_show(g_scieditor);
-
   initControlDialog();
   initProgramDialog();
   initializeComms();

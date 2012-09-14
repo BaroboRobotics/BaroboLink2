@@ -33,6 +33,15 @@ void initProgramDialog(void)
   if(numPages == 3) {
     return;
   }
+  /* Add Scintilla */
+  g_scieditor = scintilla_new();
+  g_sci = SCINTILLA(g_scieditor);
+  GtkWidget *container = GTK_WIDGET(gtk_builder_get_object(g_builder, "alignment2"));
+  gtk_container_add(GTK_CONTAINER(container), g_scieditor);
+  scintilla_set_id(g_sci, 0);
+  //gtk_widget_set_usize(g_scieditor, 100, 300);
+  gtk_widget_show(g_scieditor);
+
   /* Attach signal handlers */
   g_signal_connect(G_OBJECT(g_scieditor), SCINTILLA_NOTIFY, G_CALLBACK(on_scintilla_notify), NULL);
   /* Set a monospace font */
