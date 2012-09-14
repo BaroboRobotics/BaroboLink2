@@ -54,39 +54,56 @@ gboolean progressBarConnectUpdate(gpointer data)
   a = (struct connectThreadArg_s*)data;
   counter[a->connectIndex]++;
   if(a->connectionCompleted) {
+    char *buf = (char*)malloc(1024);
     //gtk_widget_hide(progressBarWindow);
     /* Check the connection status return value */
     GtkLabel* label = GTK_LABEL(gtk_builder_get_object(g_builder, "label_connectFailed"));
     switch(a->connectReturnVal) {
       case -1: 
-        gtk_label_set_text(label, 
-            "Connection failed: Remote device could not be found. Please check \n"
-            "that the Mobot is turned on and the address is correct.");
+        sprintf(buf, 
+            "Connection to %s failed: Remote device could not be found. Please check \n"
+            "that the Mobot is turned on and the address is correct.",
+            g_robotManager->getEntry(a->connectIndex));
+        gtk_label_set_text(label, buf);
         break;
       case -2:
-        gtk_label_set_text(label,
-            "Connection failed: Another device is already connected to the Mobot.");
+        sprintf(buf,
+            "Connection to %s failed: Another device is already connected to the Mobot.",
+            g_robotManager->getEntry(a->connectIndex));
+        gtk_label_set_text(label, buf);
         break;
       case -3:
-        gtk_label_set_text(label,
-            "Connection failed: The address format is incorrect. Please check that \n"
-            "the address has been typed correctly.");
+        sprintf(buf, 
+            "Connection to %s failed: The address format is incorrect. Please check that \n"
+            "the address has been typed correctly.",
+            g_robotManager->getEntry(a->connectIndex));
+        gtk_label_set_text(label,buf);
         break;
       case -4:
-        gtk_label_set_text(label, 
-            "Connection failed.");
+        sprintf(buf,
+            "Connection to %s failed.",
+            g_robotManager->getEntry(a->connectIndex));
+        gtk_label_set_text(label, buf);
         break;
       case -5:
-        gtk_label_set_text(label,
-            "Connection failed: Bluetooth device not found. Please plug in a Mobot \n"
-            "compatible bluetooth dongle.");
+        sprintf(buf,
+            "Connection to %s failed: Bluetooth device not found. Please plug in a Mobot \n"
+            "compatible bluetooth dongle.",
+            g_robotManager->getEntry(a->connectIndex));
+        gtk_label_set_text(label,buf);
         break;
       case -6:
-        gtk_label_set_text(label,
-            "Connection failed: The Mobot firmware version does not match the RoboMancer version. Please make sure that both your Mobot firmware and your RoboMancer software are up to date.");
+        sprintf(buf,
+            "Connection to %s failed: The Mobot firmware version does not match the \n"
+            "RoboMancer version. Please make sure that both your Mobot firmware and \n"
+            "your RoboMancer software are up to date.",
+            g_robotManager->getEntry(a->connectIndex));
+        gtk_label_set_text(label,buf);
       default:
-        gtk_label_set_text(label,
-            "Connection error.");
+        sprintf(buf, 
+            "Connection to %s failed.", 
+            g_robotManager->getEntry(a->connectIndex));
+        gtk_label_set_text(label, buf);
         break;
     } 
     if(a->connectReturnVal) {
@@ -95,6 +112,7 @@ gboolean progressBarConnectUpdate(gpointer data)
     }
     refreshConnectDialog();
     free(a);
+    free(buf);
     return FALSE;
   } else {
     //gtk_progress_bar_pulse(GTK_PROGRESS_BAR(progressBarConnect));

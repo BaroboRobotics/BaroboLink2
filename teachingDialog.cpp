@@ -314,11 +314,29 @@ void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_n
   static bool buttonCallbackEnabled = false;
   static int selectedRobot = 0;
   int i;
+  int connectPage, controlPage, programPage, posePage;
+  GtkWidget *w;
+
+  /* Figure out the page numbers by the number of total pages */
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "notebook1"));
+  int numPages = gtk_notebook_get_n_pages(GTK_NOTEBOOK(w));
+  if(numPages == 3) {
+    connectPage = 0;
+    controlPage = 1;
+    posePage = 2;
+    programPage = 99;
+  } else if (numPages == 4) {
+    connectPage = 0;
+    controlPage = 1;
+    programPage = 2;
+    posePage = 3;
+  }
+
   mobot_t* mobot;
   refreshConnectDialog();
   /* If the teaching dialog gets selected, we should initialize all connected
    * Mobots to use our custom button handler. */
-  if(page_num == 3) {
+  if(page_num == posePage) {
     /* Enable all button handlers */
     for(i = 0; i < g_robotManager->numConnected(); i++) {
       mobot = (mobot_t*)g_robotManager->getMobot(i);
@@ -336,8 +354,7 @@ void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_n
   }
 
   /* If the control dialog is selected... */
-  GtkWidget *w;
-  if(page_num == 1) {
+  if(page_num == controlPage) {
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
     gtk_combo_box_set_active(GTK_COMBO_BOX(w), selectedRobot);
   } else {
