@@ -24,7 +24,7 @@ elseif(CMAKE_HOST_APPLE)
   set_target_properties(stkcomms PROPERTIES
     INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
   install(TARGETS stkcomms 
-          LIBRARY DESTINATION lib)
+          ARCHIVE DESTINATION lib)
   install(FILES libstkcomms.hpp DESTINATION include)
 else(CMAKE_HOST_WIN32)
 	add_definitions(-DBUILD_CSTKCOMMS)

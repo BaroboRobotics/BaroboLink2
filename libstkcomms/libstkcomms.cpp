@@ -2,8 +2,12 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <string.h>
 #ifndef _WIN32
 #include <sys/ioctl.h>
+#include <libgen.h>
+#include <sys/types.h>
+#include <signal.h>
 #else
 #pragma comment(lib, "ws2_32.lib")
 #include <winsock2.h>
@@ -47,6 +51,7 @@ int stkComms_destroy(stkComms_t* comms)
 
 int stkComms_connect(stkComms_t* comms, const char addr[])
 {
+#ifndef __MACH__
   int err = 0;
   int flags;
 #ifndef _WIN32
@@ -144,7 +149,74 @@ int stkComms_connect(stkComms_t* comms, const char addr[])
   }
 #endif
   return 0;
+#else 
+  return -1;
+#endif
 }
+
+#ifdef __MACH__
+int stkComms_connectWithAddressTTY(stkComms_t* comms, const char* address)
+{
+  char buf[80];
+  char chunk1[3];
+  char chunk2[3];
+  sscanf(address, "%*c%*c:%*c%*c:%*c%*c:%*c%*c:%c%c:%c%c", 
+      &chunk1[0], &chunk1[1],
+      &chunk2[0], &chunk2[1]);
+  chunk1[2] = '\0';
+  chunk2[2] = '\0';
+  sprintf(buf, "/dev/tty.MOBOT-%s%s-SPP", chunk1, chunk2);
+  return stkComms_connectWithTTY(comms, buf);
+}
+
+#define MAX_PATH 1024
+int stkComms_connectWithTTY(stkComms_t* comms, const char* ttyfilename)
+{
+  FILE *lockfile;
+  char *filename = strdup(ttyfilename);
+  char lockfileName[MAX_PATH];
+  int pid;
+  int status;
+  /* Open the lock file, if it exists */
+  sprintf(lockfileName, "/tmp/%s.lock", basename(filename));
+  lockfile = fopen(lockfileName, "r");
+  if(lockfile == NULL) {
+    /* Lock file does not exist. Proceed. */
+    comms->lockfileName = strdup(lockfileName);
+  } else {
+    /* Lockfile exists. Need to check PID in the lock file and see if that
+     * process is still running. */
+    fscanf(lockfile, "%d", &pid);
+    if(pid > 0 && kill(pid,0) < 0 && errno == ESRCH) {
+      /* Lock file is stale. Delete it */
+      unlink(lockfileName);
+    } else {
+      /* The tty device is locked. Return error code. */
+      fprintf(stderr, "Error: Another application is already connected to the Mobot.\n");
+      free(filename);
+      fclose(lockfile);
+      return -2;
+    }
+  }
+  fclose(lockfile);
+  comms->socket = open(ttyfilename, O_RDWR | O_NOCTTY );
+  if(comms->socket < 0) {
+    perror("Unable to open tty port.");
+    return -1;
+  }
+  comms->isConnected = 1;
+  if(status) return status;
+  /* Finished connecting. Create the lockfile. */
+  lockfile = fopen(lockfileName, "w");
+  if(lockfile == NULL) {
+    fprintf(stderr, "Fatal error. %s:%d\n", __FILE__, __LINE__);
+    return -1;
+  }
+  fprintf(lockfile, "%d", getpid());
+  fclose(lockfile);
+  return 0;
+}
+#endif
 
 int stkComms_disconnect(stkComms_t* comms)
 {

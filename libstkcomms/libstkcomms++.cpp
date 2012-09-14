@@ -36,7 +36,11 @@ CStkComms::~CStkComms()
 
 int CStkComms::connect(const char addr[])
 {
+#ifndef __MACH__
   return stkComms_connect(_comms, addr);
+#else
+  return stkComms_connectWithAddressTTY(_comms, addr);
+#endif
 }
 
 int CStkComms::disconnect()
