@@ -7,6 +7,12 @@
 #include <ScintillaWidget.h>
 #include "RoboMancer.h"
 #include "RobotManager.h"
+#ifdef __MACH__
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <gtk-mac-integration.h>
+#endif
 
 GtkBuilder *g_builder;
 GtkWidget *g_window;
@@ -14,6 +20,14 @@ GtkWidget *g_scieditor;
 ScintillaObject *g_sci;
 
 CRobotManager *g_robotManager;
+
+char *g_interfaceFiles[512] = {
+  "interface/interface.glade",
+  "interface.glade",
+  "../share/RoboMancer/interface.glade",
+  NULL,
+  NULL
+};
 
 int main(int argc, char* argv[])
 {
@@ -24,14 +38,39 @@ int main(int argc, char* argv[])
   /* Create the GTK Builder */
   g_builder = gtk_builder_new();
 
+#ifdef __MACH__
+  char *datadir = getenv("XDG_DATA_DIRS");
+  if(datadir != NULL) {
+    g_interfaceFiles[3] = (char*)malloc(sizeof(char)*512);
+    sprintf(g_interfaceFiles[3], "%s/RoboMancer/interface.glade", datadir);
+  }
+#endif
+
   /* Load the UI */
-  if( ! gtk_builder_add_from_file(g_builder, "interface/interface.glade", &error) )
-  {
-    g_warning("%s", error->message);
-    //g_free(error);
-    return -1;
+  /* Find ther interface file */
+  struct stat s;
+  int err;
+  int i;
+  for(i = 0; g_interfaceFiles[i] != NULL; i++) {
+    err = stat(g_interfaceFiles[i], &s);
+    if(err == 0) {
+      printf("%d:%s\n", i, g_interfaceFiles[i]);
+      if( ! gtk_builder_add_from_file(g_builder, g_interfaceFiles[i], &error) )
+      {
+        g_warning("%s", error->message);
+        //g_free(error);
+        return -1;
+      } else {
+        break;
+      }
+    }
   }
 
+  if(g_interfaceFiles[i] == NULL) {
+    /* Could not find the interface file */
+    g_warning("Could not find interface file.");
+    return -1;
+  }
   /* Initialize the subsystem */
   initialize();
 
@@ -39,6 +78,14 @@ int main(int argc, char* argv[])
   g_window = GTK_WIDGET( gtk_builder_get_object(g_builder, "window1"));
   /* Connect signals */
   gtk_builder_connect_signals(g_builder, NULL);
+
+#ifdef __MACH__
+  //g_signal_connect(GtkOSXMacmenu, "NSApplicationBlockTermination",
+      //G_CALLBACK(app_should_quit_cb), NULL);
+  GtkWidget* quititem = GTK_WIDGET(gtk_builder_get_object(g_builder, "imagemenuitem5"));
+  gtk_mac_menu_set_quit_menu_item(GTK_MENU_ITEM(quititem));
+#endif
+
   /* Show the window */
   gtk_widget_show(g_window);
   gtk_main();

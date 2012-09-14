@@ -17,7 +17,6 @@
 #include "command.h"
 #include "../thread_macros.h"
 
-
 //#ifdef DEBUG
 //#define THROW throw
 //#else
@@ -874,6 +873,7 @@ int hexFile_loadFile(hexFile_t* hf, const char* filename)
 {
   FILE* fp = fopen(filename, "r");
   if(fp == NULL) {
+    printf("File %s not found.\n", filename);
     return -1;
   }
   char buf[128];

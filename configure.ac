@@ -13,9 +13,6 @@ AC_PROG_CC
 
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-lmobot':
-PKG_CHECK_MODULES([DEPS], [
-                   gtk+-2.0 >= 2.20.0
-                   gmodule-export-2.0 >= 2.20.0])
 AC_CHECK_LIB([mobot], [Mobot_init])
 LDFLAGS="$LDFLAGS -Llibstkcomms -lstkcomms"
 
@@ -25,9 +22,16 @@ echo $host_os
 case $host_os in
   linux* )
     AC_CHECK_LIB([scintilla], [scintilla_new], [], [], [-pthread -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgio-2.0 -lpangoft2-1.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lm -lcairo -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0])
+PKG_CHECK_MODULES([DEPS], [
+                   gtk+-2.0 >= 2.20.0
+                   gmodule-export-2.0 >= 2.20.0])
     ;;
   darwin* )
     AC_CHECK_LIB([scintilla], [scintilla_new], [], [], [-lgtk-quartz-2.0 -lgdk-quartz-2.0 -latk-1.0 -lgio-2.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lpango-1.0 -lcairo -lgmodule-2.0 -lgthread-2.0 -lgobject-2.0 -lglib-2.0 -lintl -lstdc++])
+PKG_CHECK_MODULES([DEPS], [
+                   gtk+-2.0 >= 2.20.0
+                   gmodule-export-2.0 >= 2.20.0
+                   gtk-mac-integration])
     ;;
 esac
 

@@ -94,14 +94,31 @@ void* reflashConnectThread(void* arg)
 
 gboolean reflashConnectTimeout(gpointer data) 
 {
+  char *filename;
+  char *datadir;
+  filename = (char*)malloc(512);
   GtkWidget *continueButton = GTK_WIDGET(data);
   if(g_reflashConnectStatus == 3) {
     /* Switch the root notebook to the next page */
     gtk_notebook_set_current_page(g_notebookRoot, 3);
     if(g_reflashHWRev == 3) {
-      g_stkComms->programAllAsync("interface/rev3.hex", 3);
+#ifdef __MACH__
+      datadir = getenv("XDG_DATA_DIRS");
+      sprintf(filename, "%s/RoboMancer/rev3.hex", datadir);
+#else
+      sprintf(filename, "interface/rev3.hex");
+#endif
+      g_stkComms->programAllAsync(filename, 3);
     } else if (g_reflashHWRev == 4) {
-      g_stkComms->programAllAsync("interface/rev4.hex", 4);
+#ifdef __MACH__
+      datadir = getenv("XDG_DATA_DIRS");
+      printf("%s\n", datadir);
+      sprintf(filename, "%s/RoboMancer/rev4.hex", datadir);
+      printf("%s\n", filename);
+#else
+      sprintf(filename, "interface/rev4.hex");
+#endif
+      g_stkComms->programAllAsync(filename, 4);
     } else {
       fprintf(stderr, "Error: Invalid HW Rev detected.\n");
       gtk_widget_set_sensitive(continueButton, TRUE);
