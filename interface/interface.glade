@@ -191,6 +191,17 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
+                      <object class="GtkMenuItem" id="menuitem_forceUpgrade">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">Reset Mobot firmware to safe mode.</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="label" translatable="yes">Reset Mobot Firmware</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menuitem_forceUpgrade_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem5">
                         <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
@@ -2349,7 +2360,7 @@ Button A and B together: Clear Recorded Poses</property>
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Default View</property>
+                <property name="label" translatable="yes">0</property>
               </object>
               <packing>
                 <property name="tab_fill">False</property>
@@ -2424,7 +2435,7 @@ To begin, please press the 'A' button on the module being reflashed. The process
               <object class="GtkLabel" id="label31">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Reflash Firmware View</property>
+                <property name="label" translatable="yes">1</property>
               </object>
               <packing>
                 <property name="position">1</property>
@@ -2530,7 +2541,7 @@ To begin, please press the 'A' button on the module being reflashed. The process
               <object class="GtkLabel" id="label33">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Reflash 2</property>
+                <property name="label" translatable="yes">2</property>
               </object>
               <packing>
                 <property name="position">2</property>
@@ -2585,7 +2596,7 @@ Please do not disconnect or turn off the robot while the reflashing is in progre
               <object class="GtkLabel" id="label35">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Reflash 3</property>
+                <property name="label" translatable="yes">3</property>
               </object>
               <packing>
                 <property name="position">3</property>
@@ -2655,10 +2666,147 @@ Press "OK" to continue.</property>
               <object class="GtkLabel" id="label37">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">page 5</property>
+                <property name="label" translatable="yes">4</property>
               </object>
               <packing>
                 <property name="position">4</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkAspectFrame" id="aspectframe5">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">none</property>
+                <child>
+                  <object class="GtkFrame" id="frame1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">none</property>
+                    <child>
+                      <object class="GtkAlignment" id="alignment3">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">12</property>
+                        <child>
+                          <object class="GtkVBox" id="vbox14">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkLabel" id="label41">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">This dialog is used to reset the firmware on a Mobot to a factory-safe mode. In the rare event that a Mobot's firmware gets corrupted or damaged, this process will replace the existing firmware with a new copy.
+
+Once this process is complete, is is recommended to upgrade the Mobot's firmware to the latest version via the Connect dialog for best results.
+
+To begin, enter the Mobot's address into the text box below and click on the button labeled "Begin". Or, you may cancel the process by clicking on "Cancel".</property>
+                                <property name="wrap">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkHBox" id="hbox10">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkLabel" id="label42">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Mobot Address:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="entry_forceUpgradeAddr">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="invisible_char">●</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="button_forceUpgradeBegin">
+                                    <property name="label" translatable="yes">Begin</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <signal name="clicked" handler="on_button_forceUpgradeBegin_clicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="button_forceUpgradeCancel">
+                                    <property name="label" translatable="yes">Cancel</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <signal name="clicked" handler="on_button_forceUpgradeCancel_clicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="label40">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Reset Mobot Firmware&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="position">5</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label39">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">5</property>
+              </object>
+              <packing>
+                <property name="position">5</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
