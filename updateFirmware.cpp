@@ -37,7 +37,6 @@ void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data)
   g_reflashMobotIndex = index;
   g_reflashMobot = mobot;
   strcpy(g_reflashAddress, RecordMobot_getAddress(mobot));
-  g_notebookRoot = GTK_NOTEBOOK(gtk_builder_get_object(g_builder, "notebook_root"));
   int hwRev;
   int rc = Mobot_getHWRev((mobot_t*)mobot, &hwRev);
   //if(rc) {
@@ -120,6 +119,16 @@ gboolean reflashConnectTimeout(gpointer data)
       sprintf(filename, "interface/rev4.hex");
 #endif
       g_stkComms->programAllAsync(filename, 4);
+    } else if (g_reflashHWRev == -1) {
+#ifdef __MACH__
+      datadir = getenv("XDG_DATA_DIRS");
+      printf("%s\n", datadir);
+      sprintf(filename, "%s/RoboMancer/rev3_safe.hex", datadir);
+      printf("%s\n", filename);
+#else
+      sprintf(filename, "interface/rev3_safe.hex");
+#endif
+      g_stkComms->programAllAsync(filename, 3);
     } else {
       fprintf(stderr, "Error: Invalid HW Rev detected.\n");
       gtk_widget_set_sensitive(continueButton, TRUE);
@@ -188,4 +197,34 @@ void on_button_reflashOK_clicked(GtkWidget* widget, gpointer data)
   /* Refresh the connect dialog and send the user back to the main page */
   refreshConnectDialog();
   gtk_notebook_set_current_page(g_notebookRoot, 0);
+}
+
+void on_button_forceUpgradeBegin_clicked(GtkWidget* widget, gpointer data)
+{
+  /* Make sure the robot is not currently connected. If it is, disconnect it */
+  const char* addr;
+  GtkWidget *w;
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_forceUpgradeAddr"));
+  addr = gtk_entry_get_text(GTK_ENTRY(w));
+  int i;
+  for(i = 0; i < g_robotManager->numEntries(); i++) {
+    if(!strcasecmp(addr, g_robotManager->getEntry(i))) {
+      g_robotManager->disconnect(i);
+    }
+  }
+  /* Set up global vars */
+  strcpy(g_reflashAddress, addr);
+  g_reflashHWRev = -1;
+  /* Go to the appropriate reflash page */
+  gtk_notebook_set_current_page(g_notebookRoot, 2);
+}
+
+void on_button_forceUpgradeCancel_clicked(GtkWidget *w, gpointer data)
+{
+  gtk_notebook_set_current_page(g_notebookRoot, 0);
+}
+
+void on_menuitem_forceUpgrade_activate(GtkWidget *w, gpointer data)
+{
+  gtk_notebook_set_current_page(g_notebookRoot, 5);
 }
