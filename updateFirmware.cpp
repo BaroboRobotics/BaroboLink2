@@ -144,10 +144,11 @@ gboolean reflashConnectTimeout(gpointer data)
     return TRUE;
   } else {
     /* Connection failed? */
-    GtkWidget *cancelButton = (GTK_WIDGET(gtk_builder_get_object(g_builder, "button_cancelFlash2")));
+    GtkWidget *cancelButton;
+    cancelButton = (GTK_WIDGET(gtk_builder_get_object(g_builder, "button_reflashContinue")));
     gtk_widget_set_sensitive(cancelButton, TRUE);
     gtk_button_set_label(GTK_BUTTON(cancelButton), "Connect failed. Retry?");
-    cancelButton = (GTK_WIDGET(gtk_builder_get_object(g_builder, "button_reflashContinue")));
+    cancelButton = (GTK_WIDGET(gtk_builder_get_object(g_builder, "button_cancelFlash2")));
     gtk_widget_set_sensitive(cancelButton, TRUE);
     gtk_spinner_stop(g_reflashConnectSpinner);
     gtk_widget_set_sensitive(continueButton, TRUE);
@@ -164,6 +165,7 @@ void on_button_reflashContinue_clicked(GtkWidget* widget, gpointer data)
    * listening socket */
   /* Set the button insensitive */
   gtk_widget_set_sensitive(widget, FALSE);
+  gtk_button_set_label(GTK_BUTTON(widget, "Continue"));
   /* Set the cancel button to not-sensitive too */
   GtkWidget *cancelButton = (GTK_WIDGET(gtk_builder_get_object(g_builder, "button_cancelFlash2")));
   gtk_widget_set_sensitive(cancelButton, FALSE);
