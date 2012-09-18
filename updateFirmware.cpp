@@ -80,6 +80,7 @@ gboolean listenButtonHWRev(gpointer data)
   if(rc == FALSE) {
     /* Swith the main notebook to page 2 */
     g_robotManager->disconnect(g_reflashMobotIndex);
+    gtk_spinner_stop(g_reflashConnectSpinner);
     gtk_notebook_set_current_page(g_notebookRoot, 2);
   }
   return rc;
@@ -159,13 +160,12 @@ gboolean reflashConnectTimeout(gpointer data)
 void on_button_reflashContinue_clicked(GtkWidget* widget, gpointer data)
 {
   g_stkComms = new CStkComms();  
-  g_reflashConnectSpinner = GTK_SPINNER(gtk_builder_get_object(g_builder, "spinner_reflashConnect"));
   /* The robot should now be in "Programming" mode. We will need to reconnect
    * no matter what because the Mobot library is currently hogging the
    * listening socket */
   /* Set the button insensitive */
   gtk_widget_set_sensitive(widget, FALSE);
-  gtk_button_set_label(GTK_BUTTON(widget, "Continue"));
+  gtk_button_set_label(GTK_BUTTON(widget), "Continue");
   /* Set the cancel button to not-sensitive too */
   GtkWidget *cancelButton = (GTK_WIDGET(gtk_builder_get_object(g_builder, "button_cancelFlash2")));
   gtk_widget_set_sensitive(cancelButton, FALSE);
@@ -221,6 +221,7 @@ void on_button_forceUpgradeBegin_clicked(GtkWidget* widget, gpointer data)
   strcpy(g_reflashAddress, addr);
   g_reflashHWRev = -1;
   /* Go to the appropriate reflash page */
+  gtk_spinner_stop(g_reflashConnectSpinner);
   gtk_notebook_set_current_page(g_notebookRoot, 2);
 }
 

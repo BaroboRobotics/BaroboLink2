@@ -101,6 +101,7 @@ void initialize()
   //g_timeout_add(1000, connectDialogPulse, NULL);
 
   g_notebookRoot = GTK_NOTEBOOK(gtk_builder_get_object(g_builder, "notebook_root"));
+  g_reflashConnectSpinner = GTK_SPINNER(gtk_builder_get_object(g_builder, "spinner_reflashConnect"));
   initControlDialog();
   initProgramDialog();
   initializeComms();
