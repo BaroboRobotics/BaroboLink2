@@ -88,8 +88,11 @@ gboolean listenButtonHWRev(gpointer data)
 void* reflashConnectThread(void* arg)
 {
   g_reflashConnectStatus = 1;
-  g_stkComms->connect(g_reflashAddress);
-  g_reflashConnectStatus = 3;
+  if(g_stkComms->connect(g_reflashAddress) == 0) {
+    g_reflashConnectStatus = 3;
+  } else {
+    g_reflashConnectStatus = -1;
+  }
 }
 
 gboolean reflashConnectTimeout(gpointer data) 
