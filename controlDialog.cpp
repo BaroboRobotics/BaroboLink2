@@ -141,11 +141,16 @@ gboolean controllerHandlerTimeout(gpointer data)
     VSCALEHANDLER(4)
 #undef VSCALEHANDLER
     if(g_initSpeeds) {
-      Mobot_getJointSpeeds((mobot_t*)mobot, 
+      if(Mobot_getJointSpeeds((mobot_t*)mobot, 
           &angles[0], 
           &angles[1], 
           &angles[2], 
-          &angles[3]);
+          &angles[3])) {
+        if(!Mobot_isConnected((mobot_t*)mobot)) {
+          g_robotManager->disconnect(index);
+        }
+        return true;
+      }
 #define VSCALEHANDLER(n) \
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed" #n)); \
       gtk_range_set_value(GTK_RANGE(w), RAD2DEG(angles[n-1]));  \
@@ -219,9 +224,20 @@ void* controllerHandlerThread(void* arg)
     int i;
     for(i = 0; i < 4; i++) {
       //g_positionValues[i] = normalizeAngleRad(g_positionValues[i]);
-      g_positionValues[i] = RAD2DEG(g_positionValues[i]);
+      if(!rc) {
+        g_positionValues[i] = RAD2DEG(g_positionValues[i]);
+      }
+      else {
+        g_positionValues[i] = 0;
+      }
     }
     MUTEX_UNLOCK(&g_activeMobotLock);
+    if(rc) {
+      MUTEX_LOCK(&g_activeMobotLock);
+      g_activeMobot = NULL;
+      MUTEX_UNLOCK(&g_activeMobotLock);
+      continue;
+    }
     /* Cycle through button handlers */
     TESTLOCK
     for(i = 0; i < NUM_BUTTONS; i++) {
@@ -239,7 +255,7 @@ void* controllerHandlerThread(void* arg)
 
 int handlerZERO(void* arg)
 {
-  Mobot_moveToZero((mobot_t*)arg);
+  Mobot_resetToZeroNB((mobot_t*)arg);
 }
 
 #define HANDLER_FORWARD(n) \

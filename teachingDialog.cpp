@@ -362,6 +362,11 @@ void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_n
     gtk_combo_box_set_active(GTK_COMBO_BOX(w), -1);
   }
 
+  /* If the connect dialog is selected, refresh the dialog */
+  if(page_num == connectPage) {
+    refreshConnectDialog();
+  }
+
   lastPage = page_num;
 }
 

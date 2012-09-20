@@ -38,6 +38,7 @@ int CRobotManager::addEntry(const char* entry)
   for(int i = (numEntries()-1); i >= 0; i--) {
     _mobots[i+1] = _mobots[i];
   }
+  _mobots[0] = NULL;
 }
 
 void CRobotManager::moveMobot(int destIndex, int srcIndex)

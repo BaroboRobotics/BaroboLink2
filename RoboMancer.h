@@ -37,6 +37,8 @@ extern HANDLE g_activeMobotLock;
 #else
 extern pthread_mutex_t g_activeMobotLock;
 #endif
+extern GtkNotebook *g_notebookRoot;
+extern GtkSpinner* g_reflashConnectSpinner;
 G_MODULE_EXPORT void on_imagemenuitem_about_activate(GtkWidget *w, gpointer data);
 G_MODULE_EXPORT void on_aboutdialog_response(GtkDialog *dialog, gint response_id, gpointer user_data);
 G_MODULE_EXPORT void on_aboutdialog_close(GtkDialog *dialog, gpointer user_data);
@@ -65,6 +67,9 @@ G_MODULE_EXPORT void on_button_cancelFlash_clicked(GtkWidget* widget, gpointer d
 G_MODULE_EXPORT void on_button_reflashContinue_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_cancelFlash2_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_reflashOK_clicked(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_button_forceUpgradeBegin_clicked(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_button_forceUpgradeCancel_clicked(GtkWidget *w, gpointer data);
+G_MODULE_EXPORT void on_menuitem_forceUpgrade_activate(GtkWidget *w, gpointer data);
 
 /* Program Dialog */
 void initProgramDialog(void);

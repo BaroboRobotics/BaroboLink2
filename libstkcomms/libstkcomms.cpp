@@ -124,9 +124,12 @@ int stkComms_connect(stkComms_t* comms, const char addr[])
     int wsaerror = WSAGetLastError();
 	  if(wsaerror == 10048) {
 		  fprintf(stderr, "Make sure there are no other programs currently connected to the Mobot.\n");
+      err = -4;
 	  } else if (wsaerror == 10047 || wsaerror == 10050) {
       fprintf(stderr, "A bluetooth device could not be found on this computer. You may need to attach\nan external Bluetooth dongle to continue.\n");
       err = -5;
+    } else {
+      err = -1;
     }
 	  // Free the buffer.
 	  LocalFree( lpMsgBuf );
