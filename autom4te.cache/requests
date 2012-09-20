@@ -285,7 +285,7 @@
                       }
                     ], 'Autom4te::Request' ),
              bless( [
-                      '4',
+                      '2',
                       1,
                       [
                         '/Users/gtkbuild/gtk/inst/share/autoconf'
