@@ -1319,7 +1319,7 @@
                                       <object class="GtkLabel" id="label6">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Joint Angle ([-180, 180] degrees)</property>
+                                        <property name="label" translatable="yes">Joint Angle (degrees)</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
