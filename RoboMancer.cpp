@@ -130,6 +130,23 @@ void on_imagemenuitem_about_activate(GtkWidget *widget, gpointer data)
   gtk_dialog_run(GTK_DIALOG(w));
 }
 
+void on_aboutdialog_activate_link(GtkAboutDialog *label, gchar* uri, gpointer data)
+{
+#ifdef _MSYS
+  ShellExecuteA(
+      NULL,
+      "open",
+      uri,
+      NULL,
+      NULL,
+      0);
+#elif defined (__MACH__) 
+  char command[MAX_PATH];
+  sprintf(command, "open %s", uri);
+  system(command); 
+#endif
+}
+
 void on_aboutdialog_response(GtkDialog *dialog, gint response_id, gpointer user_data)
 {
   gtk_widget_hide(GTK_WIDGET(dialog));

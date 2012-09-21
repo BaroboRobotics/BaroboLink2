@@ -13,6 +13,7 @@
     <property name="website">http://www.barobo.com</property>
     <property name="website_label" translatable="yes">Barobo Inc.</property>
     <signal name="close" handler="on_aboutdialog_close" swapped="no"/>
+    <signal name="activate-link" handler="on_aboutdialog_activate_link" swapped="no"/>
     <signal name="response" handler="on_aboutdialog_response" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox2">
