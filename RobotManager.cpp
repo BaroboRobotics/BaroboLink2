@@ -129,14 +129,17 @@ recordMobot_t* CRobotManager::getUnboundMobot()
 {
   int i;
   recordMobot_t* mobot;
-  mobot = getMobot(0);
-  for(i = 1; mobot != NULL; i++) {
-    if(mobot->bound == false) {
-      return mobot;
+  mobot = NULL;
+  for(i = 0; i < numEntries(); i++) {
+    if(_mobots[i] == NULL) {
+      continue;
     }
-    mobot = getMobot(i);
+    if(_mobots[i]->bound == false) {
+      mobot = _mobots[i];
+      break;
+    }
   }
-  return NULL;
+  return mobot;
 }
 
 int CRobotManager::numConnected()
