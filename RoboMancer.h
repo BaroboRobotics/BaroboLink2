@@ -135,6 +135,8 @@ void initControlDialog(void);
 void* controllerHandlerThread(void* arg);
 
 /* Teaching Dialog */
+G_MODULE_EXPORT void on_button_setJointsNeutral_clicked(GtkWidget*w, gpointer data);
+G_MODULE_EXPORT void on_button_holdJoints_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_button_clearRecordedPositions_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_button_recordPos_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_button_addDelay_clicked(GtkWidget*w, gpointer data);

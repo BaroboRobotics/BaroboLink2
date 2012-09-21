@@ -41,6 +41,42 @@ void teachingDialog_refreshRecordedMotions(int currentMotion)
   g_dnd = true;
 }
 
+void on_button_setJointsNeutral_clicked(GtkWidget*w, gpointer data)
+{
+  /* Set all joints of all connected mobots to neutral */
+  mobot_t* mobot;
+  int i;
+  for(i = 0; i < g_robotManager->numEntries(); i++) {
+    mobot = (mobot_t*)g_robotManager->getMobotIndex(i);
+    if(mobot == NULL) {
+      continue;
+    }
+    Mobot_setMovementStateNB(mobot, 
+        MOBOT_NEUTRAL,
+        MOBOT_NEUTRAL,
+        MOBOT_NEUTRAL,
+        MOBOT_NEUTRAL);
+  }
+}
+
+void on_button_holdJoints_clicked(GtkWidget*w, gpointer data)
+{
+  /* Set all joints of all connected mobots to hold */
+  mobot_t* mobot;
+  int i;
+  for(i = 0; i < g_robotManager->numEntries(); i++) {
+    mobot = (mobot_t*)g_robotManager->getMobotIndex(i);
+    if(mobot == NULL) {
+      continue;
+    }
+    Mobot_setMovementStateNB(mobot, 
+        MOBOT_HOLD,
+        MOBOT_HOLD,
+        MOBOT_HOLD,
+        MOBOT_HOLD);
+  }
+}
+
 void on_button_recordPos_clicked(GtkWidget*w, gpointer data)
 {
   g_robotManager->record();
