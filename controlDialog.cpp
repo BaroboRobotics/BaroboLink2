@@ -528,7 +528,7 @@ void on_button_setSpeeds_clicked(GtkWidget* wid, gpointer data)
 #define GETVALUESETSPEED(n) \
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorSpeed" #n)); \
   text = gtk_entry_get_text(GTK_ENTRY(w)); \
-  if(text != NULL) { \
+  if((text != NULL) && (strlen(text) != 0)) { \
     sscanf(text, "%lf", &value); \
     g_speedEntryValues[n-1] = value; \
     g_speedEntryValuesValid[n-1] = true; \

@@ -194,8 +194,6 @@ gboolean playTimeout(gpointer userdata)
   gboolean loop;
   g_isPlaying = true;
 
-  g_isPlaying = true;
-
   /* Get the looped motion check button */
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "checkbutton_playLooped"));
 	//for(i = 0; !done ; i++) {
