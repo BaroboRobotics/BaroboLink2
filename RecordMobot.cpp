@@ -74,6 +74,20 @@ int RecordMobot_addDelay(recordMobot_t* mobot, double seconds)
 	return 0;
 }
 
+int RecordMobot_isMoving(recordMobot_t* rmobot)
+{
+  mobot_t *mobot = (mobot_t*)rmobot;
+  mobotJointState_t state;
+  int i;
+  for(i = 1; i <= 4; i++) {
+    Mobot_getJointState(mobot, (mobotJointId_t)i, &state);
+    if(state == MOBOT_FORWARD || state == MOBOT_BACKWARD) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
 int RecordMobot_play(recordMobot_t* mobot, int index)
 {
 	if (index < 0 || index >= mobot->numMotions) {

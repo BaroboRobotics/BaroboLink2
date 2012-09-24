@@ -11,6 +11,8 @@ bool g_dndInsertIndexValid = false;
 int g_dndRemoveIndex = 0;
 bool g_dndRemoveIndexValid = false;
 bool g_dnd = true;
+bool g_playLooped = false;
+int g_poseIndex;
 
 void teachingDialog_refreshRecordedMotions(int currentMotion)
 {
@@ -185,36 +187,15 @@ void on_button_saveToProgram_clicked(GtkWidget*widget, gpointer data)
   delete program;
 }
 
-gboolean playTimeout(gpointer userdata)
+void* playThread(void* arg)
 {
-	CRobotManager* robotManager;
-	robotManager = g_robotManager;
-	static int i=0, j=0, done=0;
-  GtkWidget *w;
-  gboolean loop;
+  CRobotManager* robotManager;
+  robotManager = g_robotManager;
+  static int j=0;
   g_isPlaying = true;
+  int done = 0;
 
-  /* Get the looped motion check button */
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "checkbutton_playLooped"));
-	//for(i = 0; !done ; i++) {
-		for(j = 0; j < robotManager->numConnected(); j++) {
-			if(RecordMobot_getMotionType(robotManager->getMobot(j), i) == MOTION_SLEEP) {
-				RecordMobot_play(robotManager->getMobot(j), i);
-				break;
-			}
-			if(RecordMobot_play(robotManager->getMobot(j), i)) {
-        /* Get the looped checkbutton state */
-        loop = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
-				if(loop) {
-					i = -1;
-				}	else {
-					done = 1;
-				}
-			}
-		}
-		for(j = 0; j < robotManager->numConnected(); j++) {
-		  Mobot_moveWait((mobot_t*)robotManager->getMobot(j));
-		}
+  for(g_poseIndex = 0; !done ; g_poseIndex++) {
     if(g_haltPlayFlag) {
       g_haltPlayFlag = 0;
 
@@ -222,28 +203,54 @@ gboolean playTimeout(gpointer userdata)
         Mobot_stop((mobot_t*)robotManager->getMobot(j));
       }
       g_isPlaying = false;
-      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "button_playRecorded"));
-      gtk_widget_set_sensitive(w, TRUE);
-      teachingDialog_refreshRecordedMotions(-1);
-      done = 0; i = 0; j = 0;
-      return false;
+      done = 0; g_poseIndex = 0; j = 0;
+      return NULL;
     }
-    i++;
-    if(!done) {
-      /* highlight the next motion */
-      teachingDialog_refreshRecordedMotions(i);
-      return true;
+
+    for(j = 0; j < robotManager->numConnected(); j++) {
+      if(RecordMobot_getMotionType(robotManager->getMobot(j), g_poseIndex) == MOTION_SLEEP) {
+        RecordMobot_play(robotManager->getMobot(j), g_poseIndex);
+        break;
+      }
+      if(RecordMobot_play(robotManager->getMobot(j), g_poseIndex)) {
+        done = 1;
+      }
     }
-	//}
-	for(j = 0; j < robotManager->numConnected(); j++) {
-		Mobot_stop((mobot_t*)robotManager->getMobot(j));
-	}
+    for(j = 0; j < g_robotManager->numConnected(); j++) {
+      Mobot_moveWait((mobot_t*)g_robotManager->getMobot(j));
+    }
+    if(done) {
+      if(g_playLooped) {
+        g_poseIndex = -1;
+        done = 0;
+      }
+    }
+  }
+  for(j = 0; j < robotManager->numConnected(); j++) {
+    Mobot_stop((mobot_t*)robotManager->getMobot(j));
+  }
   g_isPlaying = false;
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "button_playRecorded"));
-  gtk_widget_set_sensitive(w, TRUE);
-	teachingDialog_refreshRecordedMotions(-1);
-  done = i = j = 0;
-	return false;
+  done = 0; g_poseIndex = 0; j = 0;
+  return NULL;
+}
+
+gboolean poseGuiTimeout(gpointer userdata)
+{
+  GtkWidget *w;
+  int j;
+  static int lastPoseIndex;
+  if(!g_isPlaying) {
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "button_playRecorded"));
+    gtk_widget_set_sensitive(w, TRUE);
+    teachingDialog_refreshRecordedMotions(-1);
+    g_poseIndex = 0; j = 0;
+    return false;
+  }
+  if(lastPoseIndex != g_poseIndex) {
+    teachingDialog_refreshRecordedMotions(g_poseIndex);
+    lastPoseIndex = g_poseIndex;
+  }
+  return true;
 }
 
 void on_button_playRecorded_clicked(GtkWidget*button, gpointer data) 
@@ -255,12 +262,19 @@ void on_button_playRecorded_clicked(GtkWidget*button, gpointer data)
   teachingDialog_refreshRecordedMotions(0);
   /* Start the play thread */
   g_haltPlayFlag = false;
-  g_idle_add(playTimeout, NULL);
+  THREAD_T thread;
+  THREAD_CREATE(&thread, playThread, NULL);
+  g_timeout_add(200, poseGuiTimeout, NULL);
 }
 
 void on_button_stopRecorded_clicked(GtkWidget*w, gpointer data)
 {
   g_haltPlayFlag = true;
+}
+
+void on_checkbutton_playLooped_clicked(GtkWidget*w, gpointer data)
+{
+  g_playLooped = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
 }
 
 gboolean refreshTimeout(gpointer userdata)

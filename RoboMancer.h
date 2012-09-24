@@ -144,6 +144,7 @@ G_MODULE_EXPORT void on_button_deleteRecordedPos_clicked(GtkWidget*w, gpointer d
 G_MODULE_EXPORT void on_button_saveToProgram_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_button_playRecorded_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_button_stopRecorded_clicked(GtkWidget*w, gpointer data);
+G_MODULE_EXPORT void on_checkbutton_playLooped_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_num, gpointer userdata);
 G_MODULE_EXPORT void on_liststore_recordedMotions_rows_reordered(
     GtkTreeModel* model, 
@@ -165,6 +166,8 @@ G_MODULE_EXPORT void on_liststore_recordedMotions_row_inserted(
     GtkTreePath* path,
     GtkTreeIter* iter,
     gpointer user_data);
+void* playThread(void* arg);
+gboolean poseGuiTimeout(gpointer userdata);
 
 /* Comms Engine */
 int initializeComms(void);

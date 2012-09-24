@@ -77,6 +77,7 @@ int RecordMobot_connectWithAddress(recordMobot_t* mobot, const char address[], i
 const char* RecordMobot_getAddress(recordMobot_t* mobot);
 int RecordMobot_record(recordMobot_t* mobot);
 int RecordMobot_addDelay(recordMobot_t* mobot, double seconds);
+int RecordMobot_isMoving(recordMobot_t* rmobot);
 int RecordMobot_play(recordMobot_t* mobot, int index);
 int RecordMobot_getMotionType(recordMobot_t* mobot, int index);
 int RecordMobot_getMotionString(recordMobot_t* mobot, int index, char* buf);
