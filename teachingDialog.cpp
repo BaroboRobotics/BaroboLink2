@@ -200,7 +200,13 @@ void* playThread(void* arg)
       g_haltPlayFlag = 0;
 
       for(j = 0; j < robotManager->numConnected(); j++) {
-        Mobot_stop((mobot_t*)robotManager->getMobot(j));
+        //Mobot_stop((mobot_t*)robotManager->getMobot(j));
+        Mobot_setMovementStateNB(
+            (mobot_t*)robotManager->getMobot(j),
+            MOBOT_HOLD,
+            MOBOT_HOLD,
+            MOBOT_HOLD,
+            MOBOT_HOLD);
       }
       g_isPlaying = false;
       done = 0; g_poseIndex = 0; j = 0;
@@ -227,7 +233,13 @@ void* playThread(void* arg)
     }
   }
   for(j = 0; j < robotManager->numConnected(); j++) {
-    Mobot_stop((mobot_t*)robotManager->getMobot(j));
+    //Mobot_stop((mobot_t*)robotManager->getMobot(j));
+    Mobot_setMovementStateNB(
+        (mobot_t*)robotManager->getMobot(j),
+        MOBOT_HOLD,
+        MOBOT_HOLD,
+        MOBOT_HOLD,
+        MOBOT_HOLD);
   }
   g_isPlaying = false;
   done = 0; g_poseIndex = 0; j = 0;
