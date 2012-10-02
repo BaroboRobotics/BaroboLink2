@@ -274,6 +274,7 @@ void on_button_playRecorded_clicked(GtkWidget*button, gpointer data)
   teachingDialog_refreshRecordedMotions(0);
   /* Start the play thread */
   g_haltPlayFlag = false;
+  g_isPlaying = true;
   THREAD_T thread;
   THREAD_CREATE(&thread, playThread, NULL);
   g_timeout_add(200, poseGuiTimeout, NULL);
