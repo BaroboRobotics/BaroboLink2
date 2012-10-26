@@ -130,7 +130,7 @@ int RecordMobot_getMotionString(recordMobot_t* mobot, int index, char* buf)
           RAD2DEG(mobot->motions[index]->data.pos[3]) );
       break;
     case MOTION_SLEEP:
-      sprintf(buf, "msleep(%d);", (int)(mobot->motions[index]->data.sleepDuration * 1000));
+      sprintf(buf, "delay(%lf);", (int)(mobot->motions[index]->data.sleepDuration));
       break;
   }
 	return 0;
