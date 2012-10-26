@@ -12,6 +12,7 @@ int g_dndRemoveIndex = 0;
 bool g_dndRemoveIndexValid = false;
 bool g_dnd = true;
 bool g_playLooped = false;
+bool g_holdOnExit = false;
 int g_poseIndex;
 
 void teachingDialog_refreshRecordedMotions(int currentMotion)
@@ -187,6 +188,16 @@ void on_button_saveToProgram_clicked(GtkWidget*widget, gpointer data)
   delete program;
 }
 
+void on_radiobutton_neutralOnExit_clicked(GtkWidget*w, gpointer data)
+{
+  g_holdOnExit = false;
+}
+
+void on_radiobutton_holdOnExit_clicked(GtkWidget*w, gpointer data)
+{
+  g_holdOnExit = true;
+}
+
 void* playThread(void* arg)
 {
   CRobotManager* robotManager;
@@ -201,12 +212,21 @@ void* playThread(void* arg)
 
       for(j = 0; j < robotManager->numConnected(); j++) {
         //Mobot_stop((mobot_t*)robotManager->getMobot(j));
-        Mobot_setMovementStateNB(
-            (mobot_t*)robotManager->getMobot(j),
-            MOBOT_HOLD,
-            MOBOT_HOLD,
-            MOBOT_HOLD,
-            MOBOT_HOLD);
+        if(g_holdOnExit) {
+          Mobot_setMovementStateNB(
+              (mobot_t*)robotManager->getMobot(j),
+              MOBOT_HOLD,
+              MOBOT_HOLD,
+              MOBOT_HOLD,
+              MOBOT_HOLD);
+        } else {
+          Mobot_setMovementStateNB(
+              (mobot_t*)robotManager->getMobot(j),
+              MOBOT_NEUTRAL,
+              MOBOT_NEUTRAL,
+              MOBOT_NEUTRAL,
+              MOBOT_NEUTRAL);
+        }
       }
       g_isPlaying = false;
       done = 0; g_poseIndex = 0; j = 0;
@@ -234,12 +254,21 @@ void* playThread(void* arg)
   }
   for(j = 0; j < robotManager->numConnected(); j++) {
     //Mobot_stop((mobot_t*)robotManager->getMobot(j));
-    Mobot_setMovementStateNB(
-        (mobot_t*)robotManager->getMobot(j),
-        MOBOT_HOLD,
-        MOBOT_HOLD,
-        MOBOT_HOLD,
-        MOBOT_HOLD);
+    if(g_holdOnExit) {
+      Mobot_setMovementStateNB(
+          (mobot_t*)robotManager->getMobot(j),
+          MOBOT_HOLD,
+          MOBOT_HOLD,
+          MOBOT_HOLD,
+          MOBOT_HOLD);
+    } else {
+      Mobot_setMovementStateNB(
+          (mobot_t*)robotManager->getMobot(j),
+          MOBOT_NEUTRAL,
+          MOBOT_NEUTRAL,
+          MOBOT_NEUTRAL,
+          MOBOT_NEUTRAL);
+    }
   }
   g_isPlaying = false;
   done = 0; g_poseIndex = 0; j = 0;

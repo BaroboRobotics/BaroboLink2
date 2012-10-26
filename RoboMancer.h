@@ -142,6 +142,8 @@ G_MODULE_EXPORT void on_button_recordPos_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_button_addDelay_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_button_deleteRecordedPos_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_button_saveToProgram_clicked(GtkWidget*w, gpointer data);
+G_MODULE_EXPORT void on_radiobutton_neutralOnExit_clicked(GtkWidget*w, gpointer data);
+G_MODULE_EXPORT void on_radiobutton_holdOnExit_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_button_playRecorded_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_button_stopRecorded_clicked(GtkWidget*w, gpointer data);
 G_MODULE_EXPORT void on_checkbutton_playLooped_clicked(GtkWidget*w, gpointer data);
