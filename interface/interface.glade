@@ -2122,35 +2122,43 @@ Button A and B together: Clear Recorded Poses</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkTreeView" id="treeview_recordedMotions">
+                          <object class="GtkScrolledWindow" id="scrolledwindow4">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="model">liststore_recordedMotions</property>
-                            <property name="headers_clickable">False</property>
-                            <property name="reorderable">True</property>
-                            <property name="search_column">0</property>
+                            <property name="hscrollbar_policy">automatic</property>
+                            <property name="vscrollbar_policy">automatic</property>
                             <child>
-                              <object class="GtkTreeViewColumn" id="treeviewcolumn2">
-                                <property name="title" translatable="yes">Recorded Poses</property>
+                              <object class="GtkTreeView" id="treeview_recordedMotions">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="model">liststore_recordedMotions</property>
+                                <property name="headers_clickable">False</property>
                                 <property name="reorderable">True</property>
+                                <property name="search_column">0</property>
                                 <child>
-                                  <object class="GtkCellRendererText" id="cellrenderertext_recordedMotionName">
-                                    <property name="editable">True</property>
-                                    <signal name="edited" handler="on_cellrenderertext_recordedMotionName_edited" swapped="no"/>
+                                  <object class="GtkTreeViewColumn" id="treeviewcolumn2">
+                                    <property name="title" translatable="yes">Recorded Poses</property>
+                                    <property name="reorderable">True</property>
+                                    <child>
+                                      <object class="GtkCellRendererText" id="cellrenderertext_recordedMotionName">
+                                        <property name="editable">True</property>
+                                        <signal name="edited" handler="on_cellrenderertext_recordedMotionName_edited" swapped="no"/>
+                                      </object>
+                                      <attributes>
+                                        <attribute name="text">0</attribute>
+                                      </attributes>
+                                    </child>
                                   </object>
-                                  <attributes>
-                                    <attribute name="text">0</attribute>
-                                  </attributes>
                                 </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="treeviewcolumn1">
                                 <child>
-                                  <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2"/>
-                                  <attributes>
-                                    <attribute name="stock-id">1</attribute>
-                                  </attributes>
+                                  <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                                    <child>
+                                      <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2"/>
+                                      <attributes>
+                                        <attribute name="stock-id">1</attribute>
+                                      </attributes>
+                                    </child>
+                                  </object>
                                 </child>
                               </object>
                             </child>
