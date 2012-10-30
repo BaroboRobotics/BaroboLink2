@@ -265,7 +265,7 @@ recordMobot_t* CRobotManager::getMobotIndex(int index)
   return _mobots[index];
 }
 
-string* CRobotManager::generateProgram(bool looped)
+string* CRobotManager::generateProgram(bool looped, bool holdOnExit)
 {
   string buf;
   string *program = new string();
@@ -282,6 +282,14 @@ string* CRobotManager::generateProgram(bool looped)
     sprintf(tbuf, "    CMobot mobot%d;\n", i+1);
     buf.assign(tbuf);
     *program += buf;
+  }
+
+  if(holdOnExit) {
+    for(i = 0; i < numConnected(); i++) {
+      sprintf(tbuf, "mobot%d.setExitState(MOBOT_HOLD);\n", i+1);
+      buf.assign(tbuf);
+      *program += buf;
+    }
   }
 
   /* Connect to each one */

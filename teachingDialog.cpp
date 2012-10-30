@@ -140,14 +140,14 @@ void on_button_clearRecordedPositions_clicked(GtkWidget*w, gpointer data)
 void on_button_saveToProgram_clicked(GtkWidget*widget, gpointer data)
 {
   /* See if the looped checkmark is checked */
+  bool playLooped = false;
   string* program;
   GtkWidget *w;
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "checkbutton_playLooped"));
   if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))) {
-    program = g_robotManager->generateProgram(true);
-  } else {
-    program = g_robotManager->generateProgram(false);
-  }
+    playLooped = true;
+  }  
+  program = g_robotManager->generateProgram(playLooped, g_holdOnExit);
   /* Open a save file dialog */
   GtkWidget *dialog;
   dialog = gtk_file_chooser_dialog_new ("Save File",
