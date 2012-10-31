@@ -284,14 +284,6 @@ string* CRobotManager::generateProgram(bool looped, bool holdOnExit)
     *program += buf;
   }
 
-  if(holdOnExit) {
-    for(i = 0; i < numConnected(); i++) {
-      sprintf(tbuf, "mobot%d.setExitState(MOBOT_HOLD);\n", i+1);
-      buf.assign(tbuf);
-      *program += buf;
-    }
-  }
-
   /* Connect to each one */
   for(i = 0; i < numConnected(); i++) {
     sprintf(tbuf, "    mobot%d.connect();\n", i+1);
@@ -347,6 +339,15 @@ string* CRobotManager::generateProgram(bool looped, bool holdOnExit)
   if(looped) {
     *program += "    }\n";
   }
+
+  if(holdOnExit) {
+    for(i = 0; i < numConnected(); i++) {
+      sprintf(tbuf, "    mobot%d.setExitState(MOBOT_HOLD);\n", i+1);
+      buf.assign(tbuf);
+      *program += buf;
+    }
+  }
+
   *program += "    return 0;\n";
   *program += "}\n";
   return program;
