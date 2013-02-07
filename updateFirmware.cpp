@@ -29,7 +29,7 @@ gboolean updateProgrammingProgressTimeout(gpointer data);
 void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data)
 {
   /* Try and grab the HW rev number from the robot */
-  int index = (int)data;
+  int index = (long)data;
   recordMobot_t* mobot = g_robotManager->getMobotIndex(index);
   if(mobot == NULL) {
     return;

@@ -153,7 +153,7 @@ gboolean connectDialogPulse(gpointer data)
 
 void on_button_Connect_clicked(GtkWidget* w, gpointer data)
 {
-  int index = (int)data;
+  int index = (long)data;
   struct connectThreadArg_s* arg;
   arg = (struct connectThreadArg_s*)malloc(sizeof(struct connectThreadArg_s));
   arg->connectIndex = index;
@@ -166,7 +166,7 @@ void on_button_Connect_clicked(GtkWidget* w, gpointer data)
 
 void on_button_Disconnect_clicked(GtkWidget* w, gpointer data)
 {
-  int index = (int) data;
+  int index = (long) data;
   /* We have to lock the controlDialog locks first to make sure we don't screw
    * up their data. */
   MUTEX_LOCK(&g_activeMobotLock);
@@ -178,7 +178,7 @@ void on_button_Disconnect_clicked(GtkWidget* w, gpointer data)
 
 void on_button_Remove_clicked(GtkWidget* w, gpointer data)
 {
-  int index = (int) data;
+  int index = (long) data;
   /* First, make sure the robot is disconnected */
   g_robotManager->disconnect(index);
   g_robotManager->remove(index);
@@ -188,7 +188,7 @@ void on_button_Remove_clicked(GtkWidget* w, gpointer data)
 
 void on_button_MoveUp_clicked(GtkWidget* w, gpointer data)
 {
-  int index = (int)data;
+  int index = (long)data;
   g_robotManager->moveEntryUp(index);
   g_robotManager->write();
   refreshConnectDialog();
@@ -196,7 +196,7 @@ void on_button_MoveUp_clicked(GtkWidget* w, gpointer data)
 
 void on_button_MoveDown_clicked(GtkWidget* w, gpointer data)
 {
-  int index = (int)data;
+  int index = (long)data;
   g_robotManager->moveEntryDown(index);
   g_robotManager->write();
   refreshConnectDialog();

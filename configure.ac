@@ -21,8 +21,8 @@ echo $host_os
 
 case $host_os in
   linux* )
-    AC_CHECK_LIB([scintilla], [scintilla_new], [], [], [-pthread -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgio-2.0 -lpangoft2-1.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lm -lcairo -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0])
-    AC_CHECK_LIB([stkcomms], [libstkcomms_is_present], [], [], [])
+    AC_CHECK_LIB([scintilla], [scintilla_new], [], [], [-pthread -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgio-2.0 -lpangoft2-1.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lm -lcairo -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0 -lstdc++])
+    AC_CHECK_LIB([stkcomms], [libstkcomms_is_present], [], [], [-pthread -lstdc++])
 PKG_CHECK_MODULES([DEPS], [
                    gtk+-2.0 >= 2.20.0
                    gmodule-export-2.0 >= 2.20.0])
