@@ -1,7 +1,7 @@
 #This makefile is for MSYS/MinGW systems
 VERSION=0.1
 MOBOT_PREFIX=/home/david/sys
-MOBOTDIR=/d/Projects/iMobot_gumstix_api/libimobotcomms
+MOBOTDIR=/e/Barobo/iMobot_gumstix_api/libimobotcomms
 SCIPREFIX=/d/Projects/scintilla
 CC=g++
 CFLAGS=-c -g `pkg-config --cflags gtk+-2.0` `pkg-config --cflags gmodule-2.0` \
@@ -25,7 +25,8 @@ OBJS=connectDialog.o RoboMancer.o configFile.o RobotManager.o RecordMobot.o prog
 HEADERS=RoboMancer.h
 
 #all:libmobot.a $(OBJS) RoboMancer
-all:$(OBJS) RoboMancer libmobot.a libmobot++_wrapper.a mobot.h
+#all:$(OBJS) RoboMancer libmobot.a libmobot++_wrapper.a mobot.h
+all:$(OBJS) RoboMancer 
 
 MOBOTDIR=/d/Projects/iMobot_gumstix_api/libimobotcomms
 
@@ -50,7 +51,7 @@ libstkcomms++.o:libstkcomms/libstkcomms++.cpp
 libinterface.a:interface.o
 	ar rcs libinterface.a interface.o
 
-RoboMancer:$(OBJS) libstkcomms++.o $(HEADERS) libinterface.a libmobot.a libstkcomms/libstkcomms.a
+RoboMancer:$(OBJS) libstkcomms++.o $(HEADERS) 
 	$(CC) -v $(OBJS) libstkcomms++.o $(LIBS) -o RoboMancer
 
 clean:

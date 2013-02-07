@@ -40,7 +40,9 @@ typedef struct stkComms_s
 
 #if !defined (_MSYS)
 #ifdef _WIN32
+#ifdef ENABLE_BLUETOOTH
   SOCKADDR_BTH addr;
+#endif
 #elif defined __MACH__
   void* addr;
 #else

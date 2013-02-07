@@ -9,9 +9,11 @@
 #include <sys/types.h>
 #include <signal.h>
 #else
-#pragma comment(lib, "ws2_32.lib")
 #include <winsock2.h>
+#ifdef ENABLE_BLUETOOTH
+#pragma comment(lib, "ws2_32.lib")
 #include <Ws2bth.h>
+#endif
 #endif
 #include "libstkcomms.hpp"
 #include "command.h"
@@ -50,6 +52,7 @@ int stkComms_destroy(stkComms_t* comms)
 
 int stkComms_connect(stkComms_t* comms, const char addr[])
 {
+#ifdef ENABLE_BLUETOOTH
 #ifndef __MACH__
   int err = 0;
   int flags;
@@ -154,6 +157,9 @@ int stkComms_connect(stkComms_t* comms, const char addr[])
 #else 
   return -1;
 #endif
+#else // ENABLE_BLUETOOTH not defined
+  return -1;
+#endif // ENABLE_BLUETOOTH
 }
 
 #ifdef __MACH__
@@ -801,6 +807,7 @@ int stkComms_setdtr (stkComms_t* comms, int on)
 } 
 
 #ifdef _WIN32
+#ifdef ENABLE_BLUETOOTH
 void baswap(bdaddr_t *dst, const bdaddr_t *src)
 {
 	register unsigned char *d = (unsigned char *) dst;
@@ -828,6 +835,7 @@ int str2ba(const char *str, bdaddr_t *ba)
 
 	return 0;
 }
+#endif
 #endif
 
 hexFile_t* hexFile_new()
