@@ -6,6 +6,9 @@
 
 char g_tmpBuf[80];
 bool g_dndConnect = true;
+char g_connectedPort[64];
+
+recordMobot_t* g_mobotParent;
 
 void on_button_connect_addRobot_clicked(GtkWidget* widget, gpointer data)
 {
@@ -14,6 +17,67 @@ void on_button_connect_addRobot_clicked(GtkWidget* widget, gpointer data)
   g_robotManager->addEntry(addr);
   g_robotManager->write();
   refreshConnectDialog();
+}
+
+void* scanThread(void* arg)
+{
+  int* completed = (int*)arg;
+  Mobot_queryAddresses((mobot_t*)g_mobotParent);
+  sleep(3);
+  *completed = 1;
+  return NULL;
+}
+
+gboolean progressBarScanningUpdate(gpointer data)
+{
+  int* completed = (int*)data;
+  GtkWidget* progressBarScanning = GTK_WIDGET(gtk_builder_get_object(g_builder, "progressbar_scanning"));
+  if(!*completed) {
+    /* Update the progress bar */
+    gtk_progress_bar_pulse(GTK_PROGRESS_BAR(progressBarScanning));
+    return true;
+  } else {
+    /* Close the window */
+    gtk_widget_hide(
+        GTK_WIDGET(gtk_builder_get_object(g_builder, "window_scanningProgress"))
+        );
+    /* Now we need to update the connection list with the scanned mobot IDs */
+    mobotInfo_t *mobots;
+    int i, n;
+    Mobot_getChildrenInfo((mobot_t*)g_mobotParent, &mobots, &n);
+    for(i = 0; i < n; i++) {
+      if(!g_robotManager->entryExists(mobots[i].serialID)) {
+        g_robotManager->addEntry(mobots[i].serialID);
+      }
+    }
+    refreshConnectDialog();
+    return false;
+  }
+}
+
+void on_button_scanMobots_clicked(GtkWidget* widget, gpointer data)
+{
+  static int completed;
+  if(g_mobotParent == NULL) 
+  {
+    g_mobotParent = (recordMobot_t*)malloc(sizeof(recordMobot_t));
+    RecordMobot_init(g_mobotParent, "Dongle");
+  }
+
+  if(((mobot_t*)g_mobotParent)->connected == 0) {
+    gtk_widget_show(
+        GTK_WIDGET(gtk_builder_get_object(g_builder, "dialog_connectDongle")));
+    return;
+  }
+
+  /* Start the query thread and show the progress bar */
+  completed = 0;
+  gtk_widget_show(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, "window_scanningProgress"))
+      );
+  THREAD_T thread;
+  THREAD_CREATE(&thread, scanThread, &completed);
+  g_timeout_add(500, progressBarScanningUpdate, &completed);
 }
 
 void on_button_connect_remove_clicked(GtkWidget* widget, gpointer data)
@@ -155,6 +219,26 @@ void on_button_Connect_clicked(GtkWidget* w, gpointer data)
 {
   int index = (long)data;
   struct connectThreadArg_s* arg;
+  /* First, check to see if the requested mobot is a DOF. If it is, we must
+   * ensure that the dongle has been connected. */
+  if(
+      (
+       (strlen(g_robotManager->getEntry(index)) == 4) &&
+      g_mobotParent == NULL
+      ) ||
+      (
+       ((mobot_t*)g_mobotParent)->connected == 0
+      )
+    )
+    {
+      /* Trying to connect to a DOF, but there is no dongle connected. Open the
+       * connect-dongle dialog */
+      g_mobotParent = (recordMobot_t*)malloc(sizeof(recordMobot_t));
+      RecordMobot_init(g_mobotParent, "Dongle");
+      gtk_widget_show(
+          GTK_WIDGET(gtk_builder_get_object(g_builder, "dialog_connectDongle")));
+      return;
+    }
   arg = (struct connectThreadArg_s*)malloc(sizeof(struct connectThreadArg_s));
   arg->connectIndex = index;
   arg->connectionCompleted = 0;

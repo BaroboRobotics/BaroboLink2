@@ -32,6 +32,7 @@ extern GtkWidget *g_scieditor;
 extern GtkWidget *g_window;
 extern ScintillaObject *g_sci;
 extern recordMobot_t* g_activeMobot;
+extern recordMobot_t *g_mobotParent;
 #ifdef _MSYS
 extern HANDLE g_activeMobotLock;
 #else
@@ -57,8 +58,14 @@ G_MODULE_EXPORT void on_button_Disconnect_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_Remove_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_MoveDown_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_MoveUp_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_button_scanMobots_clicked(GtkWidget* widget, gpointer data);
 void refreshConnectDialog();
 gboolean connectDialogPulse(gpointer data);
+
+/* Connect Dongle Dialog */
+
+G_MODULE_EXPORT void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data);
+G_MODULE_EXPORT void on_button_connectDongleClose_clicked(GtkWidget *w, gpointer data);
 
 /* Reflashing Process */
 extern char g_reflashAddress[80];

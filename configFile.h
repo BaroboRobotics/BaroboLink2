@@ -9,6 +9,7 @@ class ConfigFile
     int read(const char* path);
     int numEntries();
     const char* getEntry(int index);
+    bool entryExists(const char* entry);
     int addEntry(const char* entry);
     int insertEntry(const char* entry, int index);
     int moveEntryDown(int index);

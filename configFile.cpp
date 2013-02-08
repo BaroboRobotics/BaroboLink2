@@ -26,7 +26,10 @@ int ConfigFile::read(const char* path)
   {
     while(file.good()) {
       getline(file, line);
-      if(line.size() != 17) {
+      if(
+          (line.size() != 17) &&
+          (line.size() != 4)
+          ) {
         continue;
       }
       /* Copy the line into the list of entries */
@@ -109,6 +112,17 @@ const char* ConfigFile::getEntry(int index)
     return NULL;
   }
   return _addresses[index];
+}
+
+bool ConfigFile::entryExists(const char* entry)
+{
+  bool rc;
+  for(int i = 0; i < _numEntries; i++) {
+    if(!strcmp(entry, _addresses[i])) {
+      return true;
+    }
+  }
+  return false;
 }
 
 int ConfigFile::remove(int index)

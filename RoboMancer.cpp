@@ -93,6 +93,7 @@ int main(int argc, char* argv[])
 
 void initialize()
 {
+  g_mobotParent = NULL;
   g_robotManager = new CRobotManager();
   /* Read the configuration file */
   g_robotManager->read( Mobot_getConfigFilePath() );

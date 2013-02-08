@@ -8,7 +8,7 @@
 
 #define RAD2DEG(x) ((x)*180.0/M_PI)
 
-void RecordMobot_init(recordMobot_t* mobot, char *name)
+void RecordMobot_init(recordMobot_t* mobot, const char *name)
 {
   Mobot_init((mobot_t*)mobot);
   mobot->firmwareVersion = 0x0FFFFFFF;
