@@ -47,6 +47,39 @@ double normalizeDeg(double deg) {
   return deg;
 }
 
+void setMotorWidgetsSensitive(int motor, bool sensitive)
+{
+  char buf[256];
+  sprintf(buf, "vscale_motorspeed%d", motor);
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, buf)),
+      sensitive );
+  sprintf(buf, "entry_motorSpeed%d", motor);
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, buf)),
+      sensitive );
+  sprintf(buf, "button_motor%dforward", motor);
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, buf)),
+      sensitive );
+  sprintf(buf, "button_motor%dstop", motor);
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, buf)),
+      sensitive );
+  sprintf(buf, "button_motor%dback", motor);
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, buf)),
+      sensitive );
+  sprintf(buf, "vscale_motorPos%d", motor);
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, buf)),
+      sensitive );
+  sprintf(buf, "entry_motorPos%d", motor);
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, buf)),
+      sensitive );
+}
+
 void initControlDialog(void)
 {
 #define BUTTON(x) \
@@ -124,8 +157,33 @@ gboolean controllerHandlerTimeout(gpointer data)
   if(mobot != g_activeMobot) {
     MUTEX_LOCK(&g_activeMobotLock);
     g_activeMobot = mobot;
+    /* Get the form factor and disable certain widgets if necessary */
+    int rc, form;
+    rc = Mobot_getFormFactor((mobot_t*)g_activeMobot, &form);
+    if(rc) {
+      /* Normal Mobot. Enable all widgets*/
+      setMotorWidgetsSensitive(2, true);
+      setMotorWidgetsSensitive(3, true);
+      setMotorWidgetsSensitive(4, true);
+    } else if (form == MOBOTFORM_L) {
+      /* Disable widgets for motors 3 and 4 */
+      setMotorWidgetsSensitive(2, true);
+      setMotorWidgetsSensitive(3, false);
+      setMotorWidgetsSensitive(4, false);
+    } else if (form == MOBOTFORM_I) {
+      /* Disable widgets for motors 2 and 4 */
+      setMotorWidgetsSensitive(2, false);
+      setMotorWidgetsSensitive(3, true);
+      setMotorWidgetsSensitive(4, false);
+    } else {
+      /* Enable all widgets */
+      setMotorWidgetsSensitive(2, true);
+      setMotorWidgetsSensitive(3, true);
+      setMotorWidgetsSensitive(4, true);
+    }
     MUTEX_UNLOCK(&g_activeMobotLock);
   }
+
   char buf[80];
 #define VSCALEHANDLER(n) \
   if(g_buttonState[S_POS##n] == 0) { \
