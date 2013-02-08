@@ -227,17 +227,21 @@ void* controllerHandlerThread(void* arg)
       if(!rc) {
         g_positionValues[i] = RAD2DEG(g_positionValues[i]);
       }
+      /*
       else {
         g_positionValues[i] = 0;
       }
+      */
     }
     MUTEX_UNLOCK(&g_activeMobotLock);
+    /*
     if(rc) {
       MUTEX_LOCK(&g_activeMobotLock);
       g_activeMobot = NULL;
       MUTEX_UNLOCK(&g_activeMobotLock);
       continue;
     }
+    */
     /* Cycle through button handlers */
     TESTLOCK
     for(i = 0; i < NUM_BUTTONS; i++) {
