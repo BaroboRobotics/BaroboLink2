@@ -4,7 +4,9 @@
 #include <stdio.h>
 #if defined (_WIN32)
 #include <winsock2.h>
+#ifdef ENABLE_BLUETOOTH
 #include <Ws2bth.h>
+#endif
 #elif defined (_MSYS)
 #include <winsock2.h>
 #else

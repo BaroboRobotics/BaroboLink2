@@ -23,7 +23,11 @@ void* scanThread(void* arg)
 {
   int* completed = (int*)arg;
   Mobot_queryAddresses((mobot_t*)g_mobotParent);
+#ifndef _WIN32
   sleep(3);
+#else
+  Sleep(3000);
+#endif
   *completed = 1;
   return NULL;
 }
