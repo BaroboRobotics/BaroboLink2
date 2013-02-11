@@ -66,6 +66,8 @@ gboolean connectDialogPulse(gpointer data);
 
 G_MODULE_EXPORT void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data);
 G_MODULE_EXPORT void on_button_connectDongleClose_clicked(GtkWidget *w, gpointer data);
+void showConnectDongleDialog(void);
+void hideConnectDongleDialog(void);
 
 /* Reflashing Process */
 extern char g_reflashAddress[80];

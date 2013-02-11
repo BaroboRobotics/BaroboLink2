@@ -1,6 +1,34 @@
 #include "mobot.h"
 #include "RoboMancer.h"
 
+void showConnectDongleDialog(void)
+{
+  GdkColor color;
+  GtkWidget *w;
+  /* First, see if the dongle is connected */
+  if( (g_mobotParent != NULL) && (((mobot_t*)g_mobotParent)->connected != 0)) {
+    /* The dongle is connected */
+    /* Make the text entry green */
+    gdk_color_parse("green", &color);
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_connectDongleCurrentPort"));
+    gtk_widget_modify_fg(w, GTK_STATE_NORMAL, &color);
+  } else {
+    /* The dongle is not connected */
+    gdk_color_parse("red", &color);
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_connectDongleCurrentPort"));
+    gtk_widget_modify_fg(w, GTK_STATE_NORMAL, &color);
+    gtk_entry_set_text(GTK_ENTRY(w), "<Not Connected>");
+  }
+  GtkWidget* window = GTK_WIDGET(gtk_builder_get_object(g_builder, "dialog_connectDongle"));
+  gtk_widget_show(window);
+}
+
+void hideConnectDongleDialog(void)
+{
+  GtkWidget* window = GTK_WIDGET(gtk_builder_get_object(g_builder, "dialog_connectDongle"));
+  gtk_widget_hide(window);
+}
+
 void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data)
 {
   char buf[256];
@@ -44,7 +72,6 @@ void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data)
 
 void on_button_connectDongleClose_clicked(GtkWidget *w, gpointer data)
 {
-  GtkWidget* window = GTK_WIDGET(gtk_builder_get_object(g_builder, "dialog_connectDongle"));
-  gtk_widget_hide(window);
+  hideConnectDongleDialog();
   return;
 }

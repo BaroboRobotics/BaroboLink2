@@ -69,8 +69,7 @@ void on_button_scanMobots_clicked(GtkWidget* widget, gpointer data)
   }
 
   if(((mobot_t*)g_mobotParent)->connected == 0) {
-    gtk_widget_show(
-        GTK_WIDGET(gtk_builder_get_object(g_builder, "dialog_connectDongle")));
+    showConnectDongleDialog();
     return;
   }
 
@@ -239,8 +238,7 @@ void on_button_Connect_clicked(GtkWidget* w, gpointer data)
        * connect-dongle dialog */
       g_mobotParent = (recordMobot_t*)malloc(sizeof(recordMobot_t));
       RecordMobot_init(g_mobotParent, "Dongle");
-      gtk_widget_show(
-          GTK_WIDGET(gtk_builder_get_object(g_builder, "dialog_connectDongle")));
+      showConnectDongleDialog();
       return;
     }
   arg = (struct connectThreadArg_s*)malloc(sizeof(struct connectThreadArg_s));

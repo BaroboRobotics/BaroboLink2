@@ -1,6 +1,8 @@
 #ifndef _CONFIG_FILE_H_
 #define _CONFIG_FILE_H_
 
+#include <BaroboConfigFile.h>
+
 class ConfigFile
 {
   public:
@@ -18,12 +20,8 @@ class ConfigFile
     int rename(const char* newName, int index);
     int write();
 
-  protected:
-    char *_addresses[100];
-
   private:
-    int _numEntries;
-    char *_path;
+    bcf_t* _bcf;
 };
 
 

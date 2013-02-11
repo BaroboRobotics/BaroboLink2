@@ -21,8 +21,8 @@ endif(CMAKE_HOST_WIN32)
 if(GTK2_FOUND)
   include_directories(${GTK2_INCLUDE_DIRS})
 # For Scintilla
-  include_directories(~/sys/include)
-  link_directories(${LIBSTKCOMMS_BINARY_DIR} ${GTK2_LIBRARY_DIRS} ~/sys/lib)
+  include_directories(~/sys/include ../BaroboConfigFile)
+  link_directories(${LIBSTKCOMMS_BINARY_DIR} ${GTK2_LIBRARY_DIRS} ~/sys/lib ../BaroboConfigFile)
 
   add_executable(RoboMancer
       commsHandler.cpp
@@ -37,7 +37,7 @@ if(GTK2_FOUND)
       teachingDialog.cpp
       updateFirmware.cpp )
   
-  target_link_libraries(RoboMancer mobot scintilla stkcomms ${GTK2_LIBRARIES} )
+  target_link_libraries(RoboMancer mobot scintilla stkcomms baroboconfigfile mxml ${GTK2_LIBRARIES} )
 else(GTK2_FOUND)
   message(FATAL_ERROR "Gtk not found!")
 endif(GTK2_FOUND)
