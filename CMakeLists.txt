@@ -22,7 +22,7 @@ if(GTK2_FOUND)
   include_directories(${GTK2_INCLUDE_DIRS})
 # For Scintilla
   include_directories(~/sys/include ../BaroboConfigFile)
-  link_directories(${LIBSTKCOMMS_BINARY_DIR} ${GTK2_LIBRARY_DIRS} ~/sys/lib ../BaroboConfigFile)
+  link_directories(${LIBSTKCOMMS_BINARY_DIR} ${GTK2_LIBRARY_DIRS} ~/sys/lib ${CMAKE_SOURCE_DIR}/../BaroboConfigFile)
 
   add_executable(RoboMancer
       commsHandler.cpp
