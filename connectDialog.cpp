@@ -19,46 +19,6 @@ void on_button_connect_addRobot_clicked(GtkWidget* widget, gpointer data)
   refreshConnectDialog();
 }
 
-void* scanThread(void* arg)
-{
-  int* completed = (int*)arg;
-  Mobot_queryAddresses((mobot_t*)g_mobotParent);
-#ifndef _WIN32
-  sleep(3);
-#else
-  Sleep(3000);
-#endif
-  *completed = 1;
-  return NULL;
-}
-
-gboolean progressBarScanningUpdate(gpointer data)
-{
-  int* completed = (int*)data;
-  GtkWidget* progressBarScanning = GTK_WIDGET(gtk_builder_get_object(g_builder, "progressbar_scanning"));
-  if(!*completed) {
-    /* Update the progress bar */
-    gtk_progress_bar_pulse(GTK_PROGRESS_BAR(progressBarScanning));
-    return true;
-  } else {
-    /* Close the window */
-    gtk_widget_hide(
-        GTK_WIDGET(gtk_builder_get_object(g_builder, "window_scanningProgress"))
-        );
-    /* Now we need to update the connection list with the scanned mobot IDs */
-    mobotInfo_t *mobots;
-    int i, n;
-    Mobot_getChildrenInfo((mobot_t*)g_mobotParent, &mobots, &n);
-    for(i = 0; i < n; i++) {
-      if(!g_robotManager->entryExists(mobots[i].serialID)) {
-        g_robotManager->addEntry(mobots[i].serialID);
-      }
-    }
-    refreshConnectDialog();
-    return false;
-  }
-}
-
 void on_button_scanMobots_clicked(GtkWidget* widget, gpointer data)
 {
   if(g_mobotParent == NULL) 

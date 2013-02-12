@@ -105,6 +105,7 @@ void initialize()
   g_reflashConnectSpinner = GTK_SPINNER(gtk_builder_get_object(g_builder, "spinner_reflashConnect"));
   initControlDialog();
   initProgramDialog();
+  initScanMobotsDialog();
   initializeComms();
 }
 

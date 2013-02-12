@@ -70,6 +70,7 @@ void showConnectDongleDialog(void);
 void hideConnectDongleDialog(void);
 
 /* Scan Mobots Dialog */
+void initScanMobotsDialog();
 void showScanMobotsDialog();
 G_MODULE_EXPORT void on_button_scanMobotsAdd_clicked(GtkWidget *w, gpointer data);
 G_MODULE_EXPORT void on_button_scanMobotsOK_clicked(GtkWidget *w, gpointer data);
