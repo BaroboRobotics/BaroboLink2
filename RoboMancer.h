@@ -63,11 +63,18 @@ void refreshConnectDialog();
 gboolean connectDialogPulse(gpointer data);
 
 /* Connect Dongle Dialog */
-
 G_MODULE_EXPORT void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data);
 G_MODULE_EXPORT void on_button_connectDongleClose_clicked(GtkWidget *w, gpointer data);
+void askConnectDongle(void);
 void showConnectDongleDialog(void);
 void hideConnectDongleDialog(void);
+
+/* Scan Mobots Dialog */
+void showScanMobotsDialog();
+G_MODULE_EXPORT void on_button_scanMobotsAdd_clicked(GtkWidget *w, gpointer data);
+G_MODULE_EXPORT void on_button_scanMobotsOK_clicked(GtkWidget *w, gpointer data);
+G_MODULE_EXPORT void on_button_scanMobotsCancel_clicked(GtkWidget *w, gpointer data);
+G_MODULE_EXPORT void on_button_scanMobotsRefresh_clicked(GtkWidget *w, gpointer data);
 
 /* Reflashing Process */
 extern char g_reflashAddress[80];

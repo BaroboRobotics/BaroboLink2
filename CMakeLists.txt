@@ -34,6 +34,7 @@ if(GTK2_FOUND)
       RecordMobot.cpp
       RoboMancer.cpp
       RobotManager.cpp
+      scanMobotsDialog.cpp
       teachingDialog.cpp
       updateFirmware.cpp )
   

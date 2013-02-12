@@ -61,7 +61,6 @@ gboolean progressBarScanningUpdate(gpointer data)
 
 void on_button_scanMobots_clicked(GtkWidget* widget, gpointer data)
 {
-  static int completed;
   if(g_mobotParent == NULL) 
   {
     g_mobotParent = (recordMobot_t*)malloc(sizeof(recordMobot_t));
@@ -69,18 +68,20 @@ void on_button_scanMobots_clicked(GtkWidget* widget, gpointer data)
   }
 
   if(((mobot_t*)g_mobotParent)->connected == 0) {
-    showConnectDongleDialog();
+    askConnectDongle();
     return;
   }
 
   /* Start the query thread and show the progress bar */
-  completed = 0;
+  showScanMobotsDialog();
+  /*
   gtk_widget_show(
       GTK_WIDGET(gtk_builder_get_object(g_builder, "window_scanningProgress"))
       );
   THREAD_T thread;
   THREAD_CREATE(&thread, scanThread, &completed);
   g_timeout_add(500, progressBarScanningUpdate, &completed);
+  */
 }
 
 void on_button_connect_remove_clicked(GtkWidget* widget, gpointer data)
@@ -238,7 +239,7 @@ void on_button_Connect_clicked(GtkWidget* w, gpointer data)
        * connect-dongle dialog */
       g_mobotParent = (recordMobot_t*)malloc(sizeof(recordMobot_t));
       RecordMobot_init(g_mobotParent, "Dongle");
-      showConnectDongleDialog();
+      askConnectDongle();
       return;
     }
   arg = (struct connectThreadArg_s*)malloc(sizeof(struct connectThreadArg_s));

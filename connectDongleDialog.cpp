@@ -1,6 +1,22 @@
 #include "mobot.h"
 #include "RoboMancer.h"
 
+void askConnectDongle(void)
+{
+  /* Set up a question dialog */
+  GtkWidget* d = gtk_message_dialog_new(
+      GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
+      GTK_DIALOG_DESTROY_WITH_PARENT,
+      GTK_MESSAGE_QUESTION,
+      GTK_BUTTONS_YES_NO,
+      "There is currently no Mobot dongle associated with RoboMancer. Would you like to add one now?");
+  int rc = gtk_dialog_run(GTK_DIALOG(d));
+  if(rc == GTK_RESPONSE_YES) {
+    showConnectDongleDialog();
+  }
+  gtk_widget_destroy(d);
+}
+
 void showConnectDongleDialog(void)
 {
   GdkColor color;
