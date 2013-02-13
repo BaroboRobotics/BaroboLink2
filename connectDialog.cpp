@@ -480,7 +480,7 @@ void refreshConnectDialog()
             _r = r * 255.0;
             _g = g * 255.0;
             _b = b * 255.0;
-            sprintf(buf, "#%2X%2X%2X", _r, _g, _b);
+            sprintf(buf, "#%02X%02X%02X", _r, _g, _b);
             GdkColor color;
             gdk_color_parse(buf, &color);
             w = gtk_color_button_new_with_color(&color);
