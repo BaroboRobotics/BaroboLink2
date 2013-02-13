@@ -113,7 +113,12 @@ void initialize()
   RecordMobot_init(g_mobotParent, "DONGLE");
   const char *dongle;
   int i, rc;
-  for(i = 0, dongle = g_robotManager->getDongle(i); dongle != NULL; i++) {
+  for(
+      i = 0, dongle = g_robotManager->getDongle(i); 
+      dongle != NULL; 
+      i++, dongle = g_robotManager->getDongle(i)
+     ) 
+  {
     rc = Mobot_connectWithTTY((mobot_t*)g_mobotParent, dongle);
     if(rc == 0) {
       break;
