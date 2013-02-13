@@ -603,6 +603,5 @@ void on_colorDialog_color_set(GtkColorButton* w, gpointer data)
   rgb[0] = color.red/65535.0;
   rgb[1] = color.green/65535.0;
   rgb[2] = color.blue/65535.0;
-  printf("%lf %lf %lf\n", rgb[0], rgb[1], rgb[2]);
   Mobot_setRGB(mobot, rgb[0], rgb[1], rgb[2]);
 }
