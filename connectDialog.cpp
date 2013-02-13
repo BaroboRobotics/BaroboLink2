@@ -319,7 +319,7 @@ void refreshConnectDialog()
   }
   rootTable = gtk_table_new(
       g_robotManager->numEntries()*3,
-      7,
+      8,
       FALSE);
   /* For each Mobot entry, we need to compose a set of child widgets and attach
    * them to the right places on the grid */
@@ -463,6 +463,44 @@ void refreshConnectDialog()
         GTK_FILL, GTK_FILL,
         2, 2);
     g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(on_button_MoveDown_clicked), (void*)i);
+    /* Maybe add a color button */
+    int form;
+    if( g_robotManager->getMobotIndex(i) != NULL ) {
+      if(!Mobot_getFormFactor((mobot_t*)g_robotManager->getMobotIndex(i), &form)) {
+        if( 
+            (form == MOBOTFORM_I) ||
+            (form == MOBOTFORM_L) ||
+            (form == MOBOTFORM_T)
+          )
+        {
+          double r, g, b;
+          int _r, _g, _b;
+          char buf[16];
+          if(!Mobot_getRGB((mobot_t*)g_robotManager->getMobotIndex(i), &r, &g, &b)) {
+            _r = r * 255.0;
+            _g = g * 255.0;
+            _b = b * 255.0;
+            sprintf(buf, "#%2X%2X%2X", _r, _g, _b);
+            GdkColor color;
+            gdk_color_parse(buf, &color);
+            w = gtk_color_button_new_with_color(&color);
+            gtk_widget_show(w);
+            gtk_table_attach( GTK_TABLE(rootTable),
+                w,
+                5, 6,
+                i*3, (i*3)+2,
+                GTK_FILL, GTK_FILL,
+                2, 2);
+            g_signal_connect(
+                G_OBJECT(w), 
+                "color-set", 
+                G_CALLBACK(on_colorDialog_color_set),
+                (void*)g_robotManager->getMobotIndex(i)
+                );
+          }
+        }
+      }
+    }
     /* Maybe add an "Upgrade Firmware" button */
     if( (g_robotManager->getMobotIndex(i) != NULL) &&
         (g_robotManager->getMobotIndex(i)->firmwareVersion < Mobot_protocolVersion()) ) {
@@ -475,7 +513,7 @@ void refreshConnectDialog()
       gtk_widget_show(w);
       gtk_table_attach( GTK_TABLE(rootTable),
           w,
-          5, 6,
+          6, 7,
           i*3, (i*3)+2,
           GTK_FILL, GTK_FILL,
           2, 2);
@@ -556,3 +594,15 @@ void refreshConnectDialog()
   g_dndConnect = true;
 }
 
+void on_colorDialog_color_set(GtkColorButton* w, gpointer data)
+{
+  mobot_t* mobot = (mobot_t*)data;
+  GdkColor color;
+  gtk_color_button_get_color(w, &color);
+  double rgb[3];
+  rgb[0] = color.red/65535.0;
+  rgb[1] = color.green/65535.0;
+  rgb[2] = color.blue/65535.0;
+  printf("%lf %lf %lf\n", rgb[0], rgb[1], rgb[2]);
+  Mobot_setRGB(mobot, rgb[0], rgb[1], rgb[2]);
+}
