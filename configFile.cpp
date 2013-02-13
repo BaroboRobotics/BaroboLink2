@@ -74,6 +74,35 @@ int ConfigFile::rename(const char* newName, int index)
   return 0;
 }
 
+int ConfigFile::addDongle(const char *entry)
+{
+  /* First, make sure it is not already in there */
+  removeDongle(entry);
+  /* Now add it */
+  return BCF_PrependDongle(_bcf, entry);
+}
+
+int ConfigFile::removeDongle(const char *name)
+{
+  /* First, we must find the dongle name */
+  const char* dongle;
+  int i;
+  for(i = 0; i < BCF_GetNumDongles(_bcf); i++) {
+    dongle = BCF_GetDongle(_bcf, i);
+    if(!strcmp(name, dongle)) {
+      /* Found it. */
+      BCF_RemoveDongle(_bcf, i);
+      return 0;
+    }
+  }
+  return -1;
+}
+
+const char* ConfigFile::getDongle(int index)
+{
+  return BCF_GetDongle(_bcf, index);
+}
+
 int ConfigFile::write()
 {
   return BCF_Write(_bcf, NULL);

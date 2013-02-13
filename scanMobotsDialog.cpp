@@ -139,6 +139,9 @@ void on_button_scanMobotsRefresh_clicked(GtkWidget *w, gpointer data)
 
   if(!g_scanMobotsActive) {
     /* If we're not currently scanning for mobots, start a scan */
+    /* First, clear the liststore */
+    GtkListStore *l = GTK_LIST_STORE(gtk_builder_get_object(g_builder, "liststore_scannedRobots"));
+    gtk_list_store_clear(l);
     /* Change the text on the progress bar */
     GtkWidget *w = GTK_WIDGET(gtk_builder_get_object(g_builder, "progressbar_scanMobots"));
     gtk_progress_bar_set_text(GTK_PROGRESS_BAR(w), "Scanning...");

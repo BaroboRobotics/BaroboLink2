@@ -18,6 +18,9 @@ class ConfigFile
     int moveEntryUp(int index);
     int remove(int index);
     int rename(const char* newName, int index);
+    int addDongle(const char* entry);
+    const char* getDongle(int index);
+    int removeDongle(const char *name);
     int write();
 
   private:

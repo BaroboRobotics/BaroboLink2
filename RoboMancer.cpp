@@ -107,6 +107,18 @@ void initialize()
   initProgramDialog();
   initScanMobotsDialog();
   initializeComms();
+
+  /* Try to connect to a DOF dongle if possible */
+  g_mobotParent = (recordMobot_t*)malloc(sizeof(recordMobot_t));
+  RecordMobot_init(g_mobotParent, "DONGLE");
+  const char *dongle;
+  int i, rc;
+  for(i = 0, dongle = g_robotManager->getDongle(i); dongle != NULL; i++) {
+    rc = Mobot_connectWithTTY((mobot_t*)g_mobotParent, dongle);
+    if(rc == 0) {
+      break;
+    }
+  }
 }
 
 int getIterModelFromTreeSelection(GtkTreeView *treeView, GtkTreeModel **model, GtkTreeIter *iter)

@@ -79,6 +79,8 @@ void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data)
       gtk_widget_show(errWindow);
     } else {
       gtk_entry_set_text(currentComPort, port);
+      g_robotManager->addDongle(port);
+      g_robotManager->write();
     }
   } else {
     /* Error */
