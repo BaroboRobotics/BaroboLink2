@@ -142,6 +142,12 @@ void on_button_scanMobotsRefresh_clicked(GtkWidget *w, gpointer data)
     /* First, clear the liststore */
     GtkListStore *l = GTK_LIST_STORE(gtk_builder_get_object(g_builder, "liststore_scannedRobots"));
     gtk_list_store_clear(l);
+    /* First, add the dongle */
+    GtkTreeIter iter;
+    gtk_list_store_append(l, &iter);
+    gtk_list_store_set(l, &iter, 
+        0, ((mobot_t*)g_mobotParent)->serialID, 
+        1, ((mobot_t*)g_mobotParent)->zigbeeAddr, -1);
     /* Change the text on the progress bar */
     GtkWidget *w = GTK_WIDGET(gtk_builder_get_object(g_builder, "progressbar_scanMobots"));
     gtk_progress_bar_set_text(GTK_PROGRESS_BAR(w), "Scanning...");
