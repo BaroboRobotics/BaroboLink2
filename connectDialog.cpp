@@ -476,7 +476,7 @@ void refreshConnectDialog()
           double r, g, b;
           int _r, _g, _b;
           char buf[16];
-          if(!Mobot_getRGB((mobot_t*)g_robotManager->getMobotIndex(i), &r, &g, &b)) {
+          if(!Mobot_getColorRGB((mobot_t*)g_robotManager->getMobotIndex(i), &r, &g, &b)) {
             _r = r * 255.0;
             _g = g * 255.0;
             _b = b * 255.0;
@@ -611,5 +611,5 @@ void on_colorDialog_color_set(GtkColorButton* w, gpointer data)
   rgb[0] = color.red/65535.0;
   rgb[1] = color.green/65535.0;
   rgb[2] = color.blue/65535.0;
-  Mobot_setRGB(mobot, rgb[0], rgb[1], rgb[2]);
+  Mobot_setColorRGB(mobot, rgb[0], rgb[1], rgb[2]);
 }

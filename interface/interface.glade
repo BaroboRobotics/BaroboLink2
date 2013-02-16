@@ -139,9 +139,6 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
-            </child>
-            <child>
               <object class="GtkLabel" id="label43">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -170,6 +167,9 @@
                 <property name="top_attach">2</property>
                 <property name="bottom_attach">3</property>
               </packing>
+            </child>
+            <child>
+              <placeholder/>
             </child>
           </object>
           <packing>
@@ -795,7 +795,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkImage" id="image1">
+                              <object class="GtkImage" id="image_jointDiagram">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="pixbuf">imobot_diagram.png</property>

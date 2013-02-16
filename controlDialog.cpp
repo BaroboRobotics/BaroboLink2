@@ -138,6 +138,9 @@ gboolean controllerHandlerTimeout(gpointer data)
   GtkWidget* w;
   recordMobot_t* mobot;
   double angles[4];
+  static uint8_t motorMask = 0x0F;
+  int rc, form;
+  static int formFactorInitialized;
   /* First, check to see if a robot is even selected. If none selected, just return. */
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
   index = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
@@ -158,28 +161,31 @@ gboolean controllerHandlerTimeout(gpointer data)
     MUTEX_LOCK(&g_activeMobotLock);
     g_activeMobot = mobot;
     /* Get the form factor and disable certain widgets if necessary */
-    int rc, form;
     rc = Mobot_getFormFactor((mobot_t*)g_activeMobot, &form);
     if(rc) {
       /* Normal Mobot. Enable all widgets*/
       setMotorWidgetsSensitive(2, true);
       setMotorWidgetsSensitive(3, true);
       setMotorWidgetsSensitive(4, true);
+      motorMask = 0x0F;
     } else if (form == MOBOTFORM_L) {
       /* Disable widgets for motors 3 and 4 */
       setMotorWidgetsSensitive(2, true);
       setMotorWidgetsSensitive(3, false);
       setMotorWidgetsSensitive(4, false);
+      motorMask = 0x03;
     } else if (form == MOBOTFORM_I) {
       /* Disable widgets for motors 2 and 4 */
       setMotorWidgetsSensitive(2, false);
       setMotorWidgetsSensitive(3, true);
       setMotorWidgetsSensitive(4, false);
+      motorMask = 0x05;
     } else {
       /* Enable all widgets */
       setMotorWidgetsSensitive(2, true);
       setMotorWidgetsSensitive(3, true);
       setMotorWidgetsSensitive(4, true);
+      motorMask = 0x0F;
     }
     MUTEX_UNLOCK(&g_activeMobotLock);
   }
@@ -193,35 +199,52 @@ gboolean controllerHandlerTimeout(gpointer data)
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "label_motorPos" #n)); \
   sprintf(buf, "%.2lf", g_positionValues[n-1]); \
   gtk_label_set_text(GTK_LABEL(w), buf); 
-  VSCALEHANDLER(1)
-    VSCALEHANDLER(2)
-    VSCALEHANDLER(3)
-    VSCALEHANDLER(4)
+  for(i = 0; i < 4; i++) {
+    if(motorMask & (1<<i)) {
+      if(g_buttonState[S_POS1+i] == 0) { 
+        sprintf(buf, "vscale_motorPos%d", i+1);
+        w = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
+        gtk_range_set_value(GTK_RANGE(w), normalizeDeg(g_positionValues[i])); 
+      } 
+      sprintf(buf, "label_motorPos%d", i+1);
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
+      sprintf(buf, "%.2lf", g_positionValues[i]); 
+      gtk_label_set_text(GTK_LABEL(w), buf); 
+    } else {
+      sprintf(buf, "vscale_motorPos%d", i+1);
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
+      gtk_range_set_value(GTK_RANGE(w), 0); 
+      sprintf(buf, "label_motorPos%d", i+1);
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
+      sprintf(buf, "N/A"); 
+      gtk_label_set_text(GTK_LABEL(w), buf); 
+    }
+  }
 #undef VSCALEHANDLER
-    if(g_initSpeeds) {
-      if(Mobot_getJointSpeeds((mobot_t*)mobot, 
+  if(g_initSpeeds) {
+    if(Mobot_getJointSpeeds((mobot_t*)mobot, 
           &angles[0], 
           &angles[1], 
           &angles[2], 
           &angles[3])) {
-        if(!Mobot_isConnected((mobot_t*)mobot)) {
-          g_robotManager->disconnect(index);
-        }
-        return true;
+      if(!Mobot_isConnected((mobot_t*)mobot)) {
+        g_robotManager->disconnect(index);
       }
-#define VSCALEHANDLER(n) \
-      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed" #n)); \
-      gtk_range_set_value(GTK_RANGE(w), RAD2DEG(angles[n-1]));  \
-      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "label_motorPos" #n)); \
-      sprintf(buf, "%.2lf", RAD2DEG(angles[n-1])); \
-      gtk_label_set_text(GTK_LABEL(w), buf);
-      VSCALEHANDLER(1)
-        VSCALEHANDLER(2)
-        VSCALEHANDLER(3)
-        VSCALEHANDLER(4)
-#undef VSCALEHANDLER
-        g_initSpeeds = 0;
+      return true;
     }
+#define VSCALEHANDLER(n) \
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed" #n)); \
+    gtk_range_set_value(GTK_RANGE(w), RAD2DEG(angles[n-1]));  \
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "label_motorPos" #n)); \
+    sprintf(buf, "%.2lf", RAD2DEG(angles[n-1])); \
+    gtk_label_set_text(GTK_LABEL(w), buf);
+    VSCALEHANDLER(1)
+      VSCALEHANDLER(2)
+      VSCALEHANDLER(3)
+      VSCALEHANDLER(4)
+#undef VSCALEHANDLER
+      g_initSpeeds = 0;
+  }
   /* Get slider, entry values */
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos1"));
   g_positionSliderValues[0] = gtk_range_get_value(GTK_RANGE(w));

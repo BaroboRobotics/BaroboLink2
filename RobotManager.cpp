@@ -105,7 +105,12 @@ int CRobotManager::connectIndex(int index)
   sprintf(name, "mobot%d", numConnected()+1);
   int err;
   if(strlen(getEntry(index)) == 4) {
-    err = Mobot_connectChildID((mobot_t*)g_mobotParent, (mobot_t**)&_mobots[index], getEntry(index));
+    if(_mobots[index] == NULL) {
+      recordMobot_t *mobot = (recordMobot_t*)malloc(sizeof(recordMobot_t));
+      _mobots[index] = mobot;
+    }
+    RecordMobot_init(_mobots[index], name);
+    err = Mobot_connectChildID((mobot_t*)g_mobotParent, (mobot_t*)_mobots[index], getEntry(index));
     if(err == 0) {
       _mobots[index]->connectStatus = RMOBOT_CONNECTED;
     }
