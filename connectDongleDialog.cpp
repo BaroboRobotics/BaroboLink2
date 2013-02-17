@@ -62,6 +62,35 @@ void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data)
     )
   {
     /* If the auto-detect button is pressed */
+    int i;
+    bool dongleFound = false;
+    for(i = 0; i < 64; i++) {
+#ifndef _WIN32
+      sprintf(buf, "/dev/ttyACM%d", i);
+#else
+      sprintf(buf, "COM%d", i);
+#endif
+      if(!Mobot_connectWithTTY((mobot_t*)g_mobotParent, buf)) {
+        /* We found the TTY port. */
+        gtk_entry_set_text(currentComPort, buf);
+        g_robotManager->addDongle(buf);
+        g_robotManager->write();
+        dongleFound = true;
+        break;
+      }
+    }
+    if(!dongleFound) {
+      /* Display a warning/error dialog */
+      GtkWidget* d = gtk_message_dialog_new(
+          GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
+          GTK_DIALOG_DESTROY_WITH_PARENT,
+          GTK_MESSAGE_WARNING,
+          GTK_BUTTONS_CLOSE,
+          "No dongle detected. Please make sure that a Mobot is currently "
+          "connected to the computer with a USB cable and turned on.");
+      gtk_dialog_run(GTK_DIALOG(d));
+      gtk_widget_destroy(d);
+    }
   } else if (
       gtk_toggle_button_get_active(
         GTK_TOGGLE_BUTTON(connectManuallyButton))
