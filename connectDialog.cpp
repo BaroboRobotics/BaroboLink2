@@ -319,7 +319,7 @@ void refreshConnectDialog()
   }
   rootTable = gtk_table_new(
       g_robotManager->numEntries()*3,
-      8,
+      9,
       FALSE);
   /* For each Mobot entry, we need to compose a set of child widgets and attach
    * them to the right places on the grid */
@@ -463,7 +463,7 @@ void refreshConnectDialog()
         GTK_FILL, GTK_FILL,
         2, 2);
     g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(on_button_MoveDown_clicked), (void*)i);
-    /* Maybe add a color button */
+    /* Maybe add a color and beep buttons */
     int form;
     if( g_robotManager->getMobotIndex(i) != NULL ) {
       if(!Mobot_getFormFactor((mobot_t*)g_robotManager->getMobotIndex(i), &form)) {
@@ -498,6 +498,26 @@ void refreshConnectDialog()
                 (void*)g_robotManager->getMobotIndex(i)
                 );
           }
+          w = gtk_button_new_with_label("Beep!");
+          gtk_widget_show(w);
+          gtk_table_attach( GTK_TABLE(rootTable),
+              w,
+              6, 7,
+              i*3, (i*3)+2,
+              GTK_FILL, GTK_FILL,
+              2, 2);
+          g_signal_connect(
+              G_OBJECT(w),
+              "pressed",
+              G_CALLBACK(on_beep_button_pressed),
+              (void*)g_robotManager->getMobotIndex(i)
+              );
+          g_signal_connect(
+              G_OBJECT(w),
+              "released",
+              G_CALLBACK(on_beep_button_released),
+              (void*)g_robotManager->getMobotIndex(i)
+              );
         }
       }
     }
@@ -520,7 +540,7 @@ void refreshConnectDialog()
         gtk_widget_show(w);
         gtk_table_attach( GTK_TABLE(rootTable),
             w,
-            6, 7,
+            7, 8,
             i*3, (i*3)+2,
             GTK_FILL, GTK_FILL,
             2, 2);
@@ -532,7 +552,7 @@ void refreshConnectDialog()
     gtk_widget_show(w);
     gtk_table_attach( GTK_TABLE(rootTable),
         w,
-        0, 6,
+        0, 8,
         i*3+2, (i*3)+3,
         GTK_FILL, GTK_FILL,
         2, 2);
@@ -612,4 +632,16 @@ void on_colorDialog_color_set(GtkColorButton* w, gpointer data)
   rgb[1] = color.green/65535.0;
   rgb[2] = color.blue/65535.0;
   Mobot_setColorRGB(mobot, rgb[0], rgb[1], rgb[2]);
+}
+
+void on_beep_button_pressed(GtkWidget *w, gpointer data)
+{
+  mobot_t* mobot = (mobot_t*)data;
+  Mobot_setBuzzerFrequencyOn(mobot, 440);
+}
+
+void on_beep_button_released(GtkWidget *w, gpointer data)
+{
+  mobot_t* mobot = (mobot_t*)data;
+  Mobot_setBuzzerFrequencyOff(mobot);
 }
