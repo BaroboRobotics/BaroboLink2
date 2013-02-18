@@ -38,7 +38,7 @@ if(GTK2_FOUND)
       teachingDialog.cpp
       updateFirmware.cpp )
   
-  target_link_libraries(RoboMancer mobot scintilla stkcomms baroboconfigfile mxml pthread ${GTK2_LIBRARIES} )
+  target_link_libraries(RoboMancer mobot scintilla stkcomms baroboconfigfile mxml pthread regex ${GTK2_LIBRARIES} )
 else(GTK2_FOUND)
   message(FATAL_ERROR "Gtk not found!")
 endif(GTK2_FOUND)
