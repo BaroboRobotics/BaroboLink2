@@ -23,6 +23,8 @@ double g_positionSliderValues[4];
 double g_positionEntryValues[4];
 bool   g_positionEntryValuesValid[4];
 double g_positionValues[4];
+double g_accelerationValues[4];
+GdkColor g_LEDColor;
 int g_playIndex;
 recordMobot_t* g_activeMobot = NULL;
 MUTEX_T g_activeMobotLock;
@@ -80,6 +82,29 @@ void setMotorWidgetsSensitive(int motor, bool sensitive)
       sensitive );
 }
 
+void setColorWidgetSensitive(bool sensitive)
+{
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, "colorselection")),
+      sensitive );
+}
+
+void setAccelWidgetSensitive(bool sensitive)
+{
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelx")),
+      sensitive );
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accely")),
+      sensitive );
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelz")),
+      sensitive );
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelmag")),
+      sensitive );
+}
+
 void initControlDialog(void)
 {
 #define BUTTON(x) \
@@ -107,6 +132,19 @@ void initControlDialog(void)
   gtk_range_set_range(GTK_RANGE(w), 0, 120);
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed4"));
   gtk_range_set_range(GTK_RANGE(w), 0, 120);
+
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelx"));
+  gtk_range_set_range(GTK_RANGE(w), -5, 5);
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accely"));
+  gtk_range_set_range(GTK_RANGE(w), -5, 5);
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelz"));
+  gtk_range_set_range(GTK_RANGE(w), -5, 5);
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelmag"));
+  gtk_range_set_range(GTK_RANGE(w), 0, 5);
+
+  /* Initialize the color selection widget */
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "colorselection"));
+  gtk_color_selection_set_update_policy(GTK_COLOR_SELECTION(w), GTK_UPDATE_CONTINUOUS);
 
   /* Initialize gaits liststore */
   GtkTreeIter iter;
@@ -139,7 +177,8 @@ gboolean controllerHandlerTimeout(gpointer data)
   recordMobot_t* mobot;
   double angles[4];
   static uint8_t motorMask = 0x0F;
-  int rc, form;
+  int rc;
+  static int form;
   static int formFactorInitialized;
   /* First, check to see if a robot is even selected. If none selected, just return. */
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
@@ -162,31 +201,53 @@ gboolean controllerHandlerTimeout(gpointer data)
     g_activeMobot = mobot;
     /* Get the form factor and disable certain widgets if necessary */
     rc = Mobot_getFormFactor((mobot_t*)g_activeMobot, &form);
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_jointDiagram"));
     if(rc) {
       /* Normal Mobot. Enable all widgets*/
       setMotorWidgetsSensitive(2, true);
       setMotorWidgetsSensitive(3, true);
       setMotorWidgetsSensitive(4, true);
+      setColorWidgetSensitive(false);
+      setAccelWidgetSensitive(false);
+      gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;
     } else if (form == MOBOTFORM_L) {
       /* Disable widgets for motors 3 and 4 */
       setMotorWidgetsSensitive(2, true);
       setMotorWidgetsSensitive(3, false);
       setMotorWidgetsSensitive(4, false);
+      setColorWidgetSensitive(true);
+      setAccelWidgetSensitive(true);
+      gtk_image_set_from_file(GTK_IMAGE(w), "DOF_joint_diagram.png");
       motorMask = 0x03;
     } else if (form == MOBOTFORM_I) {
       /* Disable widgets for motors 2 and 4 */
       setMotorWidgetsSensitive(2, false);
       setMotorWidgetsSensitive(3, true);
       setMotorWidgetsSensitive(4, false);
+      gtk_image_set_from_file(GTK_IMAGE(w), "interface/DOF_joint_diagram.png");
+      setColorWidgetSensitive(true);
+      setAccelWidgetSensitive(true);
       motorMask = 0x05;
     } else {
       /* Enable all widgets */
       setMotorWidgetsSensitive(2, true);
       setMotorWidgetsSensitive(3, true);
       setMotorWidgetsSensitive(4, true);
+      setColorWidgetSensitive(false);
+      setAccelWidgetSensitive(false);
+      gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;
     }
+    /* Set the color widget */
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "colorselection"));
+    double r, g, b;
+    Mobot_getColorRGB((mobot_t*)g_activeMobot, &r, &g, &b);
+    GdkColor color;
+    color.red = r*(1<<16-1);
+    color.green = g*(1<<16-1);
+    color.blue = b*(1<<16-1);
+    gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(w), &color);
     MUTEX_UNLOCK(&g_activeMobotLock);
   }
 
@@ -245,6 +306,21 @@ gboolean controllerHandlerTimeout(gpointer data)
 #undef VSCALEHANDLER
       g_initSpeeds = 0;
   }
+  if(
+      (form == MOBOTFORM_I) || (form == MOBOTFORM_L)
+    )
+  {
+    /* Set acceleration sliders */
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelx"));
+    gtk_range_set_value(GTK_RANGE(w), g_accelerationValues[0]);
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accely"));
+    gtk_range_set_value(GTK_RANGE(w), g_accelerationValues[1]);
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelz"));
+    gtk_range_set_value(GTK_RANGE(w), g_accelerationValues[2]);
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelmag"));
+    gtk_range_set_value(GTK_RANGE(w), g_accelerationValues[3]);
+  }
+
   /* Get slider, entry values */
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos1"));
   g_positionSliderValues[0] = gtk_range_get_value(GTK_RANGE(w));
@@ -294,13 +370,13 @@ void* controllerHandlerThread(void* arg)
     }
 
     TESTLOCK
+    /* First, get motor position values */
     int rc = Mobot_getJointAngles(
         (mobot_t*)g_activeMobot,
         &g_positionValues[0],
         &g_positionValues[1],
         &g_positionValues[2],
         &g_positionValues[3]);
-    /* First, get motor position values */
     /* Convert angles to degrees */
     int i;
     for(i = 0; i < 4; i++) {
@@ -314,6 +390,19 @@ void* controllerHandlerThread(void* arg)
       }
       */
     }
+    /* Now get Acceleration Values */
+    Mobot_getAccelerometerData(
+        (mobot_t*)g_activeMobot,
+        &g_accelerationValues[0],
+        &g_accelerationValues[1],
+        &g_accelerationValues[2]);
+    g_accelerationValues[3] = 
+      sqrt (
+       (g_accelerationValues[0] * g_accelerationValues[0]) + 
+       (g_accelerationValues[1] * g_accelerationValues[1]) + 
+       (g_accelerationValues[2] * g_accelerationValues[2]) 
+      );
+
     MUTEX_UNLOCK(&g_activeMobotLock);
     /*
     if(rc) {
@@ -528,6 +617,16 @@ HANDLER_POS(3)
 HANDLER_POS(4)
 #undef HANDLER_POS
 
+int handlerCOLORSELECTION(void* arg)
+{
+  /* Get the color from the color selection and set the Mobot RGB to that color
+   * */
+  Mobot_setColorRGB((mobot_t*)g_activeMobot, 
+      g_LEDColor.red / (double)((1<<16)-1),
+      g_LEDColor.green / (double)((1<<16)-1),
+      g_LEDColor.blue / (double)((1<<16)-1));
+}
+
 #define BUTTONHANDLERS(n) \
 void on_button_motor##n##back_clicked(GtkWidget*w, gpointer data) \
 { \
@@ -701,4 +800,10 @@ void on_button_playGait_clicked(GtkWidget* w, gpointer data)
   g_playIndex = i;
 
   g_buttonState[B_PLAY] = 1;
+}
+
+void on_colorselection_color_changed(GtkColorSelection *w, gpointer user_data)
+{
+  g_buttonState[S_COLORSELECTION] = 1;
+  gtk_color_selection_get_current_color(w, &g_LEDColor);
 }

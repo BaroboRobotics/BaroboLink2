@@ -60,6 +60,8 @@ G_MODULE_EXPORT void on_button_MoveDown_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_MoveUp_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_scanMobots_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_colorDialog_color_set(GtkColorButton* w, gpointer data);
+G_MODULE_EXPORT void on_beep_button_pressed(GtkWidget *w, gpointer data);
+G_MODULE_EXPORT void on_beep_button_released(GtkWidget *w, gpointer data);
 void refreshConnectDialog();
 gboolean connectDialogPulse(gpointer data);
 
@@ -149,6 +151,7 @@ G_MODULE_EXPORT void on_button_moveToZero_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_move_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_moveTo_clicked(GtkWidget* w, gpointer data);
 G_MODULE_EXPORT void on_button_playGait_clicked(GtkWidget* w, gpointer data);
+G_MODULE_EXPORT void on_colorselection_color_changed(GtkColorSelection *w, gpointer user_data);
 void initControlDialog(void);
 void* controllerHandlerThread(void* arg);
 
