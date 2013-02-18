@@ -162,29 +162,34 @@ gboolean controllerHandlerTimeout(gpointer data)
     g_activeMobot = mobot;
     /* Get the form factor and disable certain widgets if necessary */
     rc = Mobot_getFormFactor((mobot_t*)g_activeMobot, &form);
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_jointDiagram"));
     if(rc) {
       /* Normal Mobot. Enable all widgets*/
       setMotorWidgetsSensitive(2, true);
       setMotorWidgetsSensitive(3, true);
       setMotorWidgetsSensitive(4, true);
+      gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;
     } else if (form == MOBOTFORM_L) {
       /* Disable widgets for motors 3 and 4 */
       setMotorWidgetsSensitive(2, true);
       setMotorWidgetsSensitive(3, false);
       setMotorWidgetsSensitive(4, false);
+      gtk_image_set_from_file(GTK_IMAGE(w), "DOF_joint_diagram.png");
       motorMask = 0x03;
     } else if (form == MOBOTFORM_I) {
       /* Disable widgets for motors 2 and 4 */
       setMotorWidgetsSensitive(2, false);
       setMotorWidgetsSensitive(3, true);
       setMotorWidgetsSensitive(4, false);
+      gtk_image_set_from_file(GTK_IMAGE(w), "interface/DOF_joint_diagram.png");
       motorMask = 0x05;
     } else {
       /* Enable all widgets */
       setMotorWidgetsSensitive(2, true);
       setMotorWidgetsSensitive(3, true);
       setMotorWidgetsSensitive(4, true);
+      gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;
     }
     MUTEX_UNLOCK(&g_activeMobotLock);
