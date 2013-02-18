@@ -2167,59 +2167,58 @@
                                     <property name="n_rows">3</property>
                                     <property name="n_columns">4</property>
                                     <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <object class="GtkVScale" id="vscale1">
+                                      <object class="GtkVScale" id="vscale_accelx">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="inverted">True</property>
                                         <property name="round_digits">1</property>
+                                        <property name="digits">2</property>
                                       </object>
                                       <packing>
                                         <property name="top_attach">2</property>
                                         <property name="bottom_attach">3</property>
+                                        <property name="x_padding">7</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkVScale" id="vscale2">
+                                      <object class="GtkVScale" id="vscale_accely">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="inverted">True</property>
                                         <property name="round_digits">1</property>
+                                        <property name="digits">2</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="right_attach">2</property>
                                         <property name="top_attach">2</property>
                                         <property name="bottom_attach">3</property>
+                                        <property name="x_padding">7</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkVScale" id="vscale3">
+                                      <object class="GtkVScale" id="vscale_accelz">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="inverted">True</property>
                                         <property name="round_digits">1</property>
+                                        <property name="digits">2</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
                                         <property name="right_attach">3</property>
                                         <property name="top_attach">2</property>
                                         <property name="bottom_attach">3</property>
+                                        <property name="x_padding">7</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkVScale" id="vscale4">
+                                      <object class="GtkVScale" id="vscale_accelmag">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="inverted">True</property>
                                         <property name="round_digits">1</property>
+                                        <property name="digits">2</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">3</property>
@@ -2237,6 +2236,8 @@
                                       <packing>
                                         <property name="top_attach">1</property>
                                         <property name="bottom_attach">2</property>
+                                        <property name="x_options"/>
+                                        <property name="y_options"/>
                                       </packing>
                                     </child>
                                     <child>
@@ -2250,6 +2251,8 @@
                                         <property name="right_attach">2</property>
                                         <property name="top_attach">1</property>
                                         <property name="bottom_attach">2</property>
+                                        <property name="x_options"/>
+                                        <property name="y_options"/>
                                       </packing>
                                     </child>
                                     <child>
@@ -2263,6 +2266,8 @@
                                         <property name="right_attach">3</property>
                                         <property name="top_attach">1</property>
                                         <property name="bottom_attach">2</property>
+                                        <property name="x_options"/>
+                                        <property name="y_options"/>
                                       </packing>
                                     </child>
                                     <child>
@@ -2276,6 +2281,19 @@
                                         <property name="right_attach">4</property>
                                         <property name="top_attach">1</property>
                                         <property name="bottom_attach">2</property>
+                                        <property name="x_options"/>
+                                        <property name="y_options"/>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="label51">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">Acceleration (G - force)</property>
+                                      </object>
+                                      <packing>
+                                        <property name="right_attach">4</property>
+                                        <property name="y_options"/>
                                       </packing>
                                     </child>
                                   </object>
