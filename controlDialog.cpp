@@ -245,9 +245,9 @@ gboolean controllerHandlerTimeout(gpointer data)
     double r, g, b;
     Mobot_getColorRGB((mobot_t*)g_activeMobot, &r, &g, &b);
     GdkColor color;
-    color.red = r*(1<<16-1);
-    color.green = g*(1<<16-1);
-    color.blue = b*(1<<16-1);
+    color.red = r*65535.0;
+    color.green = g*65535.0;
+    color.blue = b*65535.0;
     gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(w), &color);
     MUTEX_UNLOCK(&g_activeMobotLock);
   }
@@ -472,32 +472,72 @@ HANDLER_STOP(4)
 int handlerROLLFORWARD(void* arg)
 {
   //Mobot_motionRollForwardNB((mobot_t*)arg, DEG2RAD(90));
-  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_FORWARD);
-  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT4, MOBOT_FORWARD);
+  if(
+      (((mobot_t*)arg)->formFactor == MOBOTFORM_I) ||
+      (((mobot_t*)arg)->formFactor == MOBOTFORM_L) ||
+      (((mobot_t*)arg)->formFactor == MOBOTFORM_T) 
+    )
+  {
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_FORWARD);
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT3, MOBOT_BACKWARD);
+  } else {
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_FORWARD);
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT4, MOBOT_FORWARD);
+  }
   return 0;
 }
 
 int handlerTURNLEFT(void* arg)
 {
   //Mobot_motionTurnLeftNB((mobot_t*)arg, DEG2RAD(90));
-  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_BACKWARD);
-  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT4, MOBOT_FORWARD);
+  if(
+      (((mobot_t*)arg)->formFactor == MOBOTFORM_I) ||
+      (((mobot_t*)arg)->formFactor == MOBOTFORM_L) ||
+      (((mobot_t*)arg)->formFactor == MOBOTFORM_T) 
+    )
+  {
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_BACKWARD);
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT3, MOBOT_BACKWARD);
+  } else {
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_BACKWARD);
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT4, MOBOT_FORWARD);
+  }
   return 0;
 }
 
 int handlerTURNRIGHT(void* arg)
 {
   //Mobot_motionTurnRightNB((mobot_t*)arg, DEG2RAD(90));
-  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_FORWARD);
-  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT4, MOBOT_BACKWARD);
+  if(
+      (((mobot_t*)arg)->formFactor == MOBOTFORM_I) ||
+      (((mobot_t*)arg)->formFactor == MOBOTFORM_L) ||
+      (((mobot_t*)arg)->formFactor == MOBOTFORM_T) 
+    )
+  {
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_FORWARD);
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT3, MOBOT_FORWARD);
+  } else {
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_FORWARD);
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT4, MOBOT_BACKWARD);
+  }
   return 0;
 }
 
 int handlerROLLBACK(void* arg)
 {
   //Mobot_motionRollBackwardNB((mobot_t*)arg, DEG2RAD(90));
-  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_BACKWARD);
-  Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT4, MOBOT_BACKWARD);
+  if(
+      (((mobot_t*)arg)->formFactor == MOBOTFORM_I) ||
+      (((mobot_t*)arg)->formFactor == MOBOTFORM_L) ||
+      (((mobot_t*)arg)->formFactor == MOBOTFORM_T) 
+    )
+  {
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_BACKWARD);
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT3, MOBOT_FORWARD);
+  } else {
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_BACKWARD);
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT4, MOBOT_BACKWARD);
+  }
   return 0;
 }
 
