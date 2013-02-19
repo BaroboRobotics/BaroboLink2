@@ -240,6 +240,7 @@ gboolean controllerHandlerTimeout(gpointer data)
       motorMask = 0x0F;
     }
     /* Set the color widget */
+    printf("color\n");
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "colorselection"));
     double r, g, b;
     Mobot_getColorRGB((mobot_t*)g_activeMobot, &r, &g, &b);

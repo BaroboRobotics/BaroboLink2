@@ -404,22 +404,24 @@ void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_n
   static bool buttonCallbackEnabled = false;
   static int selectedRobot = 0;
   int i;
-  int connectPage, controlPage, programPage, posePage;
+  int connectPage, controlPage, controlPage2, programPage, posePage;
   GtkWidget *w;
 
   /* Figure out the page numbers by the number of total pages */
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "notebook1"));
   int numPages = gtk_notebook_get_n_pages(GTK_NOTEBOOK(w));
-  if(numPages == 3) {
+  if(numPages == 4) {
     connectPage = 0;
     controlPage = 1;
-    posePage = 2;
-    programPage = 99;
-  } else if (numPages == 4) {
-    connectPage = 0;
-    controlPage = 1;
-    programPage = 2;
+    controlPage2 = 2;
     posePage = 3;
+    programPage = 99;
+  } else if (numPages == 5) {
+    connectPage = 0;
+    controlPage = 1;
+    controlPage2 = 2;
+    programPage = 3;
+    posePage = 4;
   }
 
   mobot_t* mobot;
@@ -444,7 +446,11 @@ void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_n
   }
 
   /* If the control dialog is selected... */
-  if(page_num == controlPage) {
+  if(
+      (page_num == controlPage) ||
+      (page_num == controlPage2)
+      ) 
+  {
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
     gtk_combo_box_set_active(GTK_COMBO_BOX(w), selectedRobot);
   } else {
