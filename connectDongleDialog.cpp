@@ -76,6 +76,7 @@ void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data)
         g_robotManager->addDongle(buf);
         g_robotManager->write();
         dongleFound = true;
+        Mobot_setDongleMobot((mobot_t*)g_mobotParent);
         break;
       }
     }
@@ -110,6 +111,7 @@ void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data)
       gtk_entry_set_text(currentComPort, port);
       g_robotManager->addDongle(port);
       g_robotManager->write();
+      Mobot_setDongleMobot((mobot_t*)g_mobotParent);
     }
   } else {
     /* Error */

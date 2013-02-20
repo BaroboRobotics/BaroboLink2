@@ -121,8 +121,9 @@ void initialize()
   {
     rc = Mobot_connectWithTTY((mobot_t*)g_mobotParent, dongle);
     if(rc == 0) {
+      Mobot_setDongleMobot((mobot_t*)g_mobotParent);
       break;
-    }
+    } 
   }
 }
 

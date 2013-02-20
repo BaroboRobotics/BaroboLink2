@@ -194,14 +194,14 @@ void on_button_Connect_clicked(GtkWidget* w, gpointer data)
        ((mobot_t*)g_mobotParent)->connected == 0
       )
     )
-    {
-      /* Trying to connect to a DOF, but there is no dongle connected. Open the
-       * connect-dongle dialog */
-      g_mobotParent = (recordMobot_t*)malloc(sizeof(recordMobot_t));
-      RecordMobot_init(g_mobotParent, "Dongle");
-      askConnectDongle();
-      return;
-    }
+  {
+    /* Trying to connect to a DOF, but there is no dongle connected. Open the
+     * connect-dongle dialog */
+    g_mobotParent = (recordMobot_t*)malloc(sizeof(recordMobot_t));
+    RecordMobot_init(g_mobotParent, "Dongle");
+    askConnectDongle();
+    return;
+  }
   arg = (struct connectThreadArg_s*)malloc(sizeof(struct connectThreadArg_s));
   arg->connectIndex = index;
   arg->connectionCompleted = 0;
