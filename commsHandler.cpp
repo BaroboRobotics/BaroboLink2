@@ -68,7 +68,7 @@ void* commsThread(void* arg)
       bytes++;
     }
     /* Send the message to the Mobot */
-    SendToMobotDirect((mobot_t*)comms->mobot, buf, bytes);
+    SendToIMobot((mobot_t*)comms->mobot, buf[0], &buf[2], bytes-3);
     /* Get a response from the Mobot */
     RecvFromIMobot((mobot_t*)comms->mobot, &buf[0], 100);
     /* Send the response to the connected party */
