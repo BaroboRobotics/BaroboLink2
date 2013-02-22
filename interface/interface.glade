@@ -1387,7 +1387,7 @@
                                             </child>
                                             <child>
                                               <object class="GtkVScale" id="vscale_motorspeed1">
-                                                <property name="height_request">100</property>
+                                                <property name="height_request">180</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="inverted">True</property>

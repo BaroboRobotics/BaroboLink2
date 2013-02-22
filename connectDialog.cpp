@@ -186,12 +186,12 @@ void on_button_Connect_clicked(GtkWidget* w, gpointer data)
   /* First, check to see if the requested mobot is a DOF. If it is, we must
    * ensure that the dongle has been connected. */
   if(
+      (strlen(g_robotManager->getEntry(index)) == 4) &&
       (
-       (strlen(g_robotManager->getEntry(index)) == 4) &&
-      g_mobotParent == NULL
-      ) ||
-      (
-       ((mobot_t*)g_mobotParent)->connected == 0
+       g_mobotParent == NULL ||
+       (
+        ((mobot_t*)g_mobotParent)->connected == 0
+       )
       )
     )
   {
