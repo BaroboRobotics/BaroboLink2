@@ -167,6 +167,40 @@ void initControlDialog(void)
   THREAD_CREATE(&thread, controllerHandlerThread, NULL);
 }
 
+void hideJoint4Widgets()
+{
+  gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "label26")));
+  gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos4")));
+  gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorPos4")));
+  gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "label_motorPos4")));
+
+  gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "label20")));
+  gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed4")));
+  gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorSpeed4")));
+
+  gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "label15")));
+  gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_motor4forward")));
+  gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_motor4stop")));
+  gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_motor4back")));
+}
+
+void showJoint4Widgets()
+{
+  gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "label26")));
+  gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos4")));
+  gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorPos4")));
+  gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "label_motorPos4")));
+
+  gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "label20")));
+  gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed4")));
+  gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorSpeed4")));
+
+  gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "label15")));
+  gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_motor4forward")));
+  gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_motor4stop")));
+  gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_motor4back")));
+}
+
 gboolean controllerHandlerTimeout(gpointer data)
 {
   /* This function will repeatedly check to see if there have been any button
@@ -209,6 +243,7 @@ gboolean controllerHandlerTimeout(gpointer data)
       setMotorWidgetsSensitive(4, true);
       setColorWidgetSensitive(false);
       setAccelWidgetSensitive(false);
+      showJoint4Widgets();
       gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;
     } else if (form == MOBOTFORM_L) {
@@ -218,6 +253,7 @@ gboolean controllerHandlerTimeout(gpointer data)
       setMotorWidgetsSensitive(4, false);
       setColorWidgetSensitive(true);
       setAccelWidgetSensitive(true);
+      hideJoint4Widgets();
       gtk_image_set_from_file(GTK_IMAGE(w), "DOF_joint_diagram.png");
       motorMask = 0x03;
     } else if (form == MOBOTFORM_I) {
@@ -228,6 +264,7 @@ gboolean controllerHandlerTimeout(gpointer data)
       gtk_image_set_from_file(GTK_IMAGE(w), "interface/DOF_joint_diagram.png");
       setColorWidgetSensitive(true);
       setAccelWidgetSensitive(true);
+      hideJoint4Widgets();
       motorMask = 0x05;
     } else {
       /* Enable all widgets */
@@ -236,11 +273,11 @@ gboolean controllerHandlerTimeout(gpointer data)
       setMotorWidgetsSensitive(4, true);
       setColorWidgetSensitive(false);
       setAccelWidgetSensitive(false);
+      showJoint4Widgets();
       gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;
     }
     /* Set the color widget */
-    printf("color\n");
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "colorselection"));
     double r, g, b;
     Mobot_getColorRGB((mobot_t*)g_activeMobot, &r, &g, &b);
