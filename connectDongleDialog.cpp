@@ -68,7 +68,7 @@ void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data)
 #ifndef _WIN32
       sprintf(buf, "/dev/ttyACM%d", i);
 #else
-      sprintf(buf, "COM%d", i);
+      sprintf(buf, "\\\\.\\COM%d", i);
 #endif
       if(!Mobot_connectWithTTY((mobot_t*)g_mobotParent, buf)) {
         /* We found the TTY port. */
