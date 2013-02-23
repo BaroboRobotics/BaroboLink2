@@ -688,7 +688,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="button_scanMobots">
-                                        <property name="label" translatable="yes">Scan for nearby Mobots</property>
+                                        <property name="label" translatable="yes">Scan for nearby Mobot-I's and Mobot-L's</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
