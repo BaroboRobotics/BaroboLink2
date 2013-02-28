@@ -37,8 +37,12 @@ if(GTK2_FOUND)
       scanMobotsDialog.cpp
       teachingDialog.cpp
       updateFirmware.cpp )
-  
-  target_link_libraries(RoboMancer mobotStatic scintilla stkcomms baroboconfigfile mxml pthread regex ${GTK2_LIBRARIES} )
+
+if(CMAKE_HOST_WIN32)
+  target_link_libraries(RoboMancer mobotStatic scintilla stkcomms baroboconfigfile mxml pthread ${GTK2_LIBRARIES} )
+else()
+  target_link_libraries(RoboMancer mobotStatic scintilla stkcomms baroboconfigfile mxml pthread bluetooth ${GTK2_LIBRARIES} )
+endif()
 else(GTK2_FOUND)
   message(FATAL_ERROR "Gtk not found!")
 endif(GTK2_FOUND)
