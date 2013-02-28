@@ -92,7 +92,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="n_rows">3</property>
-            <property name="n_columns">2</property>
+            <property name="n_columns">3</property>
             <child>
               <object class="GtkRadioButton" id="radiobutton_connectDongleAuto">
                 <property name="label" translatable="yes">Find connected dongle automatically</property>
@@ -103,6 +103,9 @@
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
               </object>
+              <packing>
+                <property name="right_attach">3</property>
+              </packing>
             </child>
             <child>
               <object class="GtkRadioButton" id="radiobutton_connectDongleManual">
@@ -133,7 +136,7 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
+                <property name="right_attach">3</property>
                 <property name="top_attach">1</property>
                 <property name="bottom_attach">2</property>
               </packing>
@@ -169,7 +172,17 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkImage" id="image_dongleConnected">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="stock">gtk-dialog-warning</property>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="right_attach">3</property>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">3</property>
+              </packing>
             </child>
           </object>
           <packing>

@@ -3,6 +3,30 @@
 
 void askConnectDongle(void)
 {
+  /* Before we ask, lets just see if we can find a connected dongle anywhere... */
+  int i;
+  char buf[256];
+  bool dongleFound = false;
+  for(i = 0; i < 64; i++) {
+#ifndef _WIN32
+    sprintf(buf, "/dev/ttyACM%d", i);
+#else
+    sprintf(buf, "\\\\.\\COM%d", i);
+#endif
+    if(!Mobot_connectWithTTY((mobot_t*)g_mobotParent, buf)) {
+      /* We found the TTY port. */
+      g_robotManager->addDongle(buf);
+      g_robotManager->write();
+      dongleFound = true;
+      Mobot_setDongleMobot((mobot_t*)g_mobotParent);
+      break;
+    }
+    g_main_context_iteration(NULL, TRUE);
+  }
+  if(dongleFound) {
+    return;
+  }
+
   /* Set up a question dialog */
   GtkWidget* d = gtk_message_dialog_new(
       GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
@@ -26,6 +50,8 @@ void showConnectDongleDialog(void)
     /* The dongle is connected */
     /* Make the text entry green */
     gdk_color_parse("green", &color);
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_dongleConnected"));
+    gtk_image_set_from_stock(GTK_IMAGE(w), GTK_STOCK_YES, GTK_ICON_SIZE_BUTTON);
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_connectDongleCurrentPort"));
     gtk_widget_modify_fg(w, GTK_STATE_NORMAL, &color);
   } else {
@@ -45,9 +71,10 @@ void hideConnectDongleDialog(void)
   gtk_widget_hide(window);
 }
 
-void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data)
+void on_button_connectDongleConnect_clicked(GtkWidget *widget, gpointer data)
 {
   char buf[256];
+  GtkWidget* w;
   GtkRadioButton *connectAutomaticallyButton = 
     GTK_RADIO_BUTTON(gtk_builder_get_object(g_builder, "radiobutton_connectDongleAuto"));
   GtkRadioButton *connectManuallyButton = 
@@ -73,6 +100,8 @@ void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data)
       if(!Mobot_connectWithTTY((mobot_t*)g_mobotParent, buf)) {
         /* We found the TTY port. */
         gtk_entry_set_text(currentComPort, buf);
+        w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_dongleConnected"));
+        gtk_image_set_from_stock(GTK_IMAGE(w), GTK_STOCK_YES, GTK_ICON_SIZE_BUTTON);
         g_robotManager->addDongle(buf);
         g_robotManager->write();
         dongleFound = true;
