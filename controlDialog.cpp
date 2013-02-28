@@ -279,12 +279,12 @@ gboolean controllerHandlerTimeout(gpointer data)
     }
     /* Set the color widget */
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "colorselection"));
-    double r, g, b;
+    int r, g, b;
     Mobot_getColorRGB((mobot_t*)g_activeMobot, &r, &g, &b);
     GdkColor color;
-    color.red = r*65535.0;
-    color.green = g*65535.0;
-    color.blue = b*65535.0;
+    color.red = r*(65535/255);
+    color.green = g*(65535/255);
+    color.blue = b*(65535/255);
     gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(w), &color);
     MUTEX_UNLOCK(&g_activeMobotLock);
   }
