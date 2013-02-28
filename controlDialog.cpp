@@ -700,9 +700,9 @@ int handlerCOLORSELECTION(void* arg)
   /* Get the color from the color selection and set the Mobot RGB to that color
    * */
   Mobot_setColorRGB((mobot_t*)g_activeMobot, 
-      g_LEDColor.red / (double)((1<<16)-1),
-      g_LEDColor.green / (double)((1<<16)-1),
-      g_LEDColor.blue / (double)((1<<16)-1));
+      g_LEDColor.red / (256),
+      g_LEDColor.green / (256),
+      g_LEDColor.blue / (256));
 }
 
 #define BUTTONHANDLERS(n) \

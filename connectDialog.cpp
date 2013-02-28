@@ -624,10 +624,10 @@ void on_colorDialog_color_set(GtkColorButton* w, gpointer data)
   mobot_t* mobot = (mobot_t*)data;
   GdkColor color;
   gtk_color_button_get_color(w, &color);
-  double rgb[3];
-  rgb[0] = color.red/65535.0;
-  rgb[1] = color.green/65535.0;
-  rgb[2] = color.blue/65535.0;
+  int rgb[3];
+  rgb[0] = color.red/(256);
+  rgb[1] = color.green/(256);
+  rgb[2] = color.blue/(256);
   Mobot_setColorRGB(mobot, rgb[0], rgb[1], rgb[2]);
 }
 
