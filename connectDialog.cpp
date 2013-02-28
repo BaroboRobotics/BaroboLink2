@@ -473,14 +473,11 @@ void refreshConnectDialog()
             (form == MOBOTFORM_T)
           )
         {
-          double r, g, b;
+          int r, g, b;
           int _r, _g, _b;
           char buf[16];
           if(!Mobot_getColorRGB((mobot_t*)g_robotManager->getMobotIndex(i), &r, &g, &b)) {
-            _r = r * 255.0;
-            _g = g * 255.0;
-            _b = b * 255.0;
-            sprintf(buf, "#%02X%02X%02X", _r, _g, _b);
+            sprintf(buf, "#%02X%02X%02X", r, g, b);
             GdkColor color;
             gdk_color_parse(buf, &color);
             w = gtk_color_button_new_with_color(&color);
