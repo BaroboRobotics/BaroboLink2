@@ -85,6 +85,10 @@ int main(int argc, char* argv[])
   gtk_mac_menu_set_quit_menu_item(GTK_MENU_ITEM(quititem));
 #endif
 
+  /* Hide the Program dialog */
+  GtkWidget* w = GTK_WIDGET(gtk_builder_get_object(g_builder, "notebook1"));
+  gtk_notebook_remove_page(GTK_NOTEBOOK(w), 3);
+
   /* Show the window */
   gtk_widget_show(g_window);
   gtk_main();
