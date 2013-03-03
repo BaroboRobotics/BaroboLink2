@@ -3,6 +3,18 @@
 
 int g_scanMobotsActive = 0;
 
+gint scanMobotsCompareFunc(
+    GtkTreeModel *model,
+    GtkTreeIter *a,
+    GtkTreeIter *b,
+    gpointer data)
+{
+  const char *astr, *bstr;
+  gtk_tree_model_get(model, a, 0, &astr, -1);
+  gtk_tree_model_get(model, b, 0, &bstr, -1);
+  return strcmp(astr, bstr);
+}
+
 void initScanMobotsDialog()
 {
   /* Initialize the tree view */
@@ -11,6 +23,20 @@ void initScanMobotsDialog()
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "treeview_scanMobots"));
   s = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
   gtk_tree_selection_set_mode(s, GTK_SELECTION_MULTIPLE);
+  /*
+  GtkListStore *ls = GTK_LIST_STORE(gtk_builder_get_object(g_builder, "liststore_scannedRobots"));
+  gtk_tree_sortable_set_sort_func(
+      GTK_TREE_SORTABLE(ls), 
+      0,
+      scanMobotsCompareFunc,
+      NULL,
+      NULL);
+      */
+  GtkTreeModel* sortModel;
+  sortModel = gtk_tree_model_sort_new_with_model(
+      GTK_TREE_MODEL( gtk_builder_get_object(g_builder, "liststore_scannedRobots")));
+  gtk_tree_view_set_model(GTK_TREE_VIEW(w), sortModel);
+  gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(sortModel), 0, GTK_SORT_ASCENDING);
 }
 
 void* scanMobotsThread(void* arg)
