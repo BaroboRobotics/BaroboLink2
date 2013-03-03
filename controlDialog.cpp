@@ -105,6 +105,30 @@ void setAccelWidgetSensitive(bool sensitive)
       sensitive );
 }
 
+void setRollingControlSensitive(bool sensitive)
+{
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, "button_forward")),
+      sensitive
+      );
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, "button_rotateLeft")),
+      sensitive
+      );
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, "button_rotateRight")),
+      sensitive
+      );
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, "button_stop")),
+      sensitive
+      );
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, "button_backward")),
+      sensitive
+      );
+}
+
 void initControlDialog(void)
 {
 #define BUTTON(x) \
@@ -243,6 +267,7 @@ gboolean controllerHandlerTimeout(gpointer data)
       setMotorWidgetsSensitive(4, true);
       setColorWidgetSensitive(false);
       setAccelWidgetSensitive(false);
+      setRollingControlSensitive(true);
       showJoint4Widgets();
       gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;
@@ -253,8 +278,9 @@ gboolean controllerHandlerTimeout(gpointer data)
       setMotorWidgetsSensitive(4, false);
       setColorWidgetSensitive(true);
       setAccelWidgetSensitive(true);
+      setRollingControlSensitive(false);
       hideJoint4Widgets();
-      gtk_image_set_from_file(GTK_IMAGE(w), "DOF_joint_diagram.png");
+      gtk_image_set_from_file(GTK_IMAGE(w), "interface/DOF_joint_diagram.png");
       motorMask = 0x03;
     } else if (form == MOBOTFORM_I) {
       /* Disable widgets for motors 2 and 4 */
@@ -264,6 +290,7 @@ gboolean controllerHandlerTimeout(gpointer data)
       gtk_image_set_from_file(GTK_IMAGE(w), "interface/DOF_joint_diagram.png");
       setColorWidgetSensitive(true);
       setAccelWidgetSensitive(true);
+      setRollingControlSensitive(true);
       hideJoint4Widgets();
       motorMask = 0x05;
     } else {
@@ -273,6 +300,7 @@ gboolean controllerHandlerTimeout(gpointer data)
       setMotorWidgetsSensitive(4, true);
       setColorWidgetSensitive(false);
       setAccelWidgetSensitive(false);
+      setRollingControlSensitive(true);
       showJoint4Widgets();
       gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;

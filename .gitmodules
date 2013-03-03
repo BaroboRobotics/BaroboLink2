@@ -1,0 +1,3 @@
+[submodule "iMobot_gumstix_api"]
+	path = iMobot_gumstix_api
+	url = git@github.com:Barobo/iMobot_gumstix_api
