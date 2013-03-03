@@ -1,3 +1,6 @@
 [submodule "iMobot_gumstix_api"]
 	path = iMobot_gumstix_api
 	url = git@github.com:Barobo/iMobot_gumstix_api
+[submodule "mxml-2.7"]
+	path = mxml-2.7
+	url = ssh://dko@iel2.engr.ucdavis.edu/home/dko/projects/mxml-2.7.git

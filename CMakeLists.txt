@@ -5,6 +5,7 @@ project(RoboMancer)
 add_subdirectory(libstkcomms)
 
 if(CMAKE_HOST_WIN32)
+  add_subdirectory(mxml-2.7)
   include(FindPkgConfig)
   pkg_check_modules(GTK2 REQUIRED gtk+-2.0)
   add_definitions(-D_MSYS)
@@ -44,7 +45,15 @@ if(GTK2_FOUND)
       updateFirmware.cpp )
 
 if(CMAKE_HOST_WIN32)
-  target_link_libraries(RoboMancer mobotStatic ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.lib stkcomms pthread ${GTK2_LIBRARIES} )
+  target_link_libraries(
+      RoboMancer 
+      ${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms/mobotStatic.lib
+      ${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms/BaroboConfigFile/baroboconfigfile.lib
+      mxml
+      ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a
+      stkcomms 
+      pthread 
+      ${GTK2_LIBRARIES} )
 else()
   target_link_libraries(RoboMancer mobotStatic ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a stkcomms pthread bluetooth ${GTK2_LIBRARIES} )
 endif()
