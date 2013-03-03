@@ -17,6 +17,7 @@ void askConnectDongle(void)
       /* We found the TTY port. */
       g_robotManager->addDongle(buf);
       g_robotManager->write();
+      printf("Found dongle at %s, writing file...\n", buf);
       dongleFound = true;
       Mobot_setDongleMobot((mobot_t*)g_mobotParent);
       break;
