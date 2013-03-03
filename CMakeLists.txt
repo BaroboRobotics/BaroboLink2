@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 2.8)
 project(RoboMancer)
 
 add_subdirectory(libstkcomms)
-add_subdirectory(iMobot_gumstix_api/libimobotcomms)
 
 if(CMAKE_HOST_WIN32)
   include(FindPkgConfig)
@@ -22,8 +21,13 @@ endif(CMAKE_HOST_WIN32)
 if(GTK2_FOUND)
   include_directories(${GTK2_INCLUDE_DIRS})
 # For Scintilla
-  include_directories(~/sys/include ../BaroboConfigFile)
-  link_directories(${LIBSTKCOMMS_BINARY_DIR} ${GTK2_LIBRARY_DIRS} ${LIBIMOBOTCOMMS_SOURCE_DIR})
+  include_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms)
+  include_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms/BaroboConfigFile)
+  include_directories(${CMAKE_SOURCE_DIR}/scintilla/include)
+  link_directories(${LIBSTKCOMMS_BINARY_DIR})
+  link_directories(${GTK2_LIBRARY_DIRS})
+  link_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms)
+  link_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms/BaroboConfigFile)
 
   add_executable(RoboMancer
       commsHandler.cpp
@@ -40,9 +44,9 @@ if(GTK2_FOUND)
       updateFirmware.cpp )
 
 if(CMAKE_HOST_WIN32)
-  target_link_libraries(RoboMancer mobotStatic scintilla stkcomms pthread ${GTK2_LIBRARIES} )
+  target_link_libraries(RoboMancer mobotStatic ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.lib stkcomms pthread ${GTK2_LIBRARIES} )
 else()
-  target_link_libraries(RoboMancer mobotStatic scintilla stkcomms pthread bluetooth ${GTK2_LIBRARIES} )
+  target_link_libraries(RoboMancer mobotStatic ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a stkcomms pthread bluetooth ${GTK2_LIBRARIES} )
 endif()
 else(GTK2_FOUND)
   message(FATAL_ERROR "Gtk not found!")
