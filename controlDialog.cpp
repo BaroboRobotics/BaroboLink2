@@ -238,6 +238,31 @@ gboolean controllerHandlerTimeout(gpointer data)
   int rc;
   static int form;
   static int formFactorInitialized;
+  char buf[80];
+
+  static GtkWidget 
+    *vscale_motorPos[4],
+    *label_motorPos[4],
+    *vscale_motorspeed[4],
+    *vscale_accel[4];
+  static int init = 1;
+
+  if(init) {
+    for(i = 0; i < 4; i++) {
+      sprintf(buf, "vscale_motorPos%d", i+1);
+      vscale_motorPos[i] = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
+      sprintf(buf, "label_motorPos%d", i+1);
+      label_motorPos[i] = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
+      sprintf(buf, "vscale_motorspeed%d", i+1);
+      vscale_motorspeed[i] = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
+    }
+    vscale_accel[0] = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelx"));
+    vscale_accel[1] = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accely"));
+    vscale_accel[2] = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelz"));
+    vscale_accel[3] = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelmag"));
+    init = 0;
+  }
+
   /* First, check to see if a robot is even selected. If none selected, just return. */
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
   index = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
@@ -251,11 +276,13 @@ gboolean controllerHandlerTimeout(gpointer data)
   mobot = g_robotManager->getMobot(index);
   if(mobot == NULL) {
     g_robotManager->disconnect(index);
+    MUTEX_LOCK(&g_activeMobotLock);
     g_activeMobot = NULL;
+    MUTEX_UNLOCK(&g_activeMobotLock);
     return true;
   }
+  MUTEX_LOCK(&g_activeMobotLock);
   if(mobot != g_activeMobot) {
-    MUTEX_LOCK(&g_activeMobotLock);
     g_activeMobot = mobot;
     /* Get the form factor and disable certain widgets if necessary */
     rc = Mobot_getFormFactor((mobot_t*)g_activeMobot, &form);
@@ -314,40 +341,22 @@ gboolean controllerHandlerTimeout(gpointer data)
     color.green = g*(65535/255);
     color.blue = b*(65535/255);
     gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(w), &color);
-    MUTEX_UNLOCK(&g_activeMobotLock);
   }
+  MUTEX_UNLOCK(&g_activeMobotLock);
 
-  char buf[80];
-#define VSCALEHANDLER(n) \
-  if(g_buttonState[S_POS##n] == 0) { \
-    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos" #n)); \
-    gtk_range_set_value(GTK_RANGE(w), normalizeDeg(g_positionValues[n-1])); \
-  } \
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "label_motorPos" #n)); \
-  sprintf(buf, "%.2lf", g_positionValues[n-1]); \
-  gtk_label_set_text(GTK_LABEL(w), buf); 
   for(i = 0; i < 4; i++) {
     if(motorMask & (1<<i)) {
       if(g_buttonState[S_POS1+i] == 0) { 
-        sprintf(buf, "vscale_motorPos%d", i+1);
-        w = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
-        gtk_range_set_value(GTK_RANGE(w), normalizeDeg(g_positionValues[i])); 
+        gtk_range_set_value(GTK_RANGE(vscale_motorPos[i]), normalizeDeg(g_positionValues[i])); 
       } 
-      sprintf(buf, "label_motorPos%d", i+1);
-      w = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
       sprintf(buf, "%.2lf", g_positionValues[i]); 
-      gtk_label_set_text(GTK_LABEL(w), buf); 
+      gtk_label_set_text(GTK_LABEL(label_motorPos[i]), buf); 
     } else {
-      sprintf(buf, "vscale_motorPos%d", i+1);
-      w = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
-      gtk_range_set_value(GTK_RANGE(w), 0); 
-      sprintf(buf, "label_motorPos%d", i+1);
-      w = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
+      gtk_range_set_value(GTK_RANGE(vscale_motorPos[i]), 0); 
       sprintf(buf, "N/A"); 
-      gtk_label_set_text(GTK_LABEL(w), buf); 
+      gtk_label_set_text(GTK_LABEL(label_motorPos[i]), buf); 
     }
   }
-#undef VSCALEHANDLER
   if(g_initSpeeds) {
     if(Mobot_getJointSpeeds((mobot_t*)mobot, 
           &angles[0], 
@@ -359,51 +368,29 @@ gboolean controllerHandlerTimeout(gpointer data)
       }
       return true;
     }
-#define VSCALEHANDLER(n) \
-    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed" #n)); \
-    gtk_range_set_value(GTK_RANGE(w), RAD2DEG(angles[n-1]));  \
-    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "label_motorPos" #n)); \
-    sprintf(buf, "%.2lf", RAD2DEG(angles[n-1])); \
-    gtk_label_set_text(GTK_LABEL(w), buf);
-    VSCALEHANDLER(1)
-      VSCALEHANDLER(2)
-      VSCALEHANDLER(3)
-      VSCALEHANDLER(4)
-#undef VSCALEHANDLER
-      g_initSpeeds = 0;
+
+    for(i = 0; i < 4; i++) {
+      gtk_range_set_value(GTK_RANGE(vscale_motorspeed[i]), RAD2DEG(angles[i])); 
+      sprintf(buf, "%.2lf", RAD2DEG(angles[i]));
+      //gtk_label_set_text(GTK_LABEL(label_motorPos[i]), buf);
+    }
+    g_initSpeeds = 0;
   }
   if(
       (form == MOBOTFORM_I) || (form == MOBOTFORM_L)
     )
   {
     /* Set acceleration sliders */
-    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelx"));
-    gtk_range_set_value(GTK_RANGE(w), g_accelerationValues[0]);
-    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accely"));
-    gtk_range_set_value(GTK_RANGE(w), g_accelerationValues[1]);
-    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelz"));
-    gtk_range_set_value(GTK_RANGE(w), g_accelerationValues[2]);
-    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelmag"));
-    gtk_range_set_value(GTK_RANGE(w), g_accelerationValues[3]);
+    for(i = 0; i < 4; i++) {
+      gtk_range_set_value(GTK_RANGE(vscale_accel[i]), g_accelerationValues[i]);
+    }
   }
 
   /* Get slider, entry values */
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos1"));
-  g_positionSliderValues[0] = gtk_range_get_value(GTK_RANGE(w));
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos2"));
-  g_positionSliderValues[1] = gtk_range_get_value(GTK_RANGE(w));
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos3"));
-  g_positionSliderValues[2] = gtk_range_get_value(GTK_RANGE(w));
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos4"));
-  g_positionSliderValues[3] = gtk_range_get_value(GTK_RANGE(w));
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed1"));
-  g_speedSliderValues[0] = gtk_range_get_value(GTK_RANGE(w));
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed2"));
-  g_speedSliderValues[1] = gtk_range_get_value(GTK_RANGE(w));
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed3"));
-  g_speedSliderValues[2] = gtk_range_get_value(GTK_RANGE(w));
-  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed4"));
-  g_speedSliderValues[3] = gtk_range_get_value(GTK_RANGE(w));
+  for(i = 0; i < 4; i++ ) {
+    g_positionSliderValues[i] = gtk_range_get_value(GTK_RANGE(vscale_motorPos[i]));
+    g_speedSliderValues[i] = gtk_range_get_value(GTK_RANGE(vscale_motorspeed[i]));
+  }
   return true;
 }
 

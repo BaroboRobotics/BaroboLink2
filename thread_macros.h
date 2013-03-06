@@ -1,14 +1,152 @@
 #ifndef _THREAD_MACROS_H_
 #define _THREAD_MACROS_H_
 
-#undef THREAD_T
-#undef MUTEX_T
-#undef COND_T
+/* * * * * * * * * * * * * * * */
+/* W I N D O W S   M A C R O S */
+/* * * * * * * * * * * * * * * */
+#if defined (_WIN32) ||  defined (MSYS)
+/* ******* *
+ * THREADS *
+ * ******* */
+#ifndef THREAD_T
+#define THREAD_T HANDLE
+#endif
+
+#define THREAD_CREATE(thread_handle, function, arg) \
+  *(thread_handle) = CreateThread( \
+      NULL, \
+      0, \
+      (LPTHREAD_START_ROUTINE)function, \
+      arg, \
+      0, \
+      NULL \
+      )
+
+#define THREAD_CANCEL(thread_handle)  \
+  TerminateThread( thread_handle, 0)
+
+#define THREAD_JOIN(thread_handle) \
+  WaitForSingleObject(thread_handle, INFINITE)
+
+#define THREAD_EXIT() \
+  ExitThread(0)
+
+#define THREAD_DETACH() 
+
+#define THREAD_YIELD() SwitchToThread()
+
+/* ***** */
+/* MUTEX */
+/* ***** */
+/* Typedef */
+#define MUTEX_T HANDLE
+/* Init */
+#define MUTEX_INIT(mutex) \
+  *mutex = CreateMutex(NULL, FALSE, NULL)
+/* Destroy */
+#define MUTEX_DESTROY(mutex)
+/* Functions */
+#define MUTEX_LOCK(mutex)           \
+  WaitForSingleObject(            \
+      *mutex ,                 \
+      INFINITE)
+#define MUTEX_UNLOCK(mutex)         \
+  ReleaseMutex( *mutex )
+#define MUTEX_NEW(mutex) \
+  mutex = (HANDLE*)malloc(sizeof(HANDLE)); \
+  if(mutex == NULL) \
+    fprintf(stderr, "Memory Error. %s:%d\n", __FILE__, __LINE__)
+
+
+/* **** *
+ * COND *
+ * **** */
+/* Typedef */
+#define COND_T HANDLE
+/* New */
+#define COND_NEW(cond) \
+  cond = (HANDLE*)malloc(sizeof(HANDLE)); \
+  if(cond == NULL) \
+    fprintf(stderr, "Memory Error. %s:%d\n", __FILE__, __LINE__)
+/* Init */
+#define COND_INIT(cond) \
+  *cond = CreateEvent(NULL, TRUE, TRUE, NULL);\
+  ResetEvent(*cond)
+/* Destroy */
+#define COND_DESTROY(cond)
+/* Functions */
+
+#define COND_WAIT( cond , mutex ) \
+ResetEvent(*cond); \
+ReleaseMutex(*mutex); \
+WaitForSingleObject( *cond, INFINITE)
+#define COND_SLEEP( cond, mutex, test )   \
+  ResetEvent( *cond );             \
+if (!test){ \
+  WaitForSingleObject( *cond, INFINITE); \
+}
+#define COND_RESET( cond, mutex ) \
+	ResetEvent(*cond)
+#define COND_SLEEP_ACTION(cond, mutex, action) \
+  ResetEvent( *cond ); \
+action; \
+WaitForSingleObject( *cond, INFINITE)
+#define SIGNAL(cond, mutex, action) \
+  action; \
+SetEvent( *cond )
+#define COND_BROADCAST(cond) \
+  PulseEvent(*cond)
+#define COND_SIGNAL(cond) \
+  SetEvent(*cond)
+
+
+/* ********* *
+ * SEMAPHORE *
+ * ********* */
+/* Typedef */
+#define SEMAPHORE_T HANDLE
+/* Init */
+#define SEMAPHORE_INIT(sem) \
+  *sem = CreateSemaphore( \
+      NULL, \
+      0, \
+      1024, \
+      NULL ) 
+/* Destroy */
+#define SEMAPHORE_DESTROY(sem) 
+/* Functions */
+#define SEMAPHORE_WAIT(sem) \
+  WaitForSingleObject(sem, INFINITE)
+#define SEMAPHORE_POST(sem) \
+  ReleaseSemaphore(sem, 1, NULL)
+
+
+/* ******* *
+ * RW_LOCK *
+ * ******* */
+/* Typedef */
+#define RWLOCK_T mc_rwlock_t
+/* Init */
+#define RWLOCK_INIT(rwlock) \
+  mc_rwlock_init(rwlock)
+/* Destroy */
+#define RWLOCK_DESTROY(rwlock) mc_rwlock_destroy(rwlock)
+/* Functions */
+#define RWLOCK_RDLOCK(rwlock) \
+  mc_rwlock_rdlock(rwlock)
+#define RWLOCK_RDUNLOCK(rwlock) \
+  mc_rwlock_rdunlock(rwlock)
+#define RWLOCK_WRLOCK(rwlock) \
+  mc_rwlock_wrlock(rwlock)
+#define RWLOCK_WRUNLOCK(rwlock) \
+  mc_rwlock_wrunlock(rwlock)
+
+
 
 /* * * * * * * * * * * * */
 /* U N I X   M A C R O S */
 /* * * * * * * * * * * * */
-#ifndef _WIN32 
+#else
 #include <pthread.h>
 #define THREAD_T pthread_t
 #define THREAD_CREATE( thread_handle, function, arg ) \
@@ -34,9 +172,6 @@
 
 #define THREAD_EXIT() \
   pthread_exit(NULL)
-
-#define THREAD_YIELD() \
-  pthread_yield()
 
 /* ***** */
 /* MUTEX */
@@ -170,149 +305,6 @@ fprintf(stderr, "rwunlock error: %s:%d\n", __FILE__, __LINE__)
 #define RWLOCK_WRUNLOCK(rwlock) \
   mc_rwlock_wrunlock(rwlock)
 #endif
-
-/* * * * * * * * * * * * * * * */
-/* W I N D O W S   M A C R O S */
-/* * * * * * * * * * * * * * * */
-#else
-/* ******* *
- * THREADS *
- * ******* */
-#ifndef THREAD_T
-#define THREAD_T HANDLE
-#endif
-
-#define THREAD_CREATE(thread_handle, function, arg) \
-  *(thread_handle) = CreateThread( \
-      NULL, \
-      0, \
-      (LPTHREAD_START_ROUTINE)function, \
-      arg, \
-      0, \
-      NULL \
-      )
-
-#define THREAD_CANCEL(thread_handle)  \
-  TerminateThread( thread_handle, 0)
-
-#define THREAD_JOIN(thread_handle) \
-  WaitForSingleObject(thread_handle, INFINITE)
-
-#define THREAD_EXIT() \
-  ExitThread(0)
-
-#define THREAD_DETACH() 
-
-#define THREAD_YIELD() \
-  SwitchToThread()
-
-/* ***** */
-/* MUTEX */
-/* ***** */
-/* Typedef */
-#define MUTEX_T HANDLE
-/* Init */
-#define MUTEX_INIT(mutex) \
-  *mutex = CreateMutex(NULL, FALSE, NULL)
-/* Destroy */
-#define MUTEX_DESTROY(mutex)
-/* Functions */
-#define MUTEX_LOCK(mutex)           \
-  WaitForSingleObject(            \
-      *mutex ,                 \
-      INFINITE)
-#define MUTEX_UNLOCK(mutex)         \
-  ReleaseMutex( *mutex )
-#define MUTEX_NEW(mutex) \
-  mutex = (HANDLE*)malloc(sizeof(HANDLE)); \
-  if(mutex == NULL) \
-    fprintf(stderr, "Memory Error. %s:%d\n", __FILE__, __LINE__)
-
-
-/* **** *
- * COND *
- * **** */
-/* Typedef */
-#define COND_T HANDLE
-/* New */
-#define COND_NEW(cond) \
-  cond = (HANDLE*)malloc(sizeof(HANDLE)); \
-  if(cond == NULL) \
-    fprintf(stderr, "Memory Error. %s:%d\n", __FILE__, __LINE__)
-/* Init */
-#define COND_INIT(cond) \
-  *cond = CreateEvent(NULL, TRUE, TRUE, NULL);\
-  ResetEvent(*cond)
-/* Destroy */
-#define COND_DESTROY(cond)
-/* Functions */
-
-#define COND_WAIT( cond , mutex ) \
-ResetEvent(*cond); \
-ReleaseMutex(*mutex); \
-WaitForSingleObject( *cond, INFINITE)
-#define COND_SLEEP( cond, mutex, test )   \
-  ResetEvent( *cond );             \
-if (!test){ \
-  WaitForSingleObject( *cond, INFINITE); \
-}
-#define COND_RESET( cond, mutex ) \
-	ResetEvent(*cond)
-#define COND_SLEEP_ACTION(cond, mutex, action) \
-  ResetEvent( *cond ); \
-action; \
-WaitForSingleObject( *cond, INFINITE)
-#define SIGNAL(cond, mutex, action) \
-  action; \
-SetEvent( *cond )
-#define COND_BROADCAST(cond) \
-  PulseEvent(*cond)
-#define COND_SIGNAL(cond) \
-  SetEvent(*cond)
-
-
-/* ********* *
- * SEMAPHORE *
- * ********* */
-/* Typedef */
-#define SEMAPHORE_T HANDLE
-/* Init */
-#define SEMAPHORE_INIT(sem) \
-  *sem = CreateSemaphore( \
-      NULL, \
-      0, \
-      1024, \
-      NULL ) 
-/* Destroy */
-#define SEMAPHORE_DESTROY(sem) 
-/* Functions */
-#define SEMAPHORE_WAIT(sem) \
-  WaitForSingleObject(sem, INFINITE)
-#define SEMAPHORE_POST(sem) \
-  ReleaseSemaphore(sem, 1, NULL)
-
-
-/* ******* *
- * RW_LOCK *
- * ******* */
-/* Typedef */
-#define RWLOCK_T mc_rwlock_t
-/* Init */
-#define RWLOCK_INIT(rwlock) \
-  mc_rwlock_init(rwlock)
-/* Destroy */
-#define RWLOCK_DESTROY(rwlock) mc_rwlock_destroy(rwlock)
-/* Functions */
-#define RWLOCK_RDLOCK(rwlock) \
-  mc_rwlock_rdlock(rwlock)
-#define RWLOCK_RDUNLOCK(rwlock) \
-  mc_rwlock_rdunlock(rwlock)
-#define RWLOCK_WRLOCK(rwlock) \
-  mc_rwlock_wrlock(rwlock)
-#define RWLOCK_WRUNLOCK(rwlock) \
-  mc_rwlock_wrunlock(rwlock)
-
-
 
 #endif /* Unix/Windows macros */
 
