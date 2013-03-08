@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include "RoboMancer.h"
@@ -349,7 +350,7 @@ gboolean controllerHandlerTimeout(gpointer data)
       if(g_buttonState[S_POS1+i] == 0) { 
         gtk_range_set_value(GTK_RANGE(vscale_motorPos[i]), normalizeDeg(g_positionValues[i])); 
       } 
-      sprintf(buf, "%.2lf", g_positionValues[i]); 
+      sprintf(buf, "%3.2lf", g_positionValues[i]); 
       gtk_label_set_text(GTK_LABEL(label_motorPos[i]), buf); 
     } else {
       gtk_range_set_value(GTK_RANGE(vscale_motorPos[i]), 0); 
@@ -371,8 +372,6 @@ gboolean controllerHandlerTimeout(gpointer data)
 
     for(i = 0; i < 4; i++) {
       gtk_range_set_value(GTK_RANGE(vscale_motorspeed[i]), RAD2DEG(angles[i])); 
-      sprintf(buf, "%.2lf", RAD2DEG(angles[i]));
-      //gtk_label_set_text(GTK_LABEL(label_motorPos[i]), buf);
     }
     g_initSpeeds = 0;
   }
