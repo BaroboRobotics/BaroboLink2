@@ -173,6 +173,8 @@ SetEvent( *cond )
 #define THREAD_EXIT() \
   pthread_exit(NULL)
 
+#define THREAD_YIELD() pthread_yield()
+
 /* ***** */
 /* MUTEX */
 /* ***** */
