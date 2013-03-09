@@ -29,7 +29,6 @@ void on_button_scanMobots_clicked(GtkWidget* widget, gpointer data)
 
   if(((mobot_t*)g_mobotParent)->connected == 0) {
     askConnectDongle();
-    return;
   }
 
   /* Start the query thread and show the progress bar */
@@ -200,7 +199,6 @@ void on_button_Connect_clicked(GtkWidget* w, gpointer data)
     g_mobotParent = (recordMobot_t*)malloc(sizeof(recordMobot_t));
     RecordMobot_init(g_mobotParent, "Dongle");
     askConnectDongle();
-    return;
   }
   arg = (struct connectThreadArg_s*)malloc(sizeof(struct connectThreadArg_s));
   arg->connectIndex = index;
