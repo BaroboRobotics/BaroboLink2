@@ -15,6 +15,7 @@
  * depressed, and 0 indicates that it is not. */
 int g_buttonState[NUM_BUTTONS];
 int g_initSpeeds = 0;
+int g_controlMode = 0; // 0 means update main control page, 1 means update "sensors" page
 
 /* Global variables that store slider and text entry values */
 double g_speedSliderValues[4];
@@ -120,14 +121,23 @@ void setRollingControlSensitive(bool sensitive)
       GTK_WIDGET(gtk_builder_get_object(g_builder, "button_rotateRight")),
       sensitive
       );
+  /*
   gtk_widget_set_sensitive(
       GTK_WIDGET(gtk_builder_get_object(g_builder, "button_stop")),
       sensitive
       );
+      */
   gtk_widget_set_sensitive(
       GTK_WIDGET(gtk_builder_get_object(g_builder, "button_backward")),
       sensitive
       );
+}
+
+void setMotionsSensitive(bool sensitive)
+{
+  GtkWidget* w;
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "treeview_gaits"));
+  gtk_widget_set_sensitive(w, sensitive);
 }
 
 void initControlDialog(void)
@@ -282,7 +292,7 @@ gboolean controllerHandlerTimeout(gpointer data)
     MUTEX_UNLOCK(&g_activeMobotLock);
     return true;
   }
-  MUTEX_LOCK(&g_activeMobotLock);
+  //MUTEX_LOCK(&g_activeMobotLock);
   if(mobot != g_activeMobot) {
     g_activeMobot = mobot;
     /* Get the form factor and disable certain widgets if necessary */
@@ -296,6 +306,7 @@ gboolean controllerHandlerTimeout(gpointer data)
       setColorWidgetSensitive(false);
       setAccelWidgetSensitive(false);
       setRollingControlSensitive(true);
+      setMotionsSensitive(true);
       showJoint4Widgets();
       gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;
@@ -307,6 +318,7 @@ gboolean controllerHandlerTimeout(gpointer data)
       setColorWidgetSensitive(true);
       setAccelWidgetSensitive(true);
       setRollingControlSensitive(false);
+      setMotionsSensitive(false);
       hideJoint4Widgets();
       gtk_image_set_from_file(GTK_IMAGE(w), "interface/DOF_joint_diagram.png");
       motorMask = 0x03;
@@ -319,6 +331,7 @@ gboolean controllerHandlerTimeout(gpointer data)
       setColorWidgetSensitive(true);
       setAccelWidgetSensitive(true);
       setRollingControlSensitive(true);
+      setMotionsSensitive(false);
       hideJoint4Widgets();
       motorMask = 0x05;
     } else {
@@ -329,6 +342,7 @@ gboolean controllerHandlerTimeout(gpointer data)
       setColorWidgetSensitive(false);
       setAccelWidgetSensitive(false);
       setRollingControlSensitive(true);
+      setMotionsSensitive(true);
       showJoint4Widgets();
       gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;
@@ -343,7 +357,7 @@ gboolean controllerHandlerTimeout(gpointer data)
     color.blue = b*(65535/255);
     gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(w), &color);
   }
-  MUTEX_UNLOCK(&g_activeMobotLock);
+  //MUTEX_UNLOCK(&g_activeMobotLock);
 
   for(i = 0; i < 4; i++) {
     if(motorMask & (1<<i)) {
@@ -395,6 +409,7 @@ gboolean controllerHandlerTimeout(gpointer data)
 
 void* controllerHandlerThread(void* arg)
 {
+  int i;
   /* This thread is responsible for communicating with the Mobot. All mobot
    * communications should be done in this thread to prevent communication
    * errors from hanging the app. */
@@ -422,38 +437,40 @@ void* controllerHandlerThread(void* arg)
     }
 
     TESTLOCK
-    /* First, get motor position values */
-    int rc = Mobot_getJointAngles(
-        (mobot_t*)g_activeMobot,
-        &g_positionValues[0],
-        &g_positionValues[1],
-        &g_positionValues[2],
-        &g_positionValues[3]);
-    /* Convert angles to degrees */
-    int i;
-    for(i = 0; i < 4; i++) {
-      //g_positionValues[i] = normalizeAngleRad(g_positionValues[i]);
-      if(!rc) {
-        g_positionValues[i] = RAD2DEG(g_positionValues[i]);
+    if(g_controlMode == 0) {
+      /* First, get motor position values */
+      int rc = Mobot_getJointAngles(
+          (mobot_t*)g_activeMobot,
+          &g_positionValues[0],
+          &g_positionValues[1],
+          &g_positionValues[2],
+          &g_positionValues[3]);
+      /* Convert angles to degrees */
+      for(i = 0; i < 4; i++) {
+        //g_positionValues[i] = normalizeAngleRad(g_positionValues[i]);
+        if(!rc) {
+          g_positionValues[i] = RAD2DEG(g_positionValues[i]);
+        }
+        /*
+           else {
+           g_positionValues[i] = 0;
+           }
+         */
       }
-      /*
-      else {
-        g_positionValues[i] = 0;
-      }
-      */
+    } else if (g_controlMode == 1) {
+      /* Now get Acceleration Values */
+      Mobot_getAccelerometerData(
+          (mobot_t*)g_activeMobot,
+          &g_accelerationValues[0],
+          &g_accelerationValues[1],
+          &g_accelerationValues[2]);
+      g_accelerationValues[3] = 
+        sqrt (
+            (g_accelerationValues[0] * g_accelerationValues[0]) + 
+            (g_accelerationValues[1] * g_accelerationValues[1]) + 
+            (g_accelerationValues[2] * g_accelerationValues[2]) 
+            );
     }
-    /* Now get Acceleration Values */
-    Mobot_getAccelerometerData(
-        (mobot_t*)g_activeMobot,
-        &g_accelerationValues[0],
-        &g_accelerationValues[1],
-        &g_accelerationValues[2]);
-    g_accelerationValues[3] = 
-      sqrt (
-       (g_accelerationValues[0] * g_accelerationValues[0]) + 
-       (g_accelerationValues[1] * g_accelerationValues[1]) + 
-       (g_accelerationValues[2] * g_accelerationValues[2]) 
-      );
 
     MUTEX_UNLOCK(&g_activeMobotLock);
     /*

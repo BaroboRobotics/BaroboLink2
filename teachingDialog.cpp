@@ -453,6 +453,11 @@ void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_n
   {
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
     gtk_combo_box_set_active(GTK_COMBO_BOX(w), selectedRobot);
+    if(page_num == controlPage) {
+      g_controlMode = 0;
+    } else {
+      g_controlMode = 1;
+    }
   } else {
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
     gtk_combo_box_set_active(GTK_COMBO_BOX(w), -1);
