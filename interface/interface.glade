@@ -510,12 +510,6 @@
       <!-- column-name ZigbeeAddr -->
       <column type="guint"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">AABB</col>
-        <col id="1">0</col>
-      </row>
-    </data>
   </object>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
