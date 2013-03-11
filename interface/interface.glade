@@ -510,12 +510,6 @@
       <!-- column-name ZigbeeAddr -->
       <column type="guint"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">AABB</col>
-        <col id="1">0</col>
-      </row>
-    </data>
   </object>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
@@ -548,8 +542,9 @@
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">Manage the Mobot dongle connection</property>
                         <property name="use_action_appearance">False</property>
-                        <property name="label" translatable="yes">Manage Dongle</property>
+                        <property name="label" translatable="yes">Manage Dongle for Mobot-I and Mobot-L</property>
                         <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menuitem_DongleDialog_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -2343,10 +2338,14 @@
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
+                      <object class="GtkLabel" id="label53">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Sensory Information for Mobot-I and Mobot-L</property>
+                      </object>
+                      <packing>
+                        <property name="right_attach">2</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -2357,7 +2356,7 @@
                   <object class="GtkLabel" id="label52">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Misc. Control</property>
+                    <property name="label" translatable="yes">Sensors</property>
                   </object>
                   <packing>
                     <property name="position">2</property>

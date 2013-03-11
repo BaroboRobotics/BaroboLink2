@@ -157,7 +157,7 @@ void on_button_saveToProgram_clicked(GtkWidget*widget, gpointer data)
       GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
       NULL);
   gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), TRUE);
-  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), "UntitledDocument.cpp");
+  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), "untitledprogram.ch");
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
   {
     char *filename;
@@ -344,7 +344,7 @@ void on_mobotButtonPress(void* data, int button, int buttonDown)
 
   /* Calculate the new state */
   if(buttonDown) {
-    Mobot_blinkLED(mobot, 0.1, 2);
+    //Mobot_blinkLED(mobot, 0.1, 2);
     newState = lastState | (1<<button);
   } else {
     newState = lastState & ~(1<<button);
@@ -453,6 +453,11 @@ void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_n
   {
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
     gtk_combo_box_set_active(GTK_COMBO_BOX(w), selectedRobot);
+    if(page_num == controlPage) {
+      g_controlMode = 0;
+    } else {
+      g_controlMode = 1;
+    }
   } else {
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
     gtk_combo_box_set_active(GTK_COMBO_BOX(w), -1);

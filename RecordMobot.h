@@ -81,6 +81,7 @@ int RecordMobot_isMoving(recordMobot_t* rmobot);
 int RecordMobot_play(recordMobot_t* mobot, int index);
 int RecordMobot_getMotionType(recordMobot_t* mobot, int index);
 int RecordMobot_getMotionString(recordMobot_t* mobot, int index, char* buf);
+int RecordMobot_getMotionStringB(recordMobot_t* mobot, int index, char* buf);
 const char* RecordMobot_getMotionName(recordMobot_t* mobot, int index);
 int RecordMobot_setMotionName(recordMobot_t* mobot, int index, const char* name);
 int RecordMobot_removeMotion(recordMobot_t* mobot, int index, bool releaseData);

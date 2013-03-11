@@ -26,6 +26,7 @@ void initialize();
 int getIterModelFromTreeSelection(GtkTreeView *treeView, GtkTreeModel **model, GtkTreeIter *iter);
 
 /* Global Vars */
+extern int g_controlMode; // 0 means update main control page, 1 means update "sensors" page
 extern GtkBuilder *g_builder;
 extern CRobotManager *g_robotManager;
 extern GtkWidget *g_scieditor;
@@ -68,6 +69,7 @@ gboolean connectDialogPulse(gpointer data);
 /* Connect Dongle Dialog */
 G_MODULE_EXPORT void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data);
 G_MODULE_EXPORT void on_button_connectDongleClose_clicked(GtkWidget *w, gpointer data);
+G_MODULE_EXPORT void on_menuitem_DongleDialog_activate(GtkWidget *w, gpointer data);
 void askConnectDongle(void);
 void showConnectDongleDialog(void);
 void hideConnectDongleDialog(void);
