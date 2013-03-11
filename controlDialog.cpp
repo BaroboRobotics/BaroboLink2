@@ -547,7 +547,7 @@ int handlerROLLFORWARD(void* arg)
     )
   {
     Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_FORWARD);
-    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT3, MOBOT_BACKWARD);
+    Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT3, MOBOT_FORWARD);
   } else {
     Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT1, MOBOT_FORWARD);
     Mobot_moveJointContinuousNB((mobot_t*)arg, MOBOT_JOINT4, MOBOT_FORWARD);
