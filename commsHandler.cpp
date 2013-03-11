@@ -68,11 +68,14 @@ void* commsThread(void* arg)
       bytes++;
     }
     /* Send the message to the Mobot */
+#if 0
     SendToIMobot((mobot_t*)comms->mobot, buf[0], &buf[2], bytes-3);
     /* Get a response from the Mobot */
     RecvFromIMobot((mobot_t*)comms->mobot, &buf[0], 100);
+#endif
+    MobotMsgTransaction((mobot_t*)comms->mobot, buf[0], &buf[2], bytes-3);
     /* Send the response to the connected party */
-    send(comms->new_fd, (const char*)&buf[0], buf[1], 0);
+    send(comms->new_fd, (const char*)&buf[2], buf[3], 0);
   }
   return NULL;
 }
