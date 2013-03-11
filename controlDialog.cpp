@@ -308,6 +308,10 @@ gboolean controllerHandlerTimeout(gpointer data)
       setRollingControlSensitive(true);
       setMotionsSensitive(true);
       showJoint4Widgets();
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos2"));
+      gtk_range_set_range(GTK_RANGE(w), -90, 90);
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos3"));
+      gtk_range_set_range(GTK_RANGE(w), -90, 90);
       gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;
     } else if (form == MOBOTFORM_L) {
@@ -320,6 +324,10 @@ gboolean controllerHandlerTimeout(gpointer data)
       setRollingControlSensitive(false);
       setMotionsSensitive(false);
       hideJoint4Widgets();
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos2"));
+      gtk_range_set_range(GTK_RANGE(w), -180, 180);
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos3"));
+      gtk_range_set_range(GTK_RANGE(w), -180, 180);
       gtk_image_set_from_file(GTK_IMAGE(w), "interface/DOF_joint_diagram.png");
       motorMask = 0x03;
     } else if (form == MOBOTFORM_I) {
@@ -333,6 +341,10 @@ gboolean controllerHandlerTimeout(gpointer data)
       setRollingControlSensitive(true);
       setMotionsSensitive(false);
       hideJoint4Widgets();
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos2"));
+      gtk_range_set_range(GTK_RANGE(w), -180, 180);
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos3"));
+      gtk_range_set_range(GTK_RANGE(w), -180, 180);
       motorMask = 0x05;
     } else {
       /* Enable all widgets */
@@ -344,6 +356,10 @@ gboolean controllerHandlerTimeout(gpointer data)
       setRollingControlSensitive(true);
       setMotionsSensitive(true);
       showJoint4Widgets();
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos2"));
+      gtk_range_set_range(GTK_RANGE(w), -90, 90);
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos3"));
+      gtk_range_set_range(GTK_RANGE(w), -90, 90);
       gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;
     }
