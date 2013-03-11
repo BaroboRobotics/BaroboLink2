@@ -2344,10 +2344,14 @@
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
+                      <object class="GtkLabel" id="label53">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Sensory Information for Mobot-I and Mobot-L</property>
+                      </object>
+                      <packing>
+                        <property name="right_attach">2</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -2358,7 +2362,7 @@
                   <object class="GtkLabel" id="label52">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Misc. Control</property>
+                    <property name="label" translatable="yes">Sensors</property>
                   </object>
                   <packing>
                     <property name="position">2</property>
