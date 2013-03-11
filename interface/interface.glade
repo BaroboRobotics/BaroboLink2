@@ -548,8 +548,9 @@
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">Manage the Mobot dongle connection</property>
                         <property name="use_action_appearance">False</property>
-                        <property name="label" translatable="yes">Manage Dongle</property>
+                        <property name="label" translatable="yes">Manage Dongle for Mobot-I and Mobot-L</property>
                         <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menuitem_DongleDialog_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>

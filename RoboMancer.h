@@ -68,6 +68,7 @@ gboolean connectDialogPulse(gpointer data);
 /* Connect Dongle Dialog */
 G_MODULE_EXPORT void on_button_connectDongleConnect_clicked(GtkWidget *w, gpointer data);
 G_MODULE_EXPORT void on_button_connectDongleClose_clicked(GtkWidget *w, gpointer data);
+G_MODULE_EXPORT void on_menuitem_DongleDialog_activate(GtkWidget *w, gpointer data);
 void askConnectDongle(void);
 void showConnectDongleDialog(void);
 void hideConnectDongleDialog(void);

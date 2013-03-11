@@ -17,9 +17,15 @@ void askConnectDongle(void)
       /* We found the TTY port. */
       g_robotManager->addDongle(buf);
       g_robotManager->write();
-      printf("Found dongle at %s, writing file...\n", buf);
+      //printf("Found dongle at %s, writing file...\n", buf);
       dongleFound = true;
       Mobot_setDongleMobot((mobot_t*)g_mobotParent);
+      /* Modify widgets in dongle dialog */
+      GtkEntry *currentComPort = GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_connectDongleCurrentPort"));
+      gtk_entry_set_text(currentComPort, buf);
+      GtkWidget *w;
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_dongleConnected"));
+      gtk_image_set_from_stock(GTK_IMAGE(w), GTK_STOCK_YES, GTK_ICON_SIZE_BUTTON);
       break;
     }
     g_main_context_iteration(NULL, TRUE);
@@ -153,4 +159,9 @@ void on_button_connectDongleClose_clicked(GtkWidget *w, gpointer data)
 {
   hideConnectDongleDialog();
   return;
+}
+
+void on_menuitem_DongleDialog_activate(GtkWidget *w, gpointer data)
+{
+  showConnectDongleDialog();
 }

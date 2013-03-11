@@ -29,7 +29,9 @@ void on_button_scanMobots_clicked(GtkWidget* widget, gpointer data)
 
   if(((mobot_t*)g_mobotParent)->connected == 0) {
     askConnectDongle();
-    return;
+    if(((mobot_t*)g_mobotParent)->connected == 0) {
+      return;
+    }
   }
 
   /* Start the query thread and show the progress bar */
