@@ -202,7 +202,6 @@ void on_button_Connect_clicked(GtkWidget* w, gpointer data)
     g_mobotParent = (recordMobot_t*)malloc(sizeof(recordMobot_t));
     RecordMobot_init(g_mobotParent, "Dongle");
     askConnectDongle();
-    return;
   }
   arg = (struct connectThreadArg_s*)malloc(sizeof(struct connectThreadArg_s));
   arg->connectIndex = index;
