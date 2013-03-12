@@ -283,13 +283,21 @@ string* CRobotManager::generateProgram(bool looped, bool holdOnExit)
 
   /* Declare the appropiate number of CMobot variables */
   for(i = 0; i < numConnected(); i++) {
-    sprintf(tbuf, "CMobot mobot%d;\n", i+1);
+    if(getMobot(i)->mobot.formFactor == MOBOTFORM_I) {
+      sprintf(tbuf, "CMobotI mobot%d;\n", i+1);
+    } else if (getMobot(i)->mobot.formFactor == MOBOTFORM_L) {
+      sprintf(tbuf, "CMobotL mobot%d;\n", i+1);
+    } else {
+      sprintf(tbuf, "CMobot mobot%d;\n", i+1);
+    }
     buf.assign(tbuf);
     *program += buf;
   }
 
   /* Connect to each one */
   for(i = 0; i < numConnected(); i++) {
+    if(getMobot(i)) {
+    }
     sprintf(tbuf, "mobot%d.connect();\n", i+1);
     buf.assign(tbuf);
     *program += buf;
