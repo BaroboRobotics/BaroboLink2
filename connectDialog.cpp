@@ -521,7 +521,7 @@ void refreshConnectDialog()
     }
     /* Maybe add an "Upgrade Firmware" button */
     if( (g_robotManager->getMobotIndex(i) != NULL) &&
-        (g_robotManager->getMobotIndex(i)->firmwareVersion < Mobot_protocolVersion()) ) 
+        (g_robotManager->getMobotIndex(i)->firmwareVersion < 38) ) 
     {
       int form;
       if(
