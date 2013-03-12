@@ -1,24 +1,93 @@
 #include "mobot.h"
 #include "RoboMancer.h"
+#include "thread_macros.h"
 
-void askConnectDongle(void)
+#define MAX_COMPORT 64
+#define MAX_THREADS 10
+
+/* Multithreaded function to try and find a dongle. Returns 0 on success */
+int numThreadsRunning = 0;
+MUTEX_T numThreadsRunning_lock;
+COND_T numThreadsRunning_cond;
+int foundDongle = 0;
+MUTEX_T foundDongle_lock;
+COND_T foundDongle_cond;
+recordMobot_t* g_dongle;
+
+void* findDongleThread(void* arg)
 {
-  /* Before we ask, lets just see if we can find a connected dongle anywhere... */
-  int i;
-  char buf[256];
-  bool dongleFound = false;
-  for(i = 0; i < 64; i++) {
+  int portnum = *(int*)arg;
+  char buf[128];
+  recordMobot_t* mobot;
 #ifndef _WIN32
-    sprintf(buf, "/dev/ttyACM%d", i);
+  sprintf(buf, "/dev/ttyACM%d", portnum);
 #else
-    sprintf(buf, "\\\\.\\COM%d", i);
+  sprintf(buf, "\\\\.\\COM%d", portnum);
 #endif
-    if(!Mobot_connectWithTTY((mobot_t*)g_mobotParent, buf)) {
+
+  /* Try to connect to the port */
+  mobot = (recordMobot_t*)malloc(sizeof(recordMobot_t));
+  RecordMobot_init(mobot, "Dongle");
+  if(!Mobot_connectWithTTY((mobot_t*)mobot, buf)) {
+    MUTEX_LOCK(&foundDongle_lock);
+    foundDongle = portnum;
+    g_dongle = mobot;
+    COND_SIGNAL(&foundDongle_cond);
+    MUTEX_UNLOCK(&foundDongle_lock);
+  } else {
+    free(mobot);
+  }
+  MUTEX_LOCK(&numThreadsRunning_lock);
+  numThreadsRunning--;
+  COND_SIGNAL(&numThreadsRunning_cond);
+  MUTEX_UNLOCK(&numThreadsRunning_lock);
+  return NULL;
+}
+
+int findDongle(void)
+{
+  THREAD_T threads[MAX_COMPORT];
+  int args[MAX_COMPORT];
+  int i = 0;
+  char buf[128];
+
+  if(foundDongle) {return 0;}
+  if(numThreadsRunning > 0) {return -1;}
+
+  /* Initialize stuff */
+  MUTEX_INIT(&numThreadsRunning_lock);
+  COND_INIT(&numThreadsRunning_cond);
+  MUTEX_INIT(&foundDongle_lock);
+  COND_INIT(&foundDongle_cond);
+  for(i = 0; i < MAX_COMPORT; i++) {
+    args[i] = i;
+  }
+  
+  /* Start the worker threads */ 
+  for(i = 0; i < MAX_COMPORT; i++) {
+    /* Wait until number of running threads is less than MAX_THREADS */
+    MUTEX_LOCK(&numThreadsRunning_lock);
+    while(numThreadsRunning > MAX_THREADS) {
+      COND_WAIT(&numThreadsRunning_cond, &numThreadsRunning_lock);
+    }
+    /* Start a thread */
+    numThreadsRunning++;
+    THREAD_CREATE(&threads[i], findDongleThread, &args[i]);
+    MUTEX_UNLOCK(&numThreadsRunning_lock);
+
+    /* Check to see if a dongle was found */
+    MUTEX_LOCK(&foundDongle_lock);
+    if(foundDongle) {
+      g_mobotParent = g_dongle;
+      MUTEX_UNLOCK(&foundDongle_lock);
+#ifndef _WIN32
+      sprintf(buf, "/dev/ttyACM%d", foundDongle);
+#else
+      sprintf(buf, "\\\\.\\COM%d", foundDongle);
+#endif
       /* We found the TTY port. */
       g_robotManager->addDongle(buf);
       g_robotManager->write();
-      //printf("Found dongle at %s, writing file...\n", buf);
-      dongleFound = true;
       Mobot_setDongleMobot((mobot_t*)g_mobotParent);
       /* Modify widgets in dongle dialog */
       GtkEntry *currentComPort = GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_connectDongleCurrentPort"));
@@ -26,11 +95,50 @@ void askConnectDongle(void)
       GtkWidget *w;
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_dongleConnected"));
       gtk_image_set_from_stock(GTK_IMAGE(w), GTK_STOCK_YES, GTK_ICON_SIZE_BUTTON);
-      break;
+      return 0;
     }
-    g_main_context_iteration(NULL, TRUE);
+    MUTEX_UNLOCK(&foundDongle_lock);
   }
-  if(dongleFound) {
+
+  /* At this point, all worker threads have been started, but a dongle has not
+   * yet been found... Wait for a dongle to be found or all worker threads to
+   * terminate */
+  MUTEX_LOCK(&numThreadsRunning_lock);
+  while(numThreadsRunning > 0) {
+    COND_WAIT(&numThreadsRunning_cond, &numThreadsRunning_lock);
+    MUTEX_UNLOCK(&numThreadsRunning_lock);
+    MUTEX_LOCK(&foundDongle_lock);
+    if(foundDongle) {
+      g_mobotParent = g_dongle;
+      MUTEX_UNLOCK(&foundDongle_lock);
+#ifndef _WIN32
+      sprintf(buf, "/dev/ttyACM%d", foundDongle);
+#else
+      sprintf(buf, "\\\\.\\COM%d", foundDongle);
+#endif
+      /* We found the TTY port. */
+      g_robotManager->addDongle(buf);
+      g_robotManager->write();
+      Mobot_setDongleMobot((mobot_t*)g_mobotParent);
+      /* Modify widgets in dongle dialog */
+      GtkEntry *currentComPort = GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_connectDongleCurrentPort"));
+      gtk_entry_set_text(currentComPort, buf);
+      GtkWidget *w;
+      w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_dongleConnected"));
+      gtk_image_set_from_stock(GTK_IMAGE(w), GTK_STOCK_YES, GTK_ICON_SIZE_BUTTON);
+      return 0;
+    } 
+    MUTEX_UNLOCK(&foundDongle_lock);
+  }
+  MUTEX_UNLOCK(&numThreadsRunning_lock);
+  MUTEX_UNLOCK(&foundDongle_lock);
+  return -1;
+}
+
+void askConnectDongle(void)
+{
+  /* Before we ask, lets just see if we can find a connected dongle anywhere... */
+  if(!findDongle()) {
     return;
   }
 
