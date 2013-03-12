@@ -2200,7 +2200,7 @@
                               <packing>
                                 <property name="top_attach">2</property>
                                 <property name="bottom_attach">3</property>
-                                <property name="x_padding">7</property>
+                                <property name="x_padding">12</property>
                               </packing>
                             </child>
                             <child>
@@ -2216,7 +2216,7 @@
                                 <property name="right_attach">2</property>
                                 <property name="top_attach">2</property>
                                 <property name="bottom_attach">3</property>
-                                <property name="x_padding">7</property>
+                                <property name="x_padding">12</property>
                               </packing>
                             </child>
                             <child>
@@ -2232,7 +2232,7 @@
                                 <property name="right_attach">3</property>
                                 <property name="top_attach">2</property>
                                 <property name="bottom_attach">3</property>
-                                <property name="x_padding">7</property>
+                                <property name="x_padding">12</property>
                               </packing>
                             </child>
                             <child>
@@ -2342,9 +2342,15 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Sensory Information for Mobot-I and Mobot-L</property>
+                        <attributes>
+                          <attribute name="weight" value="ultrabold"/>
+                          <attribute name="stretch" value="semi-expanded"/>
+                        </attributes>
                       </object>
                       <packing>
                         <property name="right_attach">2</property>
+                        <property name="y_options"/>
+                        <property name="y_padding">13</property>
                       </packing>
                     </child>
                   </object>
