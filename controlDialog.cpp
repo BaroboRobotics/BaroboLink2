@@ -308,11 +308,11 @@ gboolean controllerHandlerTimeout(gpointer data)
       setRollingControlSensitive(true);
       setMotionsSensitive(true);
       showJoint4Widgets();
+      gtk_image_set_from_file(GTK_IMAGE(w), "interface/imobot_diagram.png");
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos2"));
       gtk_range_set_range(GTK_RANGE(w), -90, 90);
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos3"));
       gtk_range_set_range(GTK_RANGE(w), -90, 90);
-      gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;
     } else if (form == MOBOTFORM_L) {
       /* Disable widgets for motors 3 and 4 */
@@ -324,11 +324,11 @@ gboolean controllerHandlerTimeout(gpointer data)
       setRollingControlSensitive(false);
       setMotionsSensitive(false);
       hideJoint4Widgets();
+      gtk_image_set_from_file(GTK_IMAGE(w), "interface/DOF_joint_diagram.png");
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos2"));
       gtk_range_set_range(GTK_RANGE(w), -180, 180);
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos3"));
       gtk_range_set_range(GTK_RANGE(w), -180, 180);
-      gtk_image_set_from_file(GTK_IMAGE(w), "interface/DOF_joint_diagram.png");
       motorMask = 0x03;
     } else if (form == MOBOTFORM_I) {
       /* Disable widgets for motors 2 and 4 */
@@ -356,11 +356,11 @@ gboolean controllerHandlerTimeout(gpointer data)
       setRollingControlSensitive(true);
       setMotionsSensitive(true);
       showJoint4Widgets();
+      gtk_image_set_from_file(GTK_IMAGE(w), "interface/imobot_diagram.png");
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos2"));
       gtk_range_set_range(GTK_RANGE(w), -90, 90);
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos3"));
       gtk_range_set_range(GTK_RANGE(w), -90, 90);
-      gtk_image_set_from_file(GTK_IMAGE(w), "imobot_diagram.png");
       motorMask = 0x0F;
     }
     /* Set the color widget */
