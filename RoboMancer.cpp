@@ -73,6 +73,24 @@ int main(int argc, char* argv[])
   /* Initialize the subsystem */
   initialize();
 
+#ifdef _WIN32
+  /* Make sure there isn't another instance of RoboMancer running by checking
+   * for the existance of a named mutex. */
+  HANDLE hMutex;
+  hMutex = CreateMutex(NULL, TRUE, TEXT("Global\\RoboMancerMutex"));
+  DWORD dwerror = GetLastError();
+  if(dwerror == ERROR_ALREADY_EXISTS) {
+    GtkWidget* d = gtk_message_dialog_new(
+        GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_ERROR,
+        GTK_BUTTONS_OK,
+        "Another instance of RoboMancer is already running. Please terminate the other process and and try again.");
+    int rc = gtk_dialog_run(GTK_DIALOG(d));
+    exit(0);
+  }
+#endif
+
   /* Get the main window */
   g_window = GTK_WIDGET( gtk_builder_get_object(g_builder, "window1"));
   /* Connect signals */
