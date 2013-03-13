@@ -202,6 +202,10 @@ void on_button_Connect_clicked(GtkWidget* w, gpointer data)
     g_mobotParent = (recordMobot_t*)malloc(sizeof(recordMobot_t));
     RecordMobot_init(g_mobotParent, "Dongle");
     askConnectDongle();
+    /* If the dongle is still not connected, just return */
+    if( (g_mobotParent == NULL) || (((mobot_t*)g_mobotParent)->connected == 0)) {
+      return;
+    }
   }
   arg = (struct connectThreadArg_s*)malloc(sizeof(struct connectThreadArg_s));
   arg->connectIndex = index;

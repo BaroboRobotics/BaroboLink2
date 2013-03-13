@@ -27,6 +27,7 @@ int getIterModelFromTreeSelection(GtkTreeView *treeView, GtkTreeModel **model, G
 
 /* Global Vars */
 extern int g_controlMode; // 0 means update main control page, 1 means update "sensors" page
+extern int g_selectedRobot;
 extern GtkBuilder *g_builder;
 extern CRobotManager *g_robotManager;
 extern GtkWidget *g_scieditor;

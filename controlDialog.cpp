@@ -801,6 +801,11 @@ SLIDERHANDLERS(4)
 void on_combobox_connectedRobots_changed(GtkWidget* w, gpointer data)
 {
   g_initSpeeds = 1;
+  int index;
+  index = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
+  if(index != -1) {
+    g_selectedRobot = index;
+  }
 }
 
 void on_button_forward_clicked(GtkWidget* w, gpointer data)

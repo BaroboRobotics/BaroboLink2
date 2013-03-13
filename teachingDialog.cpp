@@ -14,6 +14,7 @@ bool g_dnd = true;
 bool g_playLooped = false;
 bool g_holdOnExit = false;
 int g_poseIndex;
+int g_selectedRobot = 0;
 
 void teachingDialog_refreshRecordedMotions(int currentMotion)
 {
@@ -402,7 +403,6 @@ void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_n
 {
   static int lastPage = 0;
   static bool buttonCallbackEnabled = false;
-  static int selectedRobot = 0;
   int i;
   int connectPage, controlPage, controlPage2, programPage, posePage;
   GtkWidget *w;
@@ -452,7 +452,10 @@ void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_n
       ) 
   {
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
-    gtk_combo_box_set_active(GTK_COMBO_BOX(w), selectedRobot);
+    if(g_selectedRobot == -1) {
+      g_selectedRobot = 0;
+    }
+    gtk_combo_box_set_active(GTK_COMBO_BOX(w), g_selectedRobot);
     if(page_num == controlPage) {
       g_controlMode = 0;
     } else {
@@ -461,6 +464,10 @@ void on_notebook1_switch_page(GtkNotebook* notebook, gpointer page, guint page_n
   } else {
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
     gtk_combo_box_set_active(GTK_COMBO_BOX(w), -1);
+  }
+  if(lastPage == controlPage) {
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_connectedRobots"));
+    g_selectedRobot = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
   }
 
   /* If the connect dialog is selected, refresh the dialog */
