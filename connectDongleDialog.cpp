@@ -10,6 +10,7 @@ int numThreadsRunning = 0;
 MUTEX_T numThreadsRunning_lock;
 COND_T numThreadsRunning_cond;
 int foundDongle = 0;
+int foundDonglePort = 0;
 MUTEX_T foundDongle_lock;
 COND_T foundDongle_cond;
 recordMobot_t* g_dongle;
@@ -30,7 +31,8 @@ void* findDongleThread(void* arg)
   RecordMobot_init(mobot, "Dongle");
   if(!Mobot_connectWithTTY((mobot_t*)mobot, buf)) {
     MUTEX_LOCK(&foundDongle_lock);
-    foundDongle = portnum;
+    foundDongle = 1;
+    foundDonglePort = portnum;
     g_dongle = mobot;
     COND_SIGNAL(&foundDongle_cond);
     MUTEX_UNLOCK(&foundDongle_lock);
@@ -68,9 +70,9 @@ int findDongle(void)
     g_mobotParent = g_dongle;
     MUTEX_UNLOCK(&foundDongle_lock);
 #ifndef _WIN32
-    sprintf(buf, "/dev/ttyACM%d", foundDongle);
+    sprintf(buf, "/dev/ttyACM%d", foundDonglePort);
 #else
-    sprintf(buf, "\\\\.\\COM%d", foundDongle);
+    sprintf(buf, "\\\\.\\COM%d", foundDonglePort);
 #endif
     /* We found the TTY port. */
     g_robotManager->addDongle(buf);
@@ -109,9 +111,9 @@ int findDongle(void)
       g_mobotParent = g_dongle;
       MUTEX_UNLOCK(&foundDongle_lock);
 #ifndef _WIN32
-      sprintf(buf, "/dev/ttyACM%d", foundDongle);
+      sprintf(buf, "/dev/ttyACM%d", foundDonglePort);
 #else
-      sprintf(buf, "\\\\.\\COM%d", foundDongle);
+      sprintf(buf, "\\\\.\\COM%d", foundDonglePort);
 #endif
       /* We found the TTY port. */
       g_robotManager->addDongle(buf);
@@ -140,9 +142,9 @@ int findDongle(void)
     g_mobotParent = g_dongle;
     MUTEX_UNLOCK(&foundDongle_lock);
 #ifndef _WIN32
-    sprintf(buf, "/dev/ttyACM%d", foundDongle);
+    sprintf(buf, "/dev/ttyACM%d", foundDonglePort);
 #else
-    sprintf(buf, "\\\\.\\COM%d", foundDongle);
+    sprintf(buf, "\\\\.\\COM%d", foundDonglePort);
 #endif
     /* We found the TTY port. */
     g_robotManager->addDongle(buf);
