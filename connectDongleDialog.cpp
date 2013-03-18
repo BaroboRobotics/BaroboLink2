@@ -35,6 +35,7 @@ void* findDongleThread(void* arg)
     COND_SIGNAL(&foundDongle_cond);
     MUTEX_UNLOCK(&foundDongle_lock);
   } else {
+    Mobot_disconnect((mobot_t*)mobot);
     free(mobot);
   }
   MUTEX_LOCK(&numThreadsRunning_lock);
