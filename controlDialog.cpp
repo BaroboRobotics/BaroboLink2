@@ -136,8 +136,18 @@ void setRollingControlSensitive(bool sensitive)
 void setMotionsSensitive(bool sensitive)
 {
   GtkWidget* w;
+  /*
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "treeview_gaits"));
   gtk_widget_set_sensitive(w, sensitive);
+  */
+  /* Hide the whole frame for now */
+  if(!sensitive) {
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "frame9"));
+    gtk_widget_hide(w);
+  } else {
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "frame9"));
+    gtk_widget_show(w);
+  }
 }
 
 void initControlDialog(void)
