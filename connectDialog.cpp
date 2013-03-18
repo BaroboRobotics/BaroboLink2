@@ -470,7 +470,11 @@ void refreshConnectDialog()
     g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(on_button_MoveDown_clicked), (void*)i);
     /* Maybe add a color and beep buttons */
     int form;
-    if( g_robotManager->getMobotIndex(i) != NULL ) {
+    if( 
+        (g_robotManager->getMobotIndex(i) != NULL ) &&
+        (g_robotManager->getMobotIndex(i)->connectStatus == RMOBOT_CONNECTED)
+      ) 
+    {
       if(!Mobot_getFormFactor((mobot_t*)g_robotManager->getMobotIndex(i), &form)) {
         if( 
             (form == MOBOTFORM_I) ||
