@@ -108,10 +108,6 @@ int main(int argc, char* argv[])
   gtk_notebook_remove_page(GTK_NOTEBOOK(w), 3);
 
   /* Show the window */
-  /* FIXME: Hide the "Scan Mobots" button for now */
-  gtk_widget_hide(
-      GTK_WIDGET(gtk_builder_get_object(g_builder, "button_scanMobots"))
-      );
   gtk_widget_show(g_window);
   gtk_main();
   return 0;
