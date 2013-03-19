@@ -109,28 +109,25 @@ void setAccelWidgetSensitive(bool sensitive)
 
 void setRollingControlSensitive(bool sensitive)
 {
-  gtk_widget_set_sensitive(
-      GTK_WIDGET(gtk_builder_get_object(g_builder, "button_forward")),
-      sensitive
-      );
-  gtk_widget_set_sensitive(
-      GTK_WIDGET(gtk_builder_get_object(g_builder, "button_rotateLeft")),
-      sensitive
-      );
-  gtk_widget_set_sensitive(
-      GTK_WIDGET(gtk_builder_get_object(g_builder, "button_rotateRight")),
-      sensitive
-      );
-  /*
-  gtk_widget_set_sensitive(
-      GTK_WIDGET(gtk_builder_get_object(g_builder, "button_stop")),
-      sensitive
-      );
-      */
-  gtk_widget_set_sensitive(
-      GTK_WIDGET(gtk_builder_get_object(g_builder, "button_backward")),
-      sensitive
-      );
+  if(sensitive) {
+    gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_forward")));
+    gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_rotateLeft")));
+    gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_rotateRight")));
+    gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_backward")));
+    gtk_label_set_text(
+        GTK_LABEL(gtk_builder_get_object(g_builder, "label21")),
+        "Rolling Control"
+        );
+  } else {
+    gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_forward")));
+    gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_rotateLeft")));
+    gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_rotateRight")));
+    gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "button_backward")));
+    gtk_label_set_text(
+        GTK_LABEL(gtk_builder_get_object(g_builder, "label21")),
+        "Stop"
+        );
+  }
 }
 
 void setMotionsSensitive(bool sensitive)
