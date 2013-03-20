@@ -79,8 +79,8 @@ int findDongle(void)
     g_robotManager->write();
     Mobot_setDongleMobot((mobot_t*)g_mobotParent);
     /* Modify widgets in dongle dialog */
-    GtkEntry *currentComPort = GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_connectDongleCurrentPort"));
-    gtk_entry_set_text(currentComPort, buf);
+    GtkLabel *currentComPort = GTK_LABEL(gtk_builder_get_object(g_builder, "label_connectDongleCurrentPort"));
+    gtk_label_set_text(currentComPort, buf);
     GtkWidget *w;
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_dongleConnected"));
     gtk_image_set_from_stock(GTK_IMAGE(w), GTK_STOCK_YES, GTK_ICON_SIZE_BUTTON);
@@ -120,8 +120,8 @@ int findDongle(void)
       g_robotManager->write();
       Mobot_setDongleMobot((mobot_t*)g_mobotParent);
       /* Modify widgets in dongle dialog */
-      GtkEntry *currentComPort = GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_connectDongleCurrentPort"));
-      gtk_entry_set_text(currentComPort, buf);
+      GtkLabel *currentComPort = GTK_LABEL(gtk_builder_get_object(g_builder, "label_connectDongleCurrentPort"));
+      gtk_label_set_text(currentComPort, buf);
       GtkWidget *w;
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_dongleConnected"));
       gtk_image_set_from_stock(GTK_IMAGE(w), GTK_STOCK_YES, GTK_ICON_SIZE_BUTTON);
@@ -151,8 +151,8 @@ int findDongle(void)
     g_robotManager->write();
     Mobot_setDongleMobot((mobot_t*)g_mobotParent);
     /* Modify widgets in dongle dialog */
-    GtkEntry *currentComPort = GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_connectDongleCurrentPort"));
-    gtk_entry_set_text(currentComPort, buf);
+    GtkLabel *currentComPort = GTK_LABEL(gtk_builder_get_object(g_builder, "label_connectDongleCurrentPort"));
+    gtk_label_set_text(currentComPort, buf);
     GtkWidget *w;
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_dongleConnected"));
     gtk_image_set_from_stock(GTK_IMAGE(w), GTK_STOCK_YES, GTK_ICON_SIZE_BUTTON);
@@ -195,12 +195,12 @@ void showConnectDongleDialog(void)
     gdk_color_parse("green", &color);
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_dongleConnected"));
     gtk_image_set_from_stock(GTK_IMAGE(w), GTK_STOCK_YES, GTK_ICON_SIZE_BUTTON);
-    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_connectDongleCurrentPort"));
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "label_connectDongleCurrentPort"));
     gtk_widget_modify_fg(w, GTK_STATE_NORMAL, &color);
   } else {
     /* The dongle is not connected */
     gdk_color_parse("red", &color);
-    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_connectDongleCurrentPort"));
+    w = GTK_WIDGET(gtk_builder_get_object(g_builder, "label_connectDongleCurrentPort"));
     gtk_widget_modify_fg(w, GTK_STATE_NORMAL, &color);
     gtk_entry_set_text(GTK_ENTRY(w), "<Not Connected>");
   }
@@ -223,7 +223,7 @@ void on_button_connectDongleConnect_clicked(GtkWidget *widget, gpointer data)
   GtkRadioButton *connectManuallyButton = 
     GTK_RADIO_BUTTON(gtk_builder_get_object(g_builder, "radiobutton_connectDongleManual"));
   GtkEntry *manualComPort = GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_connectDongleManual"));
-  GtkEntry *currentComPort = GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_connectDongleCurrentPort"));
+  GtkLabel *currentComPort = GTK_LABEL(gtk_builder_get_object(g_builder, "label_connectDongleCurrentPort"));
 
   /* Check to see if the auto button is pressed */
   if(
@@ -242,7 +242,7 @@ void on_button_connectDongleConnect_clicked(GtkWidget *widget, gpointer data)
 #endif
       if(!Mobot_connectWithTTY((mobot_t*)g_mobotParent, buf)) {
         /* We found the TTY port. */
-        gtk_entry_set_text(currentComPort, buf);
+        gtk_label_set_text(currentComPort, buf);
         w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_dongleConnected"));
         gtk_image_set_from_stock(GTK_IMAGE(w), GTK_STOCK_YES, GTK_ICON_SIZE_BUTTON);
         g_robotManager->addDongle(buf);
@@ -280,7 +280,7 @@ void on_button_connectDongleConnect_clicked(GtkWidget *widget, gpointer data)
       GtkWidget* errWindow = GTK_WIDGET(gtk_builder_get_object(g_builder, "dialog_connectFailed"));
       gtk_widget_show(errWindow);
     } else {
-      gtk_entry_set_text(currentComPort, port);
+      gtk_label_set_text(currentComPort, port);
       g_robotManager->addDongle(port);
       g_robotManager->write();
       Mobot_setDongleMobot((mobot_t*)g_mobotParent);

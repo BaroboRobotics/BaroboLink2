@@ -135,6 +135,7 @@ void initialize()
   RecordMobot_init(g_mobotParent, "DONGLE");
   const char *dongle;
   int i, rc;
+  GtkLabel* l = GTK_LABEL(gtk_builder_get_object(g_builder, "label_connectDongleCurrentPort"));
   for(
       i = 0, dongle = g_robotManager->getDongle(i); 
       dongle != NULL; 
@@ -144,8 +145,12 @@ void initialize()
     rc = Mobot_connectWithTTY((mobot_t*)g_mobotParent, dongle);
     if(rc == 0) {
       Mobot_setDongleMobot((mobot_t*)g_mobotParent);
+      gtk_label_set_text(l, dongle);
       break;
     } 
+  }
+  if(rc) {
+    gtk_label_set_text(l, "Not connected");
   }
 }
 
