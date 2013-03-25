@@ -530,13 +530,11 @@ void refreshConnectDialog()
     /* Maybe add an "Upgrade Firmware" button */
     if( (g_robotManager->getMobotIndex(i) != NULL) &&
         (g_robotManager->getMobotIndex(i)->connectStatus == RMOBOT_CONNECTED) &&
-        (g_robotManager->getMobotIndex(i)->firmwareVersion < 38) ) 
+        (g_robotManager->getMobotIndex(i)->firmwareVersion < Mobot_protocolVersion()) ) 
     {
-      int form;
-      if(
-          Mobot_getFormFactor((mobot_t*)g_robotManager->getMobotIndex(i), &form) ||
-          form == MOBOTFORM_ORIGINAL
-          ) 
+      int form=0;
+      Mobot_getFormFactor((mobot_t*)g_robotManager->getMobotIndex(i), &form);
+      if(form == MOBOTFORM_ORIGINAL) 
       {
         GdkColor color;
         gdk_color_parse("yellow", &color);
