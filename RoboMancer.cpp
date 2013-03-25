@@ -204,6 +204,13 @@ void on_aboutdialog_close(GtkDialog *dialog, gpointer user_data)
   gtk_widget_hide(GTK_WIDGET(dialog));
 }
 
+gboolean on_window1_delete_event(GtkWidget *w)
+{
+  /* Disconnect from all connected robots */
+  g_robotManager->disconnectAll();
+  gtk_main_quit();
+}
+
 double normalizeAngleRad(double radians)
 {
   while(radians > M_PI) {

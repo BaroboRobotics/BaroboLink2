@@ -42,6 +42,15 @@ int CRobotManager::addEntry(const char* entry)
   _mobots[0] = NULL;
 }
 
+int CRobotManager::disconnectAll()
+{
+  int i;
+  for(i = 0; i < MAX_CONNECTED; i++) {
+    disconnect(i);
+  }
+  return 0;
+}
+
 void CRobotManager::moveMobot(int destIndex, int srcIndex)
 {
   _mobots[destIndex] = _mobots[srcIndex];

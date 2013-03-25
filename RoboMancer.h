@@ -46,6 +46,7 @@ G_MODULE_EXPORT void on_imagemenuitem_about_activate(GtkWidget *w, gpointer data
 G_MODULE_EXPORT void on_aboutdialog_response(GtkDialog *dialog, gint response_id, gpointer user_data);
 G_MODULE_EXPORT void on_aboutdialog_close(GtkDialog *dialog, gpointer user_data);
 G_MODULE_EXPORT void on_aboutdialog_activate_link(GtkAboutDialog *label, gchar* uri, gpointer data);
+G_MODULE_EXPORT gboolean on_window1_delete_event(GtkWidget *w);
 
 /* Connect Dialog */
 G_MODULE_EXPORT void on_button_connect_addRobot_clicked(GtkWidget* widget, gpointer data);

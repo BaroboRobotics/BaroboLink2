@@ -25,6 +25,7 @@ class CRobotManager : public ConfigFile
     bool isPlaying();
     int connectIndex(int index);
     int disconnect(int index);
+    int disconnectAll();
     recordMobot_t* getUnboundMobot();
     int numConnected();
     int numAvailable();
