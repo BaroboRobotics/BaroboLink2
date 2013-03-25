@@ -108,29 +108,29 @@ gboolean reflashConnectTimeout(gpointer data)
     if(g_reflashHWRev == 3) {
 #ifdef __MACH__
       datadir = getenv("XDG_DATA_DIRS");
-      sprintf(filename, "%s/RoboMancer/rev3.hex", datadir);
+      sprintf(filename, "%s/RoboMancer/hexfiles/rev3.hex", datadir);
 #else
-      sprintf(filename, "interface/rev3.hex");
+      sprintf(filename, "hexfiles/rev3.hex");
 #endif
       g_stkComms->programAllAsync(filename, 3);
     } else if (g_reflashHWRev == 4) {
 #ifdef __MACH__
       datadir = getenv("XDG_DATA_DIRS");
       printf("%s\n", datadir);
-      sprintf(filename, "%s/RoboMancer/rev4.hex", datadir);
+      sprintf(filename, "%s/RoboMancer/hexfiles/rev4.hex", datadir);
       printf("%s\n", filename);
 #else
-      sprintf(filename, "interface/rev4.hex");
+      sprintf(filename, "hexfiles/rev4.hex");
 #endif
       g_stkComms->programAllAsync(filename, 4);
     } else if (g_reflashHWRev == -1) {
 #ifdef __MACH__
       datadir = getenv("XDG_DATA_DIRS");
       printf("%s\n", datadir);
-      sprintf(filename, "%s/RoboMancer/rev3_safe.hex", datadir);
+      sprintf(filename, "%s/RoboMancer/hexfiles/rev3_safe.hex", datadir);
       printf("%s\n", filename);
 #else
-      sprintf(filename, "interface/rev3_safe.hex");
+      sprintf(filename, "hexfiles/rev3_safe.hex");
 #endif
       g_stkComms->programAllAsync(filename, 3);
     } else {
