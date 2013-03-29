@@ -34,22 +34,35 @@ void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data)
   if(mobot == NULL) {
     return;
   }
-  g_reflashMobotIndex = index;
-  g_reflashMobot = mobot;
-  strcpy(g_reflashAddress, RecordMobot_getAddress(mobot));
-  int hwRev;
-  int rc = Mobot_getHWRev((mobot_t*)mobot, &hwRev);
-  //if(rc) {
+  if(mobot->mobot.formFactor == MOBOTFORM_ORIGINAL) {
+    g_reflashMobotIndex = index;
+    g_reflashMobot = mobot;
+    strcpy(g_reflashAddress, RecordMobot_getAddress(mobot));
+    int hwRev;
+    int rc = Mobot_getHWRev((mobot_t*)mobot, &hwRev);
+    //if(rc) {
     /* Need to determine revision number by button press */
     gtk_notebook_set_current_page(g_notebookRoot, 1);
     /* Start a timeout function that listens for a button A press */
     g_idle_add(listenButtonHWRev, NULL);
     /*
+       } else {
+       g_reflashHWRev = hwRev;
+       gtk_notebook_set_current_page(g_notebookRoot, 2);
+       }
+     */
   } else {
-    g_reflashHWRev = hwRev;
-    gtk_notebook_set_current_page(g_notebookRoot, 2);
+    /* This is a Mobot-I or Mobot-L. Must use the firmware update utility to
+     * upgrade the firmware. Pop up a dialog box... */
+    GtkWidget* d = gtk_message_dialog_new(
+        GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_WARNING,
+        GTK_BUTTONS_OK,
+        "To upgrade the firmware of this robot, please close RoboMancer and start the Mobot Firmware Update utility.");
+    gtk_dialog_run(GTK_DIALOG(d));
+    gtk_widget_hide(GTK_WIDGET(d));
   }
-  */
 }
 
 void on_button_cancelFlash_clicked(GtkWidget* widget, gpointer data)

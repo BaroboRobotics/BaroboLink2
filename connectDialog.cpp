@@ -534,23 +534,20 @@ void refreshConnectDialog()
     {
       int form=0;
       Mobot_getFormFactor((mobot_t*)g_robotManager->getMobotIndex(i), &form);
-      if(form == MOBOTFORM_ORIGINAL) 
-      {
-        GdkColor color;
-        gdk_color_parse("yellow", &color);
-        w = gtk_button_new_with_label("Upgrade\nFirmware");
-        gtk_widget_modify_bg(w, GTK_STATE_NORMAL, &color);
-        gdk_color_parse("#FFFF22", &color);
-        gtk_widget_modify_bg(w, GTK_STATE_PRELIGHT, &color);
-        gtk_widget_show(w);
-        gtk_table_attach( GTK_TABLE(rootTable),
-            w,
-            7, 8,
-            i*3, (i*3)+2,
-            GTK_FILL, GTK_FILL,
-            2, 2);
-        g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(on_button_updateFirmware_clicked), (void*)i);
-      }
+      GdkColor color;
+      gdk_color_parse("yellow", &color);
+      w = gtk_button_new_with_label("Upgrade\nFirmware");
+      gtk_widget_modify_bg(w, GTK_STATE_NORMAL, &color);
+      gdk_color_parse("#FFFF22", &color);
+      gtk_widget_modify_bg(w, GTK_STATE_PRELIGHT, &color);
+      gtk_widget_show(w);
+      gtk_table_attach( GTK_TABLE(rootTable),
+          w,
+          7, 8,
+          i*3, (i*3)+2,
+          GTK_FILL, GTK_FILL,
+          2, 2);
+      g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(on_button_updateFirmware_clicked), (void*)i);
     }
     /* Add a horizontal separator */
     w = gtk_hseparator_new();
