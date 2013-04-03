@@ -28,6 +28,7 @@ if(GTK2_FOUND)
 # For Scintilla
   include_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms)
   include_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms/BaroboConfigFile)
+  include_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms/BaroboConfigFile/mxml-2.7)
   include_directories(${CMAKE_SOURCE_DIR}/scintilla/include)
   link_directories(${LIBSTKCOMMS_BINARY_DIR})
   link_directories(${GTK2_LIBRARY_DIRS})
@@ -48,10 +49,17 @@ if(GTK2_FOUND)
       teachingDialog.cpp
       updateFirmware.cpp )
 
+  add_executable(MobotFirmwareUpdate MobotFirmwareUpdate.cpp)
+
 if(CMAKE_HOST_WIN32)
   target_link_libraries(
       RoboMancer 
       ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a 
+      stkcomms 
+      mobotStatic
+      ${GTK2_LIBRARIES} )
+  target_link_libraries(
+      MobotFirmwareUpdate
       stkcomms 
       mobotStatic
       ${GTK2_LIBRARIES} )
