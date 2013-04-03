@@ -49,7 +49,7 @@ void* findDongleWorkerThread(void* arg)
   char buf[80];
   mobot_t* mobot;
   int rc;
-#ifdef _WIN32
+#if defined (_WIN32) or defined (_MSYS)
   sprintf(buf, "\\\\.\\COM%d", num);
 #else
   sprintf(buf, "/dev/ttyACM%d", num);
@@ -58,6 +58,7 @@ void* findDongleWorkerThread(void* arg)
   mobot = (mobot_t*)malloc(sizeof(mobot_t));
   Mobot_init(mobot);
   rc = Mobot_connectWithTTY(mobot, buf);
+  printf("Connect to %s returned %d\n", buf, rc);
   if(rc == 0) {
     /* We found the Mobot */
     MUTEX_LOCK(&g_giant_lock);
@@ -134,6 +135,7 @@ gboolean findDongleTimeout(gpointer data)
   if(g_dongleSearchStatus == DONGLE_SEARCHING) {
     rc = TRUE;
   } else if (g_dongleSearchStatus == DONGLE_FOUND) {
+    printf("Dongle found\n");
     /* Set up the labels and stuff */
     switch(g_mobot->formFactor) {
       case MOBOTFORM_I:
@@ -153,18 +155,28 @@ gboolean findDongleTimeout(gpointer data)
     gtk_label_set_text(
         GTK_LABEL(gtk_builder_get_object(g_builder, "label_firmwareVersion")),
         buf);
-    gtk_label_set_text(
-        GTK_LABEL(gtk_builder_get_object(g_builder, "label_serialID")),
+    gtk_entry_set_text(
+        GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_serialID")),
         g_mobot->serialID);
     /* Go to next notebook page */
     gtk_notebook_next_page(
         GTK_NOTEBOOK(gtk_builder_get_object(g_builder, "notebook1")));
     rc = FALSE;
   } else if (g_dongleSearchStatus == DONGLE_NOTFOUND) {
+    printf("No dongle found\n");
     /* Renable the button */
     gtk_widget_set_sensitive(
         GTK_WIDGET(gtk_builder_get_object(g_builder, "button_p1_next")),
         TRUE);
+    /* Pop up a dialog box */
+    GtkWidget* d = gtk_message_dialog_new(
+        GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_QUESTION,
+        GTK_BUTTONS_OK,
+        "No attached Mobot was detected. Please make sure there is a Mobot connected to the computer with a Micro-USB cable and that the Mobot is powered on.");
+    gtk_dialog_run(GTK_DIALOG(d));
+    gtk_widget_hide(GTK_WIDGET(d));
     rc = FALSE;
   } else {
     /* Something very weird happened */
