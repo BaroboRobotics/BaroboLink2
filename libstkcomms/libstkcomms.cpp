@@ -25,7 +25,7 @@
 //#else
 #define THROW 
 //#endif
-#define VERBOSE
+//#define VERBOSE
 
 stkComms_t* stkComms_new()
 {

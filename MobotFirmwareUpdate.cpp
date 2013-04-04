@@ -63,7 +63,6 @@ void* findDongleWorkerThread(void* arg)
   mobot = (mobot_t*)malloc(sizeof(mobot_t));
   Mobot_init(mobot);
   rc = Mobot_connectWithTTY(mobot, buf);
-  printf("Connect to %s returned %d\n", buf, rc);
   if(rc == 0) {
     /* We found the Mobot */
     MUTEX_LOCK(&g_giant_lock);
@@ -144,7 +143,6 @@ gboolean findDongleTimeout(gpointer data)
   if(g_dongleSearchStatus == DONGLE_SEARCHING) {
     rc = TRUE;
   } else if (g_dongleSearchStatus == DONGLE_FOUND) {
-    printf("Dongle found\n");
     /* Set up the labels and stuff */
     switch(g_mobot->formFactor) {
       case MOBOTFORM_I:
@@ -172,7 +170,6 @@ gboolean findDongleTimeout(gpointer data)
         GTK_NOTEBOOK(gtk_builder_get_object(g_builder, "notebook1")));
     rc = FALSE;
   } else if (g_dongleSearchStatus == DONGLE_NOTFOUND) {
-    printf("No dongle found\n");
     /* Renable the button */
     gtk_widget_set_sensitive(
         GTK_WIDGET(gtk_builder_get_object(g_builder, "button_p1_next")),
@@ -357,9 +354,7 @@ void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data)
   }
 #endif
   /* Next, reboot the module and go on to the next page */
-  printf("Reboot...\n");
   Mobot_reboot(g_mobot);
-  printf("Done reboot.\n");
   Mobot_disconnect(g_mobot);
   free(g_mobot);
   g_mobot = NULL;
@@ -368,6 +363,9 @@ void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data)
 
 void on_button_flashAnother_clicked(GtkWidget* widget, gpointer data)
 {
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, "button_p1_next")),
+      true);
   gtk_notebook_set_current_page(
       GTK_NOTEBOOK(gtk_builder_get_object(g_builder, "notebook1")),
       0);

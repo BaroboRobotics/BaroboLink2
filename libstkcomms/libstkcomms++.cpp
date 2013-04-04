@@ -100,7 +100,7 @@ int CStkComms::programAll(const char* hexFileName)
     THROW;
     return -1;
   }
-	stkComms_setProgress(_comms, 1.1);
+	stkComms_setProgress(_comms, 1.0);
 	stkComms_setProgramComplete(_comms, 1);
   return 0;  
 }
