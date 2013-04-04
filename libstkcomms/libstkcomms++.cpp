@@ -45,6 +45,11 @@ int CStkComms::connect(const char addr[])
 #endif
 }
 
+int CStkComms::connectWithTTY(const char* ttyfilename)
+{
+  return stkComms_connectWithTTY(_comms, ttyfilename);
+}
+
 int CStkComms::disconnect()
 {
   return stkComms_disconnect(_comms);
@@ -77,10 +82,12 @@ int CStkComms::programAll(const char* hexFileName)
     THROW;
     return -1;
   }
+  /*
   if(progFuses()) {
     THROW;
     return -1;
   }
+  */
   if(progHexFile(hexFileName)) {
     THROW;
     return -1;

@@ -8,6 +8,7 @@
 #include <libgen.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <termios.h>
 #else
 #include <winsock2.h>
 #ifdef ENABLE_BLUETOOTH
@@ -22,8 +23,9 @@
 //#ifdef DEBUG
 //#define THROW throw
 //#else
-#define THROW
+#define THROW 
 //#endif
+#define VERBOSE
 
 stkComms_t* stkComms_new()
 {
@@ -162,7 +164,52 @@ int stkComms_connect(stkComms_t* comms, const char addr[])
 #endif // ENABLE_BLUETOOTH
 }
 
-#ifdef __MACH__
+#if defined (_WIN32) or defined (_MSYS)
+int stkComms_connectWithTTY(stkComms_t* comms, const char* ttyfilename)
+{
+  int rc;
+  /* Check the file name. If we receive something like "COM45", we want to
+   * change it to "\\.\COM45" */
+  char *tty;
+  tty = (char*)malloc((sizeof(char)*strlen(ttyfilename))+20);
+  tty[0] = '\0';
+  if(ttyfilename[0] != '\\') {
+    strcpy(tty, "\\\\.\\");
+  }
+  strcat(tty, ttyfilename);
+  /* For windows, we should connect to a com port */
+  comms->commHandle = CreateFile(
+      tty, 
+      GENERIC_READ | GENERIC_WRITE,
+      0,
+      0,
+      OPEN_EXISTING,
+      FILE_FLAG_OVERLAPPED,
+      0 );
+  free(tty);
+  if(comms->commHandle == INVALID_HANDLE_VALUE) {
+    //fprintf(stderr, "Error connecting to COM port: %s\n", ttyfilename);
+    return -1;
+  }
+  /* Adjust settings */
+  DCB dcb;
+  FillMemory(&dcb, sizeof(dcb), 0);
+  dcb.DCBlength = sizeof(dcb);
+  if (!BuildCommDCB("57600,n,8,1", &dcb)) {
+    fprintf(stderr, "Could not build DCB.\n");
+    return -1;
+  }
+  dcb.BaudRate = 57600;
+
+  if (!SetCommState(comms->commHandle, &dcb)) {
+    fprintf(stderr, "Could not set Comm State to new DCB settings.\n");
+    return -1;
+  }
+  
+  comms->isConnected = 1;
+  return 0;
+}
+#else
 int stkComms_connectWithAddressTTY(stkComms_t* comms, const char* address)
 {
   char buf[80];
@@ -185,28 +232,6 @@ int stkComms_connectWithTTY(stkComms_t* comms, const char* ttyfilename)
   char lockfileName[MAX_PATH];
   int pid;
   int status;
-  /* Open the lock file, if it exists */
-  sprintf(lockfileName, "/tmp/%s.lock", basename(filename));
-  lockfile = fopen(lockfileName, "r");
-  if(lockfile == NULL) {
-    /* Lock file does not exist. Proceed. */
-    comms->lockfileName = strdup(lockfileName);
-  } else {
-    /* Lockfile exists. Need to check PID in the lock file and see if that
-     * process is still running. */
-    fscanf(lockfile, "%d", &pid);
-    if(pid > 0 && kill(pid,0) < 0 && errno == ESRCH) {
-      /* Lock file is stale. Delete it */
-      unlink(lockfileName);
-    } else {
-      /* The tty device is locked. Return error code. */
-      fprintf(stderr, "Error: Another application is already connected to the Mobot.\n");
-      free(filename);
-      fclose(lockfile);
-      return -2;
-    }
-  }
-  fclose(lockfile);
   comms->socket = open(ttyfilename, O_RDWR | O_NOCTTY );
   if(comms->socket < 0) {
     perror("Unable to open tty port.");
@@ -219,33 +244,78 @@ int stkComms_connectWithTTY(stkComms_t* comms, const char* ttyfilename)
   flags = fcntl(comms->socket, F_GETFL, 0);
   fcntl(comms->socket, F_SETFL, flags | O_NONBLOCK);
 #endif
-  /* Finished connecting. Create the lockfile. */
-  lockfile = fopen(lockfileName, "w");
-  if(lockfile == NULL) {
-    fprintf(stderr, "Fatal error. %s:%d\n", __FILE__, __LINE__);
-    return -1;
+  /* Change the baud rate to 57600 */
+  struct termios term;
+  tcgetattr(comms->socket, &term);
+
+  // Input flags - Turn off input processing
+  // convert break to null byte, no CR to NL translation,
+  // no NL to CR translation, don't mark parity errors or breaks
+  // no input parity check, don't strip high bit off,
+  // no XON/XOFF software flow control
+  //
+  term.c_iflag &= ~(IGNBRK | BRKINT | ICRNL |
+      INLCR | PARMRK | INPCK | ISTRIP | IXON);
+  //
+  // Output flags - Turn off output processing
+  // no CR to NL translation, no NL to CR-NL translation,
+  // no NL to CR translation, no column 0 CR suppression,
+  // no Ctrl-D suppression, no fill characters, no case mapping,
+  // no local output processing
+  //
+  // term.c_oflag &= ~(OCRNL | ONLCR | ONLRET |
+  //                     ONOCR | ONOEOT| OFILL | OLCUC | OPOST);
+  term.c_oflag = 0;
+  //
+  // No line processing:
+  // echo off, echo newline off, canonical mode off, 
+  // extended input processing off, signal chars off
+  //
+  term.c_lflag &= ~(ECHO | ECHONL | ICANON | IEXTEN | ISIG);
+  //
+  // Turn off character processing
+  // clear current char size mask, no parity checking,
+  // no output processing, force 8 bit input
+  //
+  term.c_cflag &= ~(CSIZE | PARENB);
+  term.c_cflag |= CS8;
+  //
+  // One input byte is enough to return from read()
+  // Inter-character timer off
+  //
+  term.c_cc[VMIN]  = 1;
+  term.c_cc[VTIME] = 0;
+  //
+  // Communication speed (simple version, using the predefined
+  // constants)
+  //
+
+  cfsetspeed(&term, B57600);
+  cfsetispeed(&term, B57600);
+  cfsetospeed(&term, B57600);
+  if(status = tcsetattr(comms->socket, TCSANOW, &term)) {
+    fprintf(stderr, "Error setting tty settings. %d\n", errno);
   }
-  fprintf(lockfile, "%d", getpid());
-  fclose(lockfile);
+  tcgetattr(comms->socket, &term);
+  if(cfgetispeed(&term) != B57600) {
+    fprintf(stderr, "Error setting input speed.\n");
+    exit(0);
+  }
+  if(cfgetospeed(&term) != B57600) {
+    fprintf(stderr, "Error setting output speed.\n");
+    exit(0);
+  }
   return 0;
 }
 #endif
 
 int stkComms_disconnect(stkComms_t* comms)
 {
-#ifdef __MACH__
-  if(comms->lockfileName != NULL) {
-    unlink(comms->lockfileName);
-    free(comms->lockfileName);
-    comms->lockfileName = NULL;
-  }
-  return close(comms->socket);
-#else
 #ifndef _WIN32
   return close(comms->socket);
 #else
-  return closesocket(comms->socket);
-#endif
+  CloseHandle(comms->commHandle);
+  return 0;
 #endif
 }
 
@@ -477,10 +547,14 @@ int stkComms_checkSignature(stkComms_t* comms)
   }
   memcpy(&comms->signature[0], &buf[1], 3);
   buf[0] = 0x1e;
-  buf[1] = 0x95;
-  buf[2] = 0x0f;
+  buf[1] = 0xa7;
+  buf[2] = 0x01;
   if(memcmp(comms->signature, buf, 3)) {
-    fprintf(stderr, "Device Signature incorrect.\n");
+    fprintf(stderr, "Device Signature incorrect. Got 0x%02x%02x%02x\n", 
+        comms->signature[0],
+        comms->signature[1],
+        comms->signature[2]
+        );
     return -1;
   }
   return 0;
@@ -519,7 +593,7 @@ int stkComms_progHexFile(stkComms_t* comms, const char* filename)
 {
   hexFile_t* file = hexFile_new();
   hexFile_init2(file, filename);
-  uint16_t pageSize = 128;
+  uint16_t pageSize = 256;
   int i;
   /* Program the file one 128-byte page at a time */
   uint8_t* buf = (uint8_t*)malloc(sizeof(uint8_t)*(pageSize + 10));
@@ -553,8 +627,8 @@ int stkComms_checkFlash(stkComms_t* comms, const char* filename)
   hexFile_t* hf = hexFile_new();
   hexFile_init2(hf, filename);
   int i;
-  uint16_t addrIncr = 0x40;
-  uint16_t pageSize = 0x80;
+  uint16_t addrIncr = 0x80;
+  uint16_t pageSize = 0x100;
   for(i = 0; i*2 < hexFile_len(hf); i += addrIncr)
   {
     if(stkComms_checkPage(comms, hf, i, i*2+pageSize > hexFile_len(hf)? hexFile_len(hf) - i*2 : pageSize))
@@ -594,6 +668,7 @@ int stkComms_checkPage(stkComms_t* comms, hexFile_t* hexfile, uint16_t address, 
   /* Now, get the data */
   rc = stkComms_recvBytes(comms, buf, size+2, size+10);
   if(rc != size+2) {
+    printf("received %d bytes, but expected %d!\n", rc, size+2);
     THROW;
     free(buf);
     return -1;

@@ -11,6 +11,7 @@
 #endif
 #include <sys/stat.h>
 #include <mobot.h>
+#include <libstkcomms.hpp>
 #include "MobotFirmwareUpdate.h"
 #include "thread_macros.h"
 
@@ -35,6 +36,8 @@ mobot_t* g_mobot = NULL;
 
 int g_numThreads = 0;
 
+char g_comport[80];
+CStkComms *g_stkComms;
 
 char *g_interfaceFiles[512] = {
   "interface/mobotfirmwareupdateinterface.glade",
@@ -67,14 +70,16 @@ void* findDongleWorkerThread(void* arg)
     /* Only update g_mobot pointer if no one else has updated it already */
     if(g_mobot == NULL) {
       g_mobot = mobot;
-      Mobot_getStatus(mobot);
       g_dongleSearchStatus = DONGLE_FOUND;
+      strcpy(g_comport, buf);
       COND_SIGNAL(&g_giant_cond);
+      MUTEX_UNLOCK(&g_giant_lock);
     } else {
+      MUTEX_UNLOCK(&g_giant_lock);
       Mobot_disconnect(mobot);
       free(mobot);
     }
-    MUTEX_UNLOCK(&g_giant_lock);
+    Mobot_getStatus(mobot);
   } else {
     free(mobot);
   }
@@ -107,6 +112,7 @@ void* findDongleThread(void* arg)
     }
     if(g_dongleSearchStatus != DONGLE_SEARCHING) {
       i++;
+      MUTEX_UNLOCK(&g_giant_lock);
       break;
     }
     /* Spawn a thread */
@@ -287,6 +293,23 @@ void on_button_p1_next_clicked(GtkWidget* widget, gpointer data)
   g_timeout_add(200, findDongleTimeout, NULL);
 }
 
+gboolean programming_progress_timeout(gpointer data)
+{
+  /* Set the progress bar */
+  gtk_progress_bar_set_fraction(
+      GTK_PROGRESS_BAR(gtk_builder_get_object(g_builder, "progressbar1")),
+      g_stkComms->getProgress());
+  /* See if programming is completed */
+  if(g_stkComms->isProgramComplete()) {
+    g_stkComms->disconnect();
+    /* Switch to next page */
+    gtk_notebook_next_page(
+        GTK_NOTEBOOK(gtk_builder_get_object(g_builder, "notebook1")));
+  } else {
+    return TRUE;
+  }
+}
+
 gboolean switch_to_p3_timeout(gpointer data)
 {
   /* Renable the button */
@@ -296,6 +319,11 @@ gboolean switch_to_p3_timeout(gpointer data)
   /* Switch to next page */
   gtk_notebook_next_page(
       GTK_NOTEBOOK(gtk_builder_get_object(g_builder, "notebook1")));
+  g_stkComms = new CStkComms();
+  g_stkComms->connectWithTTY(g_comport);
+  g_stkComms->programAllAsync("hexfiles/mobot-il.hex");
+  /* Start the programming progress timeout */
+  g_timeout_add(200, programming_progress_timeout, NULL);
   return FALSE;
 }
 
@@ -336,4 +364,11 @@ void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data)
   free(g_mobot);
   g_mobot = NULL;
   g_timeout_add(2000, switch_to_p3_timeout, NULL);
+}
+
+void on_button_flashAnother_clicked(GtkWidget* widget, gpointer data)
+{
+  gtk_notebook_set_current_page(
+      GTK_NOTEBOOK(gtk_builder_get_object(g_builder, "notebook1")),
+      0);
 }

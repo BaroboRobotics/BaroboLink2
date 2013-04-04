@@ -43,6 +43,7 @@ class CStkComms
   CStkComms();
   ~CStkComms();
   int connect(const char addr[]);
+  int connectWithTTY(const char* ttyfilename);
   int setSocket(int socket);
   int programAll(const char* hexFileName);
   int programAll(const char* hexFileName, int hwRev);

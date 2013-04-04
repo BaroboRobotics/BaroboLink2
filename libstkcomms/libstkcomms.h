@@ -32,6 +32,9 @@ typedef struct stkComms_s
   int isConnected;
   int programComplete;
   uint8_t signature[3];
+#if defined (_WIN32) or defined (_MSYS)
+  HANDLE commHandle;
+#endif
 
   MUTEX_T* progressLock;
   COND_T* progressCond;
