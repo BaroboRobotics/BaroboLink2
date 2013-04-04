@@ -1985,13 +1985,13 @@
                                         <property name="can_focus">False</property>
                                         <property name="layout_style">spread</property>
                                         <child>
-                                          <object class="GtkButton" id="button_moveTo">
-                                            <property name="label" translatable="yes">Move To</property>
+                                          <object class="GtkButton" id="button_move">
+                                            <property name="label" translatable="yes">Move</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
                                             <property name="use_action_appearance">False</property>
-                                            <signal name="clicked" handler="on_button_moveTo_clicked" swapped="no"/>
+                                            <signal name="clicked" handler="on_button_move_clicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">True</property>
