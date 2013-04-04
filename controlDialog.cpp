@@ -883,7 +883,7 @@ void on_button_move_clicked(GtkWidget* wid, gpointer data)
 #define GETVALUEMOVEJOINT(n) \
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorPos" #n)); \
   text = gtk_entry_get_text(GTK_ENTRY(w)); \
-  if(text != NULL) { \
+  if((text != NULL) && (strlen(text) > 0)) { \
     sscanf(text, "%lf", &value); \
     g_positionEntryValues[n-1] = value; \
     g_positionEntryValuesValid[n-1] = true; \
