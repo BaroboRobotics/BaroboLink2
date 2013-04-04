@@ -25,6 +25,13 @@ int str2ba(const char *str, bdaddr_t *ba);
 #endif
 #include "../thread_macros.h"
 
+typedef enum robot_type_e
+{
+  MOBOT_NONE,
+  MOBOT_A,
+  MOBOT_IL
+} robot_type_t;
+
 #ifdef BUILD_CSTKCOMMS
 typedef struct stkComms_s
 {
@@ -52,6 +59,7 @@ typedef struct stkComms_s
   struct sockaddr_rc addr;
 #endif
 #endif
+  robot_type_t formFactor;
 } stkComms_t;
 #else
 struct stkComms_s;

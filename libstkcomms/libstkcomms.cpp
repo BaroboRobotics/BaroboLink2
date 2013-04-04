@@ -529,6 +529,7 @@ int stkComms_leaveProgMode(stkComms_t* comms)
 int stkComms_checkSignature(stkComms_t* comms)
 {
   uint8_t buf[10];
+  uint8_t buf2[10];
   buf[0] = Cmnd_STK_READ_SIGN;
   buf[1] = Sync_CRC_EOP;
   int rc;
@@ -546,10 +547,19 @@ int stkComms_checkSignature(stkComms_t* comms)
     return -1;
   }
   memcpy(&comms->signature[0], &buf[1], 3);
+  /* Mobot-IL device signature */
   buf[0] = 0x1e;
   buf[1] = 0xa7;
   buf[2] = 0x01;
-  if(memcmp(comms->signature, buf, 3)) {
+  /* Mobot-A device signature */
+  buf2[0] = 0x1e;
+  buf2[1] = 0x95;
+  buf2[2] = 0x0f;
+  if(!memcmp(comms->signature, buf, 3)) {
+    comms->formFactor = MOBOT_IL;
+  } else if (!memcmp(comms->signature, buf2, 3)) {
+    comms->formFactor = MOBOT_A;
+  } else {
     fprintf(stderr, "Device Signature incorrect. Got 0x%02x%02x%02x\n", 
         comms->signature[0],
         comms->signature[1],
@@ -593,7 +603,12 @@ int stkComms_progHexFile(stkComms_t* comms, const char* filename)
 {
   hexFile_t* file = hexFile_new();
   hexFile_init2(file, filename);
-  uint16_t pageSize = 256;
+  uint16_t pageSize;
+  if(comms->formFactor == MOBOT_IL) {
+    pageSize = 256;
+  } else {
+    pageSize = 128;
+  }
   int i;
   /* Program the file one 128-byte page at a time */
   uint8_t* buf = (uint8_t*)malloc(sizeof(uint8_t)*(pageSize + 10));
@@ -627,8 +642,15 @@ int stkComms_checkFlash(stkComms_t* comms, const char* filename)
   hexFile_t* hf = hexFile_new();
   hexFile_init2(hf, filename);
   int i;
-  uint16_t addrIncr = 0x80;
-  uint16_t pageSize = 0x100;
+  uint16_t addrIncr;
+  uint16_t pageSize;
+  if(comms->formFactor == MOBOT_IL) {
+    addrIncr = 0x80;
+    pageSize = 0x100;
+  } else {
+    addrIncr = 0x40;
+    pageSize = 0x80;
+  }
   for(i = 0; i*2 < hexFile_len(hf); i += addrIncr)
   {
     if(stkComms_checkPage(comms, hf, i, i*2+pageSize > hexFile_len(hf)? hexFile_len(hf) - i*2 : pageSize))
