@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <ctype.h>
 #include <gtk/gtk.h>
 #include <string.h>
 #define PLAT_GTK 1
@@ -66,6 +67,7 @@ void* findDongleWorkerThread(void* arg)
     /* Only update g_mobot pointer if no one else has updated it already */
     if(g_mobot == NULL) {
       g_mobot = mobot;
+      Mobot_getStatus(mobot);
       g_dongleSearchStatus = DONGLE_FOUND;
       COND_SIGNAL(&g_giant_cond);
     } else {
@@ -283,4 +285,55 @@ void on_button_p1_next_clicked(GtkWidget* widget, gpointer data)
 
   /* Start the search timeout */
   g_timeout_add(200, findDongleTimeout, NULL);
+}
+
+gboolean switch_to_p3_timeout(gpointer data)
+{
+  /* Renable the button */
+  gtk_widget_set_sensitive(
+      GTK_WIDGET(gtk_builder_get_object(g_builder, "button_p2_yes")),
+      true);
+  /* Switch to next page */
+  gtk_notebook_next_page(
+      GTK_NOTEBOOK(gtk_builder_get_object(g_builder, "notebook1")));
+  return FALSE;
+}
+
+void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data)
+{
+  int i;
+  gtk_widget_set_sensitive(widget, false);
+  /* First, reprogram the serial ID */
+  const char* text;
+  char buf[5];
+  text = gtk_entry_get_text(
+      GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_serialID")));
+#if 0
+  if(strlen(text)==4) {
+    for(i = 0; i < 5; i++) {
+      buf[i] = toupper(text[i]);
+    }
+    Mobot_setID(g_mobot, buf);
+  } else {
+    /* Pop up warning dialog */
+    GtkWidget* d = gtk_message_dialog_new(
+        GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_WARNING,
+        GTK_BUTTONS_OK,
+        "The Serial ID does not have a valid format. The serial ID should consist of four alpha-numeric characters.");
+    gtk_dialog_run(GTK_DIALOG(d));
+    gtk_widget_hide(d);
+    gtk_widget_set_sensitive(widget, true);
+    return;
+  }
+#endif
+  /* Next, reboot the module and go on to the next page */
+  printf("Reboot...\n");
+  Mobot_reboot(g_mobot);
+  printf("Done reboot.\n");
+  Mobot_disconnect(g_mobot);
+  free(g_mobot);
+  g_mobot = NULL;
+  g_timeout_add(2000, switch_to_p3_timeout, NULL);
 }

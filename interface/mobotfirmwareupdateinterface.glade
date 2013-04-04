@@ -201,10 +201,10 @@ click "Next".</property>
               <object class="GtkLabel" id="label9">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">If the Mobot's serial
-                ID does not match the one printed on the sticker, you may
-                modify it by typing the correct ID into the text box
-                above. Please click "Next" to continue the upgrade process. </property>
+                <property name="label" translatable="yes">If the Mobot's serial ID does not match the one printed 
+on the sticker, you may modify it by typing the correct
+ID into the text box above. Please click "Next" to 
+continue the upgrade process. </property>
               </object>
               <packing>
                 <property name="expand">True</property>

@@ -10,6 +10,7 @@ extern "C" {
 #endif
 
 G_MODULE_EXPORT void on_button_p1_next_clicked(GtkWidget* widget, gpointer data);
+G_MODULE_EXPORT void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data);
 
 #ifdef __cplusplus
 }
