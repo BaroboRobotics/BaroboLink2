@@ -59,7 +59,7 @@ void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data)
         GTK_DIALOG_DESTROY_WITH_PARENT,
         GTK_MESSAGE_WARNING,
         GTK_BUTTONS_OK,
-        "To upgrade the firmware of this robot, please close RoboMancer and start the Mobot Firmware Update utility located in your Start menu at Start->Barobo Mobot 2.0->Mobot Firmware Update.");
+        "To upgrade the firmware of this robot, please close RoboMancer and start the Mobot Firmware Update utility located in your Start menu at Start->All Programs->Barobo Mobot 2.0->Mobot Firmware Update.");
     gtk_dialog_run(GTK_DIALOG(d));
     gtk_widget_hide(GTK_WIDGET(d));
   }

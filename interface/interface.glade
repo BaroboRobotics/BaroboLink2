@@ -558,7 +558,7 @@
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">Reset Mobot firmware to safe mode.</property>
                         <property name="use_action_appearance">False</property>
-                        <property name="label" translatable="yes">Reset Mobot Firmware</property>
+                        <property name="label" translatable="yes">Reset Mobot-A Firmware</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_forceUpgrade_activate" swapped="no"/>
                       </object>

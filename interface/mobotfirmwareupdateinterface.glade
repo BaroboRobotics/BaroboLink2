@@ -235,7 +235,7 @@ continue the upgrade process. </property>
                 </child>
                 <child>
                   <object class="GtkButton" id="button_p2_yes">
-                    <property name="label" translatable="yes">OK</property>
+                    <property name="label" translatable="yes">Next</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
