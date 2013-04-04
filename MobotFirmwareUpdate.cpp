@@ -358,7 +358,7 @@ void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data)
   Mobot_disconnect(g_mobot);
   free(g_mobot);
   g_mobot = NULL;
-  g_timeout_add(2000, switch_to_p3_timeout, NULL);
+  g_timeout_add(3000, switch_to_p3_timeout, NULL);
 }
 
 void on_button_flashAnother_clicked(GtkWidget* widget, gpointer data)
