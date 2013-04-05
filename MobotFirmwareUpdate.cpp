@@ -203,6 +203,15 @@ int main(int argc, char* argv[])
   HANDLE hMutex;
   hMutex = CreateMutex(NULL, TRUE, TEXT("Global\\RoboMancerMutex"));
   DWORD dwerror = GetLastError();
+#endif
+
+ 
+  gtk_init(&argc, &argv);
+
+  /* Create the GTK Builder */
+  g_builder = gtk_builder_new();
+
+#ifdef _WIN32
   if(dwerror == ERROR_ALREADY_EXISTS) {
     GtkWidget* d = gtk_message_dialog_new(
         GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
@@ -214,13 +223,6 @@ int main(int argc, char* argv[])
     exit(0);
   }
 #endif
-
- 
-  gtk_init(&argc, &argv);
-
-  /* Create the GTK Builder */
-  g_builder = gtk_builder_new();
-
 #ifdef __MACH__
   char *datadir = getenv("XDG_DATA_DIRS");
   if(datadir != NULL) {
