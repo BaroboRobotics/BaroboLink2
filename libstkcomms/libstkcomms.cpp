@@ -155,6 +155,7 @@ int stkComms_connect(stkComms_t* comms, const char addr[])
     printf("ioctlsocket failed %d\n", WSAGetLastError());
   }
 #endif
+  comms->connectionType = CONNECT_SOCKET;
   return 0;
 #else 
   return -1;
@@ -207,6 +208,7 @@ int stkComms_connectWithTTY(stkComms_t* comms, const char* ttyfilename)
   }
   
   comms->isConnected = 1;
+  comms->connectionType = CONNECT_TTY;
   return 0;
 }
 #else
@@ -305,6 +307,7 @@ int stkComms_connectWithTTY(stkComms_t* comms, const char* ttyfilename)
     fprintf(stderr, "Error setting output speed.\n");
     exit(0);
   }
+  comms->connectionType = CONNECT_TTY;
   return 0;
 }
 #endif
@@ -373,7 +376,15 @@ int stkComms_handshake(stkComms_t* comms)
 #else
     Sleep(1000);
 #endif
+#ifndef _WIN32
     len = stkComms_recvBytes2(comms, buf, 10);
+#else
+    if(comms->connectionType == CONNECT_SOCKET) {
+      len = stkComms_recvBytes2(comms, buf, 10);
+    } else {
+      len = stkComms_recvBytes(comms, buf, 2, 10);
+    }
+#endif
     if(len == 2) {break;}
   }
   if(len == 2 && buf[0] == Resp_STK_INSYNC )
@@ -830,10 +841,23 @@ int stkComms_sendBytes(stkComms_t* comms, void* buf, size_t len)
     return -1;
   } 
 #else
-  if(send(comms->socket, (const char*)buf, len, 0) == -1) {
-    perror("Write error");
-    return -1;
-  } 
+  if(comms->connectionType == CONNECT_SOCKET) {
+    if(send(comms->socket, (const char*)buf, len, 0) == -1) {
+      perror("Write error");
+      return -1;
+    } 
+  } else {
+    WriteFile( comms->commHandle,
+        (LPCVOID)buf,
+        len,
+        NULL,
+        &comms->ov);
+    DWORD bytes;
+    GetOverlappedResult( comms->commHandle,
+        &comms->ov,
+        &bytes,
+        TRUE);
+  }
 #endif
   return 0;
 }
@@ -848,7 +872,22 @@ int stkComms_recvBytes(stkComms_t* comms, uint8_t* buf, size_t expectedBytes, si
 #ifndef _WIN32
     rc = read(comms->socket, mybuf, size);
 #else
-    rc = recvfrom(comms->socket, (char*)mybuf, size, 0, (struct sockaddr*)0, 0);
+    if(comms->connectionType == CONNECT_SOCKET) {
+      rc = recvfrom(comms->socket, (char*)mybuf, size, 0, (struct sockaddr*)0, 0);
+    } else {
+      ReadFile(
+          comms->commHandle,
+          (LPVOID)mybuf,
+          expectedBytes,
+          NULL,
+          &comms->ov);
+      DWORD bytes;
+      GetOverlappedResult( comms->commHandle,
+          &comms->ov,
+          &bytes,
+          TRUE);
+      rc = bytes;
+    }
 #endif
     if(rc > 0) {
       memcpy(&buf[len], mybuf, rc);

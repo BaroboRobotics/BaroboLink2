@@ -32,6 +32,13 @@ typedef enum robot_type_e
   MOBOT_IL
 } robot_type_t;
 
+typedef enum connection_type_e
+{
+  CONNECT_NONE,
+  CONNECT_SOCKET,
+  CONNECT_TTY
+} connection_type_t;
+
 #ifdef BUILD_CSTKCOMMS
 typedef struct stkComms_s
 {
@@ -41,6 +48,7 @@ typedef struct stkComms_s
   uint8_t signature[3];
 #if defined (_WIN32) or defined (_MSYS)
   HANDLE commHandle;
+  OVERLAPPED ov;
 #endif
 
   MUTEX_T* progressLock;
@@ -60,6 +68,7 @@ typedef struct stkComms_s
 #endif
 #endif
   robot_type_t formFactor;
+  connection_type_t connectionType;
 } stkComms_t;
 #else
 struct stkComms_s;
