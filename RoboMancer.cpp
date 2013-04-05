@@ -39,24 +39,25 @@ int main(int argc, char* argv[])
   HANDLE hMutex;
   hMutex = CreateMutex(NULL, TRUE, TEXT("Global\\RoboMancerMutex"));
   DWORD dwerror = GetLastError();
-  if(dwerror == ERROR_ALREADY_EXISTS) {
-    GtkWidget* d = gtk_message_dialog_new(
-        GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
-        GTK_DIALOG_DESTROY_WITH_PARENT,
-        GTK_MESSAGE_ERROR,
-        GTK_BUTTONS_OK,
-        "Another instance of RoboMancer is already running. Please terminate the other process and and try again.");
-    int rc = gtk_dialog_run(GTK_DIALOG(d));
-    exit(0);
-  }
 #endif
-
  
   gtk_init(&argc, &argv);
 
   /* Create the GTK Builder */
   g_builder = gtk_builder_new();
 
+#ifdef _WIN32
+  if(dwerror == ERROR_ALREADY_EXISTS) {
+    GtkWidget* d = gtk_message_dialog_new(
+        GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_ERROR,
+        GTK_BUTTONS_OK,
+        "Another instance of RoboMancer is already running. Please terminate the other process and try again.");
+    int rc = gtk_dialog_run(GTK_DIALOG(d));
+    exit(0);
+  }
+#endif
 #ifdef __MACH__
   char *datadir = getenv("XDG_DATA_DIRS");
   if(datadir != NULL) {
