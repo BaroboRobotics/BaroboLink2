@@ -120,10 +120,13 @@ void* findDongleThread(void* arg)
     MUTEX_UNLOCK(&g_giant_lock);
   }
   /* Join all threads */
+  /* Actually, don't bother joining the threads.. */
+/*
   int j;
   for(j = 0; j < i; j++) {
     THREAD_JOIN(threads[j]);
   }
+*/
   MUTEX_LOCK(&g_giant_lock);
   if(g_dongleSearchStatus == DONGLE_SEARCHING) {
     g_dongleSearchStatus = DONGLE_NOTFOUND;
