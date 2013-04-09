@@ -91,7 +91,7 @@ void* findDongleWorkerThread(void* arg)
 
 void* findDongleThread(void* arg)
 {
-  int args[64];
+  static int args[64];
   int i;
   THREAD_T threads[64];
   for(i = 0; i < 64; i++) {
@@ -122,6 +122,12 @@ void* findDongleThread(void* arg)
   /* Join all threads */
   int j;
   for(j = 0; j < i; j++) {
+    MUTEX_LOCK(&g_giant_lock);
+    if(g_dongleSearchStatus != DONGLE_SEARCHING) {
+      MUTEX_UNLOCK(&g_giant_lock);
+      break;
+    }
+    MUTEX_UNLOCK(&g_giant_lock);
     THREAD_JOIN(threads[j]);
   }
   MUTEX_LOCK(&g_giant_lock);
