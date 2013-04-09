@@ -27,6 +27,8 @@
 //#endif
 //#define VERBOSE
 
+#define ENABLE_BLUETOOTH
+
 stkComms_t* stkComms_new()
 {
 	stkComms_t* comms;
