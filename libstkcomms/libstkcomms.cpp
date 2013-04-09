@@ -1,3 +1,4 @@
+#define ENABLE_BLUETOOTH
 #include <stdlib.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -27,7 +28,6 @@
 //#endif
 //#define VERBOSE
 
-#define ENABLE_BLUETOOTH
 
 stkComms_t* stkComms_new()
 {
@@ -944,6 +944,7 @@ int stkComms_setdtr (stkComms_t* comms, int on)
 #endif
 } 
 
+#if 0
 #ifdef _WIN32
 #ifdef ENABLE_BLUETOOTH
 void baswap(bdaddr_t *dst, const bdaddr_t *src)
@@ -973,6 +974,7 @@ int str2ba(const char *str, bdaddr_t *ba)
 
 	return 0;
 }
+#endif
 #endif
 #endif
 
