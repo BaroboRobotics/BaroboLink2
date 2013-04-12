@@ -13,6 +13,7 @@
 #include <gtk-mac-integration.h>
 #endif
 #include <sys/stat.h>
+#include "thread_macros.h"
 
 GtkBuilder *g_builder;
 GtkWidget *g_window;
@@ -206,10 +207,17 @@ void on_aboutdialog_close(GtkDialog *dialog, gpointer user_data)
   gtk_widget_hide(GTK_WIDGET(dialog));
 }
 
+void* disconnectThread(void* arg)
+{
+  g_robotManager->disconnectAll();
+}
+
 gboolean on_window1_delete_event(GtkWidget *w)
 {
   /* Disconnect from all connected robots */
-  g_robotManager->disconnectAll();
+  THREAD_T thread;
+  THREAD_CREATE(&thread, disconnectThread, NULL);
+  sleep(3);
   gtk_main_quit();
 }
 
