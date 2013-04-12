@@ -18,6 +18,7 @@ void RecordMobot_init(recordMobot_t* mobot, const char *name)
   mobot->bound = false;
   mobot->connectStatus = RMOBOT_NOT_CONNECTED;
   strcpy(mobot->name, name);
+  mobot->dirty = 0;
 }
 
 void RecordMobot_destroy(recordMobot_t* mobot)

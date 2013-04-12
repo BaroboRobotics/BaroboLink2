@@ -485,8 +485,34 @@ void refreshConnectDialog()
           int r, g, b;
           int _r, _g, _b;
           char buf[16];
-          if(!Mobot_getColorRGB((mobot_t*)g_robotManager->getMobotIndex(i), &r, &g, &b)) {
-            sprintf(buf, "#%02X%02X%02X", r, g, b);
+          if(g_robotManager->getMobotIndex(i)->dirty) {
+            if(!Mobot_getColorRGB((mobot_t*)g_robotManager->getMobotIndex(i), &r, &g, &b)) {
+              g_robotManager->getMobotIndex(i)->rgb[0] = r;
+              g_robotManager->getMobotIndex(i)->rgb[1] = g;
+              g_robotManager->getMobotIndex(i)->rgb[2] = b;
+              sprintf(buf, "#%02X%02X%02X", r, g, b);
+              GdkColor color;
+              gdk_color_parse(buf, &color);
+              w = gtk_color_button_new_with_color(&color);
+              gtk_widget_show(w);
+              gtk_table_attach( GTK_TABLE(rootTable),
+                  w,
+                  5, 6,
+                  i*3, (i*3)+2,
+                  GTK_FILL, GTK_FILL,
+                  2, 2);
+              g_signal_connect(
+                  G_OBJECT(w), 
+                  "color-set", 
+                  G_CALLBACK(on_colorDialog_color_set),
+                  (void*)g_robotManager->getMobotIndex(i)
+                  );
+            } 
+          } else {
+            sprintf(buf, "#%02X%02X%02X", 
+                g_robotManager->getMobotIndex(i)->rgb[0], 
+                g_robotManager->getMobotIndex(i)->rgb[1], 
+                g_robotManager->getMobotIndex(i)->rgb[2]);
             GdkColor color;
             gdk_color_parse(buf, &color);
             w = gtk_color_button_new_with_color(&color);
@@ -582,7 +608,10 @@ void refreshConnectDialog()
   GtkTreeIter connectedIter;
   for(i = 0; i < g_robotManager->numEntries(); i++) {
     gtk_list_store_append(liststore_available, &iter);
-    if(g_robotManager->isConnected(i)) {
+    if(
+        (g_robotManager->getMobotIndex(i) != NULL) &&
+        (g_robotManager->getMobotIndex(i)->connectStatus == RMOBOT_CONNECTED)
+        ) {
       /* Add it to the liststore of connected bots */
       gtk_list_store_append(liststore_connected, &connectedIter);
       gtk_list_store_set(liststore_connected, &connectedIter, 

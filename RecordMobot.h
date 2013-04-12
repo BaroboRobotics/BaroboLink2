@@ -66,6 +66,8 @@ typedef struct recordMobot_s
   bool bound; /* Is the mobot bound via external TCP socket? */
   int firmwareVersion;
   recordMobotConnectStatus_t connectStatus;
+  int dirty;
+  int rgb[3];
 } recordMobot_t;
 
 #ifdef __cplusplus
