@@ -168,6 +168,10 @@ gboolean findDongleTimeout(gpointer data)
     gtk_label_set_text(
         GTK_LABEL(gtk_builder_get_object(g_builder, "label_firmwareVersion")),
         buf);
+    sprintf(buf, "%d", Mobot_protocolVersion());
+    gtk_label_set_text(
+        GTK_LABEL(gtk_builder_get_object(g_builder, "label_upgradeVersion")),
+        buf);
     gtk_entry_set_text(
         GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_serialID")),
         g_mobot->serialID);

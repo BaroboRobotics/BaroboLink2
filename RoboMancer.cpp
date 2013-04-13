@@ -22,7 +22,7 @@ ScintillaObject *g_sci;
 
 CRobotManager *g_robotManager;
 
-char *g_interfaceFiles[512] = {
+const char *g_interfaceFiles[512] = {
   "interface/interface.glade",
   "interface.glade",
   "../share/RoboMancer/interface.glade",
@@ -212,13 +212,29 @@ void* disconnectThread(void* arg)
   g_robotManager->disconnectAll();
 }
 
+gboolean exitTimeout(gpointer data)
+{
+  gtk_main_quit();
+  return FALSE;
+}
+
 gboolean on_window1_delete_event(GtkWidget *w)
 {
   /* Disconnect from all connected robots */
   THREAD_T thread;
   THREAD_CREATE(&thread, disconnectThread, NULL);
-  sleep(3);
-  gtk_main_quit();
+  GtkWidget *d = gtk_message_dialog_new(
+      GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
+      GTK_DIALOG_MODAL,
+      GTK_MESSAGE_INFO,
+      GTK_BUTTONS_NONE,
+      "RoboMancer shutting down..."
+      );
+  gtk_window_set_decorated(
+      GTK_WINDOW(d),
+      false);
+  gtk_widget_show_all(d);
+  g_timeout_add(3000, exitTimeout, NULL);
 }
 
 double normalizeAngleRad(double radians)
