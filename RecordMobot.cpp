@@ -8,13 +8,22 @@
 
 #define RAD2DEG(x) ((x)*180.0/M_PI)
 
+recordMobot_t* RecordMobot_new()
+{
+  recordMobot_t* mobot;
+  mobot = (recordMobot_t*)malloc(sizeof(recordMobot_t));
+  memset(mobot, 0, sizeof(recordMobot_t));
+  mobot->motions = (struct motion_s**)malloc(sizeof(struct motion_s*) * 100); 
+  memset(mobot->motions, 0, sizeof(struct motion_s*) * 100);
+  mobot->numMotionsAllocated = 100;
+  return mobot;
+}
+
 void RecordMobot_init(recordMobot_t* mobot, const char *name)
 {
   Mobot_init((mobot_t*)mobot);
   mobot->firmwareVersion = 0x0FFFFFFF;
   mobot->numMotions = 0;
-  mobot->motions = (struct motion_s**)malloc(sizeof(struct motion_s*) * 100); 
-  mobot->numMotionsAllocated = 100;
   mobot->bound = false;
   mobot->connectStatus = RMOBOT_NOT_CONNECTED;
   strcpy(mobot->name, name);
@@ -37,6 +46,7 @@ int RecordMobot_connectWithAddress(recordMobot_t* mobot, const char address[], i
   }
   mobot->firmwareVersion = Mobot_getVersion((mobot_t*)mobot);
     mobot->connectStatus = RMOBOT_CONNECTED;
+  mobot->dirty = 1;
   return 0;
 }
 

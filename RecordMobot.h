@@ -73,6 +73,7 @@ typedef struct recordMobot_s
 #ifdef __cplusplus
 extern "C" {
 #endif
+recordMobot_t* RecordMobot_new();
 void RecordMobot_init(recordMobot_t* mobot, const char *name);
 void RecordMobot_destroy(recordMobot_t* mobot);
 int RecordMobot_connectWithAddress(recordMobot_t* mobot, const char address[], int channel);
