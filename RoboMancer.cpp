@@ -207,21 +207,34 @@ void on_aboutdialog_close(GtkDialog *dialog, gpointer user_data)
   gtk_widget_hide(GTK_WIDGET(dialog));
 }
 
+volatile gboolean g_disconnectThreadDone = 0;
 void* disconnectThread(void* arg)
 {
   g_robotManager->disconnectAll();
+  g_disconnectThreadDone = TRUE;
 }
 
 gboolean exitTimeout(gpointer data)
 {
-  gtk_main_quit();
-  return FALSE;
+  static int i = 0;
+  if((i >= 6) || g_disconnectThreadDone) {
+    gtk_main_quit();
+    return FALSE;
+  } else {
+    i++;
+    return TRUE;
+  }
 }
 
 gboolean on_window1_delete_event(GtkWidget *w)
 {
+  /* First, disable the active robot, if there is one */
+  MUTEX_LOCK(&g_activeMobotLock);
+  g_activeMobot = NULL;
+  MUTEX_UNLOCK(&g_activeMobotLock);
   /* Disconnect from all connected robots */
   THREAD_T thread;
+  g_disconnectThreadDone = 0;
   THREAD_CREATE(&thread, disconnectThread, NULL);
   GtkWidget *d = gtk_message_dialog_new(
       GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
@@ -234,7 +247,7 @@ gboolean on_window1_delete_event(GtkWidget *w)
       GTK_WINDOW(d),
       false);
   gtk_widget_show_all(d);
-  g_timeout_add(3000, exitTimeout, NULL);
+  g_timeout_add(500, exitTimeout, NULL);
 }
 
 double normalizeAngleRad(double radians)
