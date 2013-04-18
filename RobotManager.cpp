@@ -262,7 +262,7 @@ recordMobot_t* CRobotManager::getMobot(int connectIndex)
   int i;
   for(i = 0; i <= MAX_CONNECTED ; i++ ) {
     if(_mobots[i] == NULL) {continue;}
-    if(_mobots[i] != NULL) {
+    if((_mobots[i] != NULL) && (_mobots[i]->connectStatus == RMOBOT_CONNECTED)) {
       connectIndex--;
     }
     if(connectIndex < 0) {
