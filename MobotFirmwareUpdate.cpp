@@ -383,3 +383,4 @@ void on_button_flashAnother_clicked(GtkWidget* widget, gpointer data)
       GTK_NOTEBOOK(gtk_builder_get_object(g_builder, "notebook1")),
       0);
 }
+
