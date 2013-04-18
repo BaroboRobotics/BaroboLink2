@@ -172,6 +172,21 @@ int getIterModelFromTreeSelection(GtkTreeView *treeView, GtkTreeModel **model, G
   return 0;
 }
 
+void on_menuitem_help_activate(GtkWidget *widget, gpointer data)
+{
+#ifdef _MSYS
+  ShellExecute(
+      NULL,
+      "open",
+      "C:\\ch\\package\\chmobot\\docs\\mobot.pdf",
+      NULL,
+      NULL,
+      SW_SHOW);
+#else
+  
+#endif
+}
+
 void on_imagemenuitem_about_activate(GtkWidget *widget, gpointer data)
 {
   /* Find the about dialog and show it */
