@@ -610,6 +610,16 @@
                         <signal name="activate" handler="on_imagemenuitem_about_activate" swapped="no"/>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem_demos">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="label" translatable="yes">Demos</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menuitem_demos_activate" swapped="no"/>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>
