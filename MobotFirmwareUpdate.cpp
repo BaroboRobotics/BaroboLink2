@@ -89,17 +89,18 @@ void* findDongleWorkerThread(void* arg)
   return NULL;
 }
 
+#define MAX_COMPORT 128
 void* findDongleThread(void* arg)
 {
-  static int args[64];
+  static int args[MAX_COMPORT];
   int i;
-  THREAD_T threads[64];
-  for(i = 0; i < 64; i++) {
+  THREAD_T threads[MAX_COMPORT];
+  for(i = 0; i < MAX_COMPORT; i++) {
     args[i] = i;
   }
   g_dongleSearchStatus = DONGLE_SEARCHING;
   /* Spawn worker threads to find the dongle on a com port */
-  for(i = 0; i < 64; i++) { 
+  for(i = 0; i < MAX_COMPORT; i++) { 
     /* First, make sure there are less than MAX_THREADS running */
     MUTEX_LOCK(&g_giant_lock);
     while(
