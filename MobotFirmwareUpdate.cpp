@@ -15,7 +15,7 @@
 #include "MobotFirmwareUpdate.h"
 #include "thread_macros.h"
 
-#define MAX_THREADS 10
+#define MAX_THREADS 20
 
 typedef enum dongleSearchStatus_e
 {
@@ -89,7 +89,7 @@ void* findDongleWorkerThread(void* arg)
   return NULL;
 }
 
-#define MAX_COMPORT 128
+#define MAX_COMPORT 256
 void* findDongleThread(void* arg)
 {
   static int args[MAX_COMPORT];

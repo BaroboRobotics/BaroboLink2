@@ -178,12 +178,43 @@ void on_menuitem_help_activate(GtkWidget *widget, gpointer data)
   ShellExecute(
       NULL,
       "open",
-      "C:\\ch\\package\\chmobot\\docs\\mobot.pdf",
+      "C:\\ch\\package\\chmobot\\docs\\index.html",
       NULL,
       NULL,
       SW_SHOW);
 #else
   
+#endif
+}
+
+void on_menuitem_demos_activate(GtkWidget *widget, gpointer data)
+{
+#ifdef _MSYS
+  STARTUPINFO si;
+  PROCESS_INFORMATION pi;
+  memset(&si, 0, sizeof(STARTUPINFO));
+  memset(&pi, 0, sizeof(PROCESS_INFORMATION));
+  CreateProcess(
+	"C:\\ch\\bin\\chide.exe",
+	"-d C:\\ch\\package\\chmobot\\demos",
+	NULL,
+	NULL,
+	FALSE,
+	NORMAL_PRIORITY_CLASS,
+	NULL,
+	NULL,
+	&si,
+	&pi);
+	
+/*
+  ShellExecute(
+      NULL,
+      "open",
+      "C:\\chide",
+      "-d C:\\Ch\\package\\chmobot\\demos",
+      NULL,
+      0);
+*/
 #endif
 }
 
