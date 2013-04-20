@@ -2,7 +2,7 @@
 #include "RoboMancer.h"
 #include "thread_macros.h"
 
-#define MAX_COMPORT 64
+#define MAX_COMPORT 256
 #define MAX_THREADS 10
 
 /* Multithreaded function to try and find a dongle. Returns 0 on success */
@@ -234,7 +234,7 @@ void on_button_connectDongleConnect_clicked(GtkWidget *widget, gpointer data)
     /* If the auto-detect button is pressed */
     int i;
     bool dongleFound = false;
-    for(i = 0; i < 64; i++) {
+    for(i = 0; i < MAX_COMPORT; i++) {
 #ifndef _WIN32
       sprintf(buf, "/dev/ttyACM%d", i);
 #else
