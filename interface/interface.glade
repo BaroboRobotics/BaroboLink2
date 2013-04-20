@@ -3423,7 +3423,7 @@ Press "OK" to continue.</property>
                                 <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">This dialog is used to reset the firmware on a Mobot to a factory-safe mode. In the rare event that a Mobot's firmware gets corrupted or damaged, this process will replace the existing firmware with a new copy.
 
-Once this process is complete, is is recommended to upgrade the Mobot's firmware to the latest version via the Connect dialog for best results.
+Once this process is complete, it is recommended to upgrade the Mobot's firmware to the latest version via the Connect dialog for best results.
 
 To begin, enter the Mobot's address into the text box below and click on the button labeled "Begin". Or, you may cancel the process by clicking on "Cancel".</property>
                                 <property name="wrap">True</property>
