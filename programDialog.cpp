@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <Python.h>
 #include <fcntl.h>
+#include "thread_macros.h"
 
 #ifndef _MSYS
 #define MAX_PATH 512
@@ -26,11 +27,13 @@ char *g_curFileName = NULL;
 char *g_exportFileName = NULL;
 bool g_dirty = false;
 bool g_reexportFlag = false;
+bool g_programRunning = false;
 
 GtkWidget *g_textview_programMessages;
 GtkTextBuffer *g_textbuffer_programMessages;
 int g_pipefd_stdout[2]; // Pipe for reading stdio from python/client program
-int g_stdout_fd;
+int g_pipefd_stderr[2]; 
+int g_pipefd_stdin[2]; // Pipe for pushing data to client program's stdin
 
 void initProgramDialog(void)
 {
@@ -76,11 +79,18 @@ void initProgramDialog(void)
   on_imagemenuitem_new_activate(NULL, NULL);
   g_textview_programMessages = GTK_WIDGET(gtk_builder_get_object(g_builder, "textview_programMessages"));
   g_textbuffer_programMessages = GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(g_textview_programMessages)));
-  if(pipe2(g_pipefd_stdout, O_NONBLOCK) == -1) {
+  if(
+      (pipe2(g_pipefd_stdout, O_NONBLOCK) == -1) ||
+      (pipe2(g_pipefd_stdin, O_NONBLOCK) == -1) ||
+      (pipe2(g_pipefd_stderr, O_NONBLOCK) == -1) 
+      ) 
+  {
     perror("pipe");
     exit(-1);
   }
   dup2(g_pipefd_stdout[1], STDOUT_FILENO);
+  dup2(g_pipefd_stderr[1], STDERR_FILENO);
+  dup2(g_pipefd_stdin[0], STDIN_FILENO);
   g_timeout_add(500, check_io_timeout, NULL);
 }
 
@@ -452,19 +462,29 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
 #endif
 }
 
+void* run_program_thread(void* arg)
+{
+  char* sourceCode = (char*)arg;
+  /* Use the python interpreter */
+  Py_Initialize();
+  PyRun_SimpleString(sourceCode);
+  //Py_Finalize();
+  free(sourceCode);
+  g_programRunning = false;
+}
+
 void on_button_runExe_clicked(GtkWidget* widget, gpointer data)
 {
+  gtk_widget_set_sensitive(widget, false);
   /* Get the source code */
   int sourceCodeSize;
   char* sourceCode;
   sourceCodeSize = scintilla_send_message(g_sci, SCI_GETLENGTH, 0, 0) + 1;
   sourceCode = (char*)malloc(sourceCodeSize);
   scintilla_send_message(g_sci, SCI_GETTEXT, sourceCodeSize, (sptr_t)sourceCode);
-  /* Use the python interpreter */
-  Py_Initialize();
-  PyRun_SimpleString(sourceCode);
-  //Py_Finalize();
-  free(sourceCode);
+  g_programRunning = true;
+  THREAD_T thread;
+  THREAD_CREATE(&thread, run_program_thread, sourceCode);
 }
 
 void on_scintilla_notify(GObject *gobject, GParamSpec *pspec, struct SCNotification* scn)
@@ -507,7 +527,20 @@ gboolean check_io_timeout(gpointer data)
   int rc;
   GtkTextIter iter;
   fflush(stdout);
+  if(g_programRunning == false) {
+    gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(g_builder, "button_runExe")), true);
+  }
   if((rc = read(g_pipefd_stdout[0], buf, 255)) > 0) {
+    buf[rc] = '\0';
+    /* Append the read data to the end of the text buffer */
+    gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(g_textbuffer_programMessages), &iter);
+    gtk_text_buffer_insert(
+        GTK_TEXT_BUFFER(g_textbuffer_programMessages),
+        &iter,
+        buf,
+        -1);
+  }
+  if((rc = read(g_pipefd_stderr[0], buf, 255)) > 0) {
     buf[rc] = '\0';
     /* Append the read data to the end of the text buffer */
     gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(g_textbuffer_programMessages), &iter);
