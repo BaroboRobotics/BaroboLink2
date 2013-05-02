@@ -2399,14 +2399,16 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkMenuBar" id="menubar1">
+                      <object class="GtkMenuBar" id="menubarwtf">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="ubuntu_local">True</property>
                         <child>
                           <object class="GtkMenuItem" id="menuitem1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="use_action_appearance">False</property>
+                            <property name="label" translatable="yes">File</property>
                             <child type="submenu">
                               <object class="GtkMenu" id="menu1">
                                 <property name="visible">True</property>
@@ -2464,6 +2466,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="use_action_appearance">False</property>
+                            <property name="label" translatable="yes">Edit</property>
                             <child type="submenu">
                               <object class="GtkMenu" id="menu2">
                                 <property name="visible">True</property>
@@ -2536,7 +2539,7 @@
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">False</property>
+                        <property name="expand">True</property>
                         <property name="fill">True</property>
                         <property name="position">0</property>
                       </packing>
