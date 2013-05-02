@@ -100,6 +100,7 @@ G_MODULE_EXPORT void on_menuitem_forceUpgrade_activate(GtkWidget *w, gpointer da
 
 /* Program Dialog */
 void initProgramDialog(void);
+gboolean check_io_timeout(gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_new_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_open_activate(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_imagemenuitem_save_activate(GtkWidget* widget, gpointer data);

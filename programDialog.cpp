@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <gtk/gtk.h>
 #include <string.h>
 #define PLAT_GTK 1
@@ -15,6 +16,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <Python.h>
+#include <fcntl.h>
 
 #ifndef _MSYS
 #define MAX_PATH 512
@@ -24,6 +26,11 @@ char *g_curFileName = NULL;
 char *g_exportFileName = NULL;
 bool g_dirty = false;
 bool g_reexportFlag = false;
+
+GtkWidget *g_textview_programMessages;
+GtkTextBuffer *g_textbuffer_programMessages;
+int g_pipefd_stdout[2]; // Pipe for reading stdio from python/client program
+int g_stdout_fd;
 
 void initProgramDialog(void)
 {
@@ -67,6 +74,14 @@ void initProgramDialog(void)
    SSM(SCI_STYLESETBOLD, SCE_C_OPERATOR, 1);
 
   on_imagemenuitem_new_activate(NULL, NULL);
+  g_textview_programMessages = GTK_WIDGET(gtk_builder_get_object(g_builder, "textview_programMessages"));
+  g_textbuffer_programMessages = GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(g_textview_programMessages)));
+  if(pipe2(g_pipefd_stdout, O_NONBLOCK) == -1) {
+    perror("pipe");
+    exit(-1);
+  }
+  dup2(g_pipefd_stdout[1], STDOUT_FILENO);
+  g_timeout_add(500, check_io_timeout, NULL);
 }
 
 void check_save_on_dirty()
@@ -98,25 +113,15 @@ void on_imagemenuitem_new_activate(GtkWidget* widget, gpointer data)
   scintilla_send_message(g_sci, SCI_CLEARALL, 0, 0);
   /* Set up the initial code stub */
   scintilla_send_message(g_sci, SCI_INSERTTEXT, 0, (sptr_t)
-      "#include <stdio.h>\n"
-      "#include <mobot.h>\n"
+      "#!/usr/bin/env python\n"
+      "from barobo.linkbot import *\n"
       "\n"
-      "int main()\n"
-      "{\n"
-      "    /* Declare a new robot variable */\n"
-      "    CMobot robot;\n"
-      "    /* Link the new variable with a physical robot */\n"
-      "    robot.connect();\n"
-      "    /* Move the robot to its zero position */\n"
-      "    robot.moveToZero();\n"
+      "myLinkBot = LinkBot()\n"
+      "myLinkBot.connect()\n"
       "\n"
-      "    /* The next lines of code make the program pause until the user presses a\n"
-      "     * key. This is used to keep the console window open after the program has\n"
-      "     * finished. */\n"
-      "    printf(\"Program Ended. Press a key to continue.\\n\");\n"
-      "    getchar();\n"
-      "    return 0;\n"
-      "}\n" );
+      "myLinkBot.move(90, 90, 90)\n"
+      "myLinkBot.move(-90, -90, -90)\n"
+      );
   scintilla_send_message(g_sci, SCI_EMPTYUNDOBUFFER, 0, 0);
   GtkWidget *w;
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "imagemenuitem_undo"));
@@ -449,9 +454,17 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
 
 void on_button_runExe_clicked(GtkWidget* widget, gpointer data)
 {
-  if(g_exportFileName == NULL) {
-    return;
-  }
+  /* Get the source code */
+  int sourceCodeSize;
+  char* sourceCode;
+  sourceCodeSize = scintilla_send_message(g_sci, SCI_GETLENGTH, 0, 0) + 1;
+  sourceCode = (char*)malloc(sourceCodeSize);
+  scintilla_send_message(g_sci, SCI_GETTEXT, sourceCodeSize, (sptr_t)sourceCode);
+  /* Use the python interpreter */
+  Py_Initialize();
+  PyRun_SimpleString(sourceCode);
+  //Py_Finalize();
+  free(sourceCode);
 }
 
 void on_scintilla_notify(GObject *gobject, GParamSpec *pspec, struct SCNotification* scn)
@@ -486,4 +499,23 @@ void on_scintilla_notify(GObject *gobject, GParamSpec *pspec, struct SCNotificat
       }
       break;
   }
+}
+
+gboolean check_io_timeout(gpointer data)
+{
+  char buf[256];
+  int rc;
+  GtkTextIter iter;
+  fflush(stdout);
+  if((rc = read(g_pipefd_stdout[0], buf, 255)) > 0) {
+    buf[rc] = '\0';
+    /* Append the read data to the end of the text buffer */
+    gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(g_textbuffer_programMessages), &iter);
+    gtk_text_buffer_insert(
+        GTK_TEXT_BUFFER(g_textbuffer_programMessages),
+        &iter,
+        buf,
+        -1);
+  }
+  return TRUE;
 }

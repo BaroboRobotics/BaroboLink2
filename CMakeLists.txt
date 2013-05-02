@@ -69,7 +69,7 @@ if(CMAKE_HOST_WIN32)
       mobotStatic
       ${GTK2_LIBRARIES} )
 else()
-  target_link_libraries(RoboMancer mobotStatic ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a stkcomms pthread bluetooth ${GTK2_LIBRARIES} )
+  target_link_libraries(RoboMancer mobotStatic ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a stkcomms pthread bluetooth ${GTK2_LIBRARIES} ${PYTHON_LIBRARIES} )
   target_link_libraries(MobotFirmwareUpdate mobotStatic stkcomms pthread ${GTK2_LIBRARIES} )
 endif()
 else(GTK2_FOUND)
