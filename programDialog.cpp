@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include <string.h>
 #define PLAT_GTK 1
 #define GTK
@@ -28,6 +29,11 @@ char *g_exportFileName = NULL;
 bool g_dirty = false;
 bool g_reexportFlag = false;
 bool g_programRunning = false;
+
+bool g_enableBackspace = true;
+char g_userChars[256];
+int g_numUserChars = 0;
+int g_numUserCharsValid = 0;
 
 GtkWidget *g_textview_programMessages;
 GtkTextBuffer *g_textbuffer_programMessages;
@@ -81,7 +87,7 @@ void initProgramDialog(void)
   g_textbuffer_programMessages = GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(g_textview_programMessages)));
   if(
       (pipe2(g_pipefd_stdout, O_NONBLOCK) == -1) ||
-      (pipe2(g_pipefd_stdin, O_NONBLOCK) == -1) ||
+      (pipe2(g_pipefd_stdin, 0) == -1) ||
       (pipe2(g_pipefd_stderr, O_NONBLOCK) == -1) 
       ) 
   {
@@ -521,6 +527,38 @@ void on_scintilla_notify(GObject *gobject, GParamSpec *pspec, struct SCNotificat
   }
 }
 
+void sendInputToClient()
+{
+  g_userChars[g_numUserChars] = '\n';
+  g_numUserChars++;
+  write(g_pipefd_stdin[1], g_userChars, g_numUserChars);
+  g_numUserChars = 0;
+  g_numUserCharsValid = 0;
+}
+
+gboolean on_textview_programMessages_key_press_event(GtkWidget*w, GdkEventKey* event, gpointer data)
+{
+  switch (event->keyval) {
+    case GDK_KEY_BackSpace:
+      if(g_numUserCharsValid > 0) {
+        g_numUserCharsValid--;
+        return FALSE;
+      } else {
+        return TRUE;
+      }
+      break;
+    case GDK_KEY_Return:
+      sendInputToClient();
+      break;
+    default:
+      g_userChars[g_numUserChars] = event->keyval;
+      g_numUserChars++;
+      g_numUserCharsValid++;
+      break;
+  }
+  return FALSE; // Propogate signal
+}
+
 gboolean check_io_timeout(gpointer data)
 {
   char buf[256];
@@ -539,6 +577,7 @@ gboolean check_io_timeout(gpointer data)
         &iter,
         buf,
         -1);
+    g_numUserCharsValid = 0;
   }
   if((rc = read(g_pipefd_stderr[0], buf, 255)) > 0) {
     buf[rc] = '\0';
@@ -549,6 +588,7 @@ gboolean check_io_timeout(gpointer data)
         &iter,
         buf,
         -1);
+    g_numUserCharsValid = 0;
   }
   return TRUE;
 }
