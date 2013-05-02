@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <Python.h>
 
 #ifndef _MSYS
 #define MAX_PATH 512

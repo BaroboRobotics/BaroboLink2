@@ -107,8 +107,10 @@ int main(int argc, char* argv[])
 #endif
 
   /* Hide the Program dialog */
+  /*
   GtkWidget* w = GTK_WIDGET(gtk_builder_get_object(g_builder, "notebook1"));
   gtk_notebook_remove_page(GTK_NOTEBOOK(w), 3);
+  */
 
   /* Show the window */
   gtk_widget_show(g_window);
