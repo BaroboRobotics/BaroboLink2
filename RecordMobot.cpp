@@ -129,7 +129,7 @@ int RecordMobot_getMotionType(recordMobot_t* mobot, int index)
 	return mobot->motions[index]->motionType;
 }
 
-int RecordMobot_getMotionString(recordMobot_t* mobot, int index, char* buf)
+int RecordMobot_getChMotionString(recordMobot_t* mobot, int index, char* buf)
 {
   switch(mobot->motions[index]->motionType) {
     case MOTION_POS:
@@ -164,7 +164,7 @@ int RecordMobot_getMotionString(recordMobot_t* mobot, int index, char* buf)
 	return 0;
 }
 
-int RecordMobot_getMotionStringB(recordMobot_t* mobot, int index, char* buf)
+int RecordMobot_getChMotionStringB(recordMobot_t* mobot, int index, char* buf)
 {
   switch(mobot->motions[index]->motionType) {
     case MOTION_POS:
@@ -194,6 +194,76 @@ int RecordMobot_getMotionStringB(recordMobot_t* mobot, int index, char* buf)
       break;
     case MOTION_SLEEP:
       sprintf(buf, "delay(%.2lf);", (mobot->motions[index]->data.sleepDuration));
+      break;
+  }
+	return 0;
+}
+
+int RecordMobot_getPythonMotionString(recordMobot_t* mobot, int index, char* buf)
+{
+  switch(mobot->motions[index]->motionType) {
+    case MOTION_POS:
+      switch(mobot->mobot.formFactor) {
+        case MOBOTFORM_I:
+          sprintf(buf, "%s.moveToNB(%.2lf, 0, %.2lf)",
+              mobot->name,
+              RAD2DEG(mobot->motions[index]->data.pos[0]),
+              RAD2DEG(mobot->motions[index]->data.pos[2]));
+          break;
+        case MOBOTFORM_L:
+          sprintf(buf, "%s.moveToNB(%.2lf, %.2lf, 0)",
+              mobot->name,
+              RAD2DEG(mobot->motions[index]->data.pos[0]),
+              RAD2DEG(mobot->motions[index]->data.pos[1]));
+          break;
+        case MOBOTFORM_ORIGINAL:
+        default:
+          sprintf(buf, "%s.moveToNB(%.2lf, %.2lf, %.2lf, %.2lf)",
+              mobot->name,
+              RAD2DEG(mobot->motions[index]->data.pos[0]),
+              RAD2DEG(mobot->motions[index]->data.pos[1]),
+              RAD2DEG(mobot->motions[index]->data.pos[2]),
+              RAD2DEG(mobot->motions[index]->data.pos[3]) );
+          break;
+      }
+      break;
+    case MOTION_SLEEP:
+      sprintf(buf, "time.sleep(%.2lf)", (mobot->motions[index]->data.sleepDuration));
+      break;
+  }
+	return 0;
+}
+
+int RecordMobot_getPythonMotionStringB(recordMobot_t* mobot, int index, char* buf)
+{
+  switch(mobot->motions[index]->motionType) {
+    case MOTION_POS:
+      switch(mobot->mobot.formFactor) {
+        case MOBOTFORM_I:
+          sprintf(buf, "%s.moveTo(%.2lf, 0, %.2lf)",
+              mobot->name,
+              RAD2DEG(mobot->motions[index]->data.pos[0]),
+              RAD2DEG(mobot->motions[index]->data.pos[2]));
+          break;
+        case MOBOTFORM_L:
+          sprintf(buf, "%s.moveTo(%.2lf, %.2lf, 0)",
+              mobot->name,
+              RAD2DEG(mobot->motions[index]->data.pos[0]),
+              RAD2DEG(mobot->motions[index]->data.pos[1]));
+          break;
+        case MOBOTFORM_ORIGINAL:
+        default:
+          sprintf(buf, "%s.moveTo(%.2lf, %.2lf, %.2lf, %.2lf)",
+              mobot->name,
+              RAD2DEG(mobot->motions[index]->data.pos[0]),
+              RAD2DEG(mobot->motions[index]->data.pos[1]),
+              RAD2DEG(mobot->motions[index]->data.pos[2]),
+              RAD2DEG(mobot->motions[index]->data.pos[3]) );
+          break;
+      }
+      break;
+    case MOTION_SLEEP:
+      sprintf(buf, "time.sleep(%.2lf)", (mobot->motions[index]->data.sleepDuration));
       break;
   }
 	return 0;

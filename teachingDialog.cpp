@@ -148,7 +148,22 @@ void on_button_saveToProgram_clicked(GtkWidget*widget, gpointer data)
   if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))) {
     playLooped = true;
   }  
-  program = g_robotManager->generateProgram(playLooped, g_holdOnExit);
+  GtkWidget* combobox;
+  combobox = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_poseLanguage"));
+  int languageindex = gtk_combo_box_get_active(GTK_COMBO_BOX(combobox));
+  char defaultFilename[128];
+  switch(languageindex) {
+    case 0: // Python
+      program = g_robotManager->generatePythonProgram(playLooped, g_holdOnExit);
+      strcpy(defaultFilename, "untitled.py");
+      break;
+    case 1:
+      strcpy(defaultFilename, "untitled.cpp");
+    case 2: // C++/Ch
+      program = g_robotManager->generateChProgram(playLooped, g_holdOnExit);
+      strcpy(defaultFilename, "untitled.Ch");
+  }
+  
   /* Open a save file dialog */
   GtkWidget *dialog;
   dialog = gtk_file_chooser_dialog_new ("Save File",
@@ -158,7 +173,7 @@ void on_button_saveToProgram_clicked(GtkWidget*widget, gpointer data)
       GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
       NULL);
   gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), TRUE);
-  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), "untitledprogram.ch");
+  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), defaultFilename);
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
   {
     char *filename;
