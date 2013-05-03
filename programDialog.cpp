@@ -73,14 +73,16 @@ void initProgramDialog(void)
       STYLE_DEFAULT,
       (sptr_t)10);
 #define SSM(m, w, l) scintilla_send_message(g_sci, m, w, l)
-   SSM(SCI_SETLEXER, SCLEX_CPP, 0);
-   SSM(SCI_SETKEYWORDS, 0, (sptr_t)"int char float double CMobot if else for while");
+   SSM(SCI_SETLEXER, SCLEX_PYTHON, 0);
+   SSM(SCI_SETKEYWORDS, 0, (sptr_t)"int char float double LinkBot barobo if else for while");
    SSM(SCI_STYLESETFORE, SCE_C_COMMENT, 0x008000);
    SSM(SCI_STYLESETFORE, SCE_C_COMMENTLINE, 0x008000);
    SSM(SCI_STYLESETFORE, SCE_C_NUMBER, 0x808000);
    SSM(SCI_STYLESETFORE, SCE_C_WORD, 0x800000);
    SSM(SCI_STYLESETFORE, SCE_C_STRING, 0x800080);
    SSM(SCI_STYLESETBOLD, SCE_C_OPERATOR, 1);
+   SSM(SCI_SETSTYLING, SCE_C_OPERATOR, 1);
+   SSM(SCI_SETMARGINWIDTHN, 0, 40);
 
   on_imagemenuitem_new_activate(NULL, NULL);
   g_textview_programMessages = GTK_WIDGET(gtk_builder_get_object(g_builder, "textview_programMessages"));
@@ -542,6 +544,7 @@ gboolean on_textview_programMessages_key_press_event(GtkWidget*w, GdkEventKey* e
     case GDK_KEY_BackSpace:
       if(g_numUserCharsValid > 0) {
         g_numUserCharsValid--;
+        g_numUserChars--;
         return FALSE;
       } else {
         return TRUE;

@@ -2590,21 +2590,6 @@
                                 <property name="can_focus">False</property>
                                 <property name="layout_style">center</property>
                                 <child>
-                                  <object class="GtkButton" id="button_exportExe">
-                                    <property name="label" translatable="yes">Export to Executable</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="use_action_appearance">False</property>
-                                    <signal name="clicked" handler="on_button_exportExe_clicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">False</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkButton" id="button_runExe">
                                     <property name="label" translatable="yes">Run</property>
                                     <property name="visible">True</property>
@@ -2616,7 +2601,7 @@
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">False</property>
-                                    <property name="position">1</property>
+                                    <property name="position">0</property>
                                   </packing>
                                 </child>
                               </object>
@@ -2665,7 +2650,7 @@
                               <object class="GtkLabel" id="label8">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">&lt;b&gt;Messages&lt;/b&gt;</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Console&lt;/b&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
                             </child>
