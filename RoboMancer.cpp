@@ -19,6 +19,8 @@ GtkBuilder *g_builder;
 GtkWidget *g_window;
 GtkWidget *g_scieditor;
 ScintillaObject *g_sci;
+GtkWidget *g_scieditor_ext;
+ScintillaObject *g_sci_ext;
 
 CRobotManager *g_robotManager;
 

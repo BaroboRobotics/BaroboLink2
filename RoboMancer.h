@@ -30,9 +30,11 @@ extern int g_controlMode; // 0 means update main control page, 1 means update "s
 extern int g_selectedRobot;
 extern GtkBuilder *g_builder;
 extern CRobotManager *g_robotManager;
-extern GtkWidget *g_scieditor;
 extern GtkWidget *g_window;
+extern GtkWidget *g_scieditor;
 extern ScintillaObject *g_sci;
+extern GtkWidget *g_scieditor_ext;
+extern ScintillaObject *g_sci_ext;
 extern recordMobot_t* g_activeMobot;
 extern recordMobot_t *g_mobotParent;
 #ifdef _MSYS
@@ -115,6 +117,7 @@ G_MODULE_EXPORT void on_imagemenuitem_open_activate(GtkWidget* widget, gpointer 
 G_MODULE_EXPORT void on_button_exportExe_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_button_runExe_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_scintilla_notify(GObject *gobject, GParamSpec *pspec, struct SCNotification* scn);
+G_MODULE_EXPORT void on_checkbutton_showExternalEditor_toggled(GtkToggleButton *tb, gpointer data);
 
 /* Control Dialog */
 G_MODULE_EXPORT void on_button_motor1back_clicked(GtkWidget*w, gpointer data); 

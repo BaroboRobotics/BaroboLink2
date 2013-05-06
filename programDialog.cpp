@@ -83,6 +83,50 @@ void initProgramDialog(void)
    SSM(SCI_STYLESETBOLD, SCE_C_OPERATOR, 1);
    SSM(SCI_SETSTYLING, SCE_C_OPERATOR, 1);
    SSM(SCI_SETMARGINWIDTHN, 0, 40);
+#undef SSM
+
+  /* Initialize "external" scintilla editor */
+  /* Add Scintilla */
+  g_scieditor_ext = scintilla_new();
+  g_sci_ext = SCINTILLA(g_scieditor_ext);
+  container = GTK_WIDGET(gtk_builder_get_object(g_builder, "alignment12"));
+  gtk_container_add(GTK_CONTAINER(container), g_scieditor_ext);
+  scintilla_set_id(g_sci_ext, 0);
+  //gtk_widget_set_usize(g_scieditor_ext, 100, 300);
+  gtk_widget_show(g_scieditor_ext);
+
+  /* Attach signal handlers */
+  g_signal_connect(G_OBJECT(g_scieditor_ext), SCINTILLA_NOTIFY, G_CALLBACK(on_scintilla_notify), NULL);
+  /* Set a monospace font */
+  scintilla_send_message(
+      g_sci_ext,
+      SCI_STYLESETFONT,
+      STYLE_DEFAULT,
+      (sptr_t)"!Courier");
+  scintilla_send_message(
+      g_sci_ext,
+      SCI_STYLESETSIZE,
+      STYLE_DEFAULT,
+      (sptr_t)10);
+#define SSM(m, w, l) scintilla_send_message(g_sci_ext, m, w, l)
+  SSM(SCI_SETLEXER, SCLEX_PYTHON, 0);
+  SSM(SCI_SETKEYWORDS, 0, (sptr_t)"int char float double LinkBot barobo if else for while");
+  SSM(SCI_STYLESETFORE, SCE_C_COMMENT, 0x008000);
+  SSM(SCI_STYLESETFORE, SCE_C_COMMENTLINE, 0x008000);
+  SSM(SCI_STYLESETFORE, SCE_C_NUMBER, 0x808000);
+  SSM(SCI_STYLESETFORE, SCE_C_WORD, 0x800000);
+  SSM(SCI_STYLESETFORE, SCE_C_STRING, 0x800080);
+  SSM(SCI_STYLESETBOLD, SCE_C_OPERATOR, 1);
+  SSM(SCI_SETSTYLING, SCE_C_OPERATOR, 1);
+  SSM(SCI_SETMARGINWIDTHN, 0, 40);
+#undef SSM
+  /* Set the size of the external editor window */
+  gtk_widget_set_size_request(GTK_WIDGET(g_scieditor_ext), 400, 400);
+
+  /* Create text tag for error text in messages window */
+  GtkWidget *textview = GTK_WIDGET(gtk_builder_get_object(g_builder, "textview_programMessages"));
+  GtkTextBuffer *tb = GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview)));
+  gtk_text_buffer_create_tag(tb, "stderr", "foreground", "#FF0000", NULL);
 
   on_imagemenuitem_new_activate(NULL, NULL);
   g_textview_programMessages = GTK_WIDGET(gtk_builder_get_object(g_builder, "textview_programMessages"));
@@ -495,6 +539,16 @@ void on_button_runExe_clicked(GtkWidget* widget, gpointer data)
   THREAD_CREATE(&thread, run_program_thread, sourceCode);
 }
 
+void on_checkbutton_showExternalEditor_toggled(GtkToggleButton *tb, gpointer data)
+{
+  if(gtk_toggle_button_get_active(tb)) {
+    /* Button is checked. Show the external dialog */
+    gtk_widget_show(GTK_WIDGET(gtk_builder_get_object(g_builder, "window_externalEditor")));
+  } else {
+    gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(g_builder, "window_externalEditor")));
+  }
+}
+
 void on_scintilla_notify(GObject *gobject, GParamSpec *pspec, struct SCNotification* scn)
 {
   GtkWidget *w;
@@ -586,11 +640,11 @@ gboolean check_io_timeout(gpointer data)
     buf[rc] = '\0';
     /* Append the read data to the end of the text buffer */
     gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(g_textbuffer_programMessages), &iter);
-    gtk_text_buffer_insert(
+    gtk_text_buffer_insert_with_tags_by_name(
         GTK_TEXT_BUFFER(g_textbuffer_programMessages),
         &iter,
         buf,
-        -1);
+        -1, "stderr", NULL);
     g_numUserCharsValid = 0;
   }
   return TRUE;
