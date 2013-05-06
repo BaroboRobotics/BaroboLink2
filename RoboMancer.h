@@ -119,6 +119,7 @@ G_MODULE_EXPORT void on_button_runExe_clicked(GtkWidget* widget, gpointer data);
 G_MODULE_EXPORT void on_scintilla_notify(GObject *gobject, GParamSpec *pspec, struct SCNotification* scn);
 G_MODULE_EXPORT void on_checkbutton_showExternalEditor_toggled(GtkToggleButton *tb, gpointer data);
 void refreshExternalEditor();
+G_MODULE_EXPORT void on_button_copyExternalToClipboard_clicked(GtkWidget *w, gpointer data);
 
 /* Control Dialog */
 G_MODULE_EXPORT void on_button_motor1back_clicked(GtkWidget*w, gpointer data); 
@@ -204,6 +205,7 @@ G_MODULE_EXPORT void on_liststore_recordedMotions_row_inserted(
 void* playThread(void* arg);
 gboolean poseGuiTimeout(gpointer userdata);
 extern bool g_holdOnExit;
+G_MODULE_EXPORT void on_combobox_outputLanguage_changed(GtkComboBox *w, gpointer data);
 
 /* Comms Engine */
 int initializeComms(void);

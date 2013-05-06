@@ -37,6 +37,7 @@ class CRobotManager : public ConfigFile
     recordMobot_t* getMobot(int connectIndex);
     recordMobot_t* getMobotIndex(int index);
     string* generateChProgram(bool looped = false, bool holdOnExit = false);
+    string* generateCppProgram(bool looped = false, bool holdOnExit = false);
     string* generatePythonProgram(bool looped = false, bool holdOnExit = false);
     bool _isPlaying;
     int _newDndIndex;

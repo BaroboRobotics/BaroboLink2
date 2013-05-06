@@ -583,4 +583,8 @@ void on_liststore_recordedMotions_row_inserted(
     }
   }
 }
-    
+   
+void on_combobox_outputLanguage_changed(GtkComboBox *w, gpointer data)
+{
+  refreshExternalEditor();
+}

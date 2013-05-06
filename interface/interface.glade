@@ -3798,6 +3798,7 @@ To begin, enter the Mobot's address into the text box below and click on the but
                 <property name="can_focus">False</property>
                 <property name="model">liststore_poseLanguages</property>
                 <property name="active">0</property>
+                <signal name="changed" handler="on_combobox_outputLanguage_changed" swapped="no"/>
                 <child>
                   <object class="GtkCellRendererText" id="cellrenderertext5"/>
                   <attributes>
@@ -3839,12 +3840,13 @@ To begin, enter the Mobot's address into the text box below and click on the but
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkButton" id="button_playExternalEditor">
-                <property name="label" translatable="yes">Play</property>
+              <object class="GtkButton" id="button_copyExternalToClipboard">
+                <property name="label" translatable="yes">Copy Program to Clipboard</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
+                <signal name="clicked" handler="on_button_copyExternalToClipboard_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

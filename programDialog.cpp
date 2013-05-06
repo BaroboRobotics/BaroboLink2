@@ -664,7 +664,7 @@ void refreshExternalEditor()
   }  
 
   GtkWidget* combobox;
-  combobox = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_poseLanguage"));
+  combobox = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_outputLanguage"));
   int languageindex = gtk_combo_box_get_active(GTK_COMBO_BOX(combobox));
   switch(languageindex) {
     case 0: // Python
@@ -672,8 +672,16 @@ void refreshExternalEditor()
       break;
     case 1:
       // c++
+      program = g_robotManager->generateCppProgram(playLooped, g_holdOnExit);
+      break;
     case 2: // Ch
       program = g_robotManager->generateChProgram(playLooped, g_holdOnExit);
   }
   scintilla_send_message(g_sci_ext, SCI_INSERTTEXT, 0, (sptr_t)program->c_str());
+}
+
+void on_button_copyExternalToClipboard_clicked(GtkWidget *w, gpointer data)
+{
+  int size = scintilla_send_message(g_sci_ext, SCI_GETLENGTH, 0, 0) + 1;
+  scintilla_send_message(g_sci_ext, SCI_COPYRANGE, 0, size);
 }
