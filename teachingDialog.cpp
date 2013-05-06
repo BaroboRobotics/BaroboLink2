@@ -43,6 +43,7 @@ void teachingDialog_refreshRecordedMotions(int currentMotion)
     }
   }
   g_dnd = true;
+  refreshExternalEditor();
 }
 
 void on_button_setJointsNeutral_clicked(GtkWidget*w, gpointer data)

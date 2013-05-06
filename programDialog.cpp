@@ -649,3 +649,31 @@ gboolean check_io_timeout(gpointer data)
   }
   return TRUE;
 }
+
+void refreshExternalEditor()
+{
+  /* Clear all contents and rewrite with current pose data */
+  scintilla_send_message(g_sci_ext, SCI_CLEARALL, 0, 0);
+  string* program;
+
+  bool playLooped = false;
+  GtkWidget *w;
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "checkbutton_playLooped"));
+  if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))) {
+    playLooped = true;
+  }  
+
+  GtkWidget* combobox;
+  combobox = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_poseLanguage"));
+  int languageindex = gtk_combo_box_get_active(GTK_COMBO_BOX(combobox));
+  switch(languageindex) {
+    case 0: // Python
+      program = g_robotManager->generatePythonProgram(playLooped, g_holdOnExit);
+      break;
+    case 1:
+      // c++
+    case 2: // Ch
+      program = g_robotManager->generateChProgram(playLooped, g_holdOnExit);
+  }
+  scintilla_send_message(g_sci_ext, SCI_INSERTTEXT, 0, (sptr_t)program->c_str());
+}
