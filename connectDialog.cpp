@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
-#include "RoboMancer.h"
+#include "BaroboLink.h"
 #include "thread_macros.h"
 #include "mobot.h"
 
@@ -125,8 +125,8 @@ gboolean progressBarConnectUpdate(gpointer data)
       case -6:
         sprintf(buf,
             "Connection to %s failed: The Mobot firmware version does not match the \n"
-            "RoboMancer version. Please make sure that both your Mobot firmware and \n"
-            "your RoboMancer software are up to date.",
+            "BaroboLink version. Please make sure that both your Mobot firmware and \n"
+            "your BaroboLink software are up to date.",
             g_robotManager->getEntry(a->connectIndex));
         gtk_label_set_text(label,buf);
       default:

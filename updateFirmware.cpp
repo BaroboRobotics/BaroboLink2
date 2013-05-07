@@ -2,7 +2,7 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include <mobot.h>
-#include "RoboMancer.h"
+#include "BaroboLink.h"
 #include "RecordMobot.h"
 #include "libstkcomms/libstkcomms.hpp"
 
@@ -59,7 +59,7 @@ void on_button_updateFirmware_clicked(GtkWidget* widget, gpointer data)
         GTK_DIALOG_DESTROY_WITH_PARENT,
         GTK_MESSAGE_WARNING,
         GTK_BUTTONS_OK,
-        "To upgrade the firmware of this robot, please close RoboMancer and start the Mobot Firmware Update utility located in your Start menu at Start->All Programs->Barobo Mobot 2.0->Mobot Firmware Update.");
+        "To upgrade the firmware of this robot, please close BaroboLink and start the Mobot Firmware Update utility located in your Start menu at Start->All Programs->Barobo Mobot 2.0->Mobot Firmware Update.");
     gtk_dialog_run(GTK_DIALOG(d));
     gtk_widget_hide(GTK_WIDGET(d));
   }
@@ -121,7 +121,7 @@ gboolean reflashConnectTimeout(gpointer data)
     if(g_reflashHWRev == 3) {
 #ifdef __MACH__
       datadir = getenv("XDG_DATA_DIRS");
-      sprintf(filename, "%s/RoboMancer/hexfiles/rev3.hex", datadir);
+      sprintf(filename, "%s/BaroboLink/hexfiles/rev3.hex", datadir);
 #else
       sprintf(filename, "hexfiles/rev3.hex");
 #endif
@@ -130,7 +130,7 @@ gboolean reflashConnectTimeout(gpointer data)
 #ifdef __MACH__
       datadir = getenv("XDG_DATA_DIRS");
       printf("%s\n", datadir);
-      sprintf(filename, "%s/RoboMancer/hexfiles/rev4.hex", datadir);
+      sprintf(filename, "%s/BaroboLink/hexfiles/rev4.hex", datadir);
       printf("%s\n", filename);
 #else
       sprintf(filename, "hexfiles/rev4.hex");
@@ -140,7 +140,7 @@ gboolean reflashConnectTimeout(gpointer data)
 #ifdef __MACH__
       datadir = getenv("XDG_DATA_DIRS");
       printf("%s\n", datadir);
-      sprintf(filename, "%s/RoboMancer/hexfiles/rev3_safe.hex", datadir);
+      sprintf(filename, "%s/BaroboLink/hexfiles/rev3_safe.hex", datadir);
       printf("%s\n", filename);
 #else
       sprintf(filename, "hexfiles/rev3_safe.hex");

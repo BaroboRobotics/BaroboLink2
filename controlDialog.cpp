@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include "RoboMancer.h"
+#include "BaroboLink.h"
 #include "controlDialog.h"
 #include "thread_macros.h"
 #include <mobot.h>

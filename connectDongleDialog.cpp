@@ -1,5 +1,5 @@
 #include "mobot.h"
-#include "RoboMancer.h"
+#include "BaroboLink.h"
 #include "thread_macros.h"
 
 #define MAX_COMPORT 256
@@ -176,7 +176,7 @@ void askConnectDongle(void)
       GTK_DIALOG_DESTROY_WITH_PARENT,
       GTK_MESSAGE_QUESTION,
       GTK_BUTTONS_YES_NO,
-      "There is currently no Mobot dongle associated with RoboMancer. Would you like to add one now?");
+      "There is currently no Mobot dongle associated with BaroboLink. Would you like to add one now?");
   int rc = gtk_dialog_run(GTK_DIALOG(d));
   if(rc == GTK_RESPONSE_YES) {
     showConnectDongleDialog();

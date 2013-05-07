@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(RoboMancer)
+project(BaroboLink)
 
 add_subdirectory(libstkcomms)
 add_subdirectory(iMobot_gumstix_api/libimobotcomms)
@@ -40,7 +40,7 @@ if(GTK2_FOUND)
   link_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms)
   link_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms/BaroboConfigFile)
 
-  add_executable(RoboMancer
+  add_executable(BaroboLink
       commsHandler.cpp
       configFile.cpp
       connectDialog.cpp
@@ -48,7 +48,7 @@ if(GTK2_FOUND)
       controlDialog.cpp
       programDialog.cpp
       RecordMobot.cpp
-      RoboMancer.cpp
+      BaroboLink.cpp
       RobotManager.cpp
       scanMobotsDialog.cpp
       teachingDialog.cpp
@@ -58,7 +58,7 @@ if(GTK2_FOUND)
 
 if(CMAKE_HOST_WIN32)
   target_link_libraries(
-      RoboMancer 
+      BaroboLink 
       ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a 
       stkcomms 
       mobotStatic
@@ -69,7 +69,7 @@ if(CMAKE_HOST_WIN32)
       mobotStatic
       ${GTK2_LIBRARIES} )
 else()
-  target_link_libraries(RoboMancer mobotStatic ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a stkcomms pthread bluetooth ${GTK2_LIBRARIES} ${PYTHON_LIBRARIES} )
+  target_link_libraries(BaroboLink mobotStatic ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a stkcomms pthread bluetooth ${GTK2_LIBRARIES} ${PYTHON_LIBRARIES} )
   target_link_libraries(MobotFirmwareUpdate mobotStatic stkcomms pthread ${GTK2_LIBRARIES} )
 endif()
 else(GTK2_FOUND)

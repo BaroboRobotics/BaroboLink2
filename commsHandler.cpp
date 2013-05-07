@@ -1,7 +1,7 @@
 #define WINVER 0x0501
 #include <stdio.h>
 #include <stdlib.h>
-#include "RoboMancer.h"
+#include "BaroboLink.h"
 #include "RecordMobot.h"
 #include "thread_macros.h"
 #ifndef _MSYS
@@ -132,7 +132,7 @@ void* listenThread(void* arg)
           GTK_DIALOG_DESTROY_WITH_PARENT,
           GTK_MESSAGE_ERROR,
           GTK_BUTTONS_OK,
-          "Another instance of RoboMancer is already running. Please terminate the other process and and try again.");
+          "Another instance of BaroboLink is already running. Please terminate the other process and and try again.");
       int rc = gtk_dialog_run(GTK_DIALOG(d));
       exit(0);
       continue;

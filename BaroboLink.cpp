@@ -5,7 +5,7 @@
 #include <Scintilla.h>
 #include <SciLexer.h>
 #include <ScintillaWidget.h>
-#include "RoboMancer.h"
+#include "BaroboLink.h"
 #include "RobotManager.h"
 #ifdef __MACH__
 #include <sys/types.h>
@@ -27,7 +27,7 @@ CRobotManager *g_robotManager;
 const char *g_interfaceFiles[512] = {
   "interface/interface.glade",
   "interface.glade",
-  "../share/RoboMancer/interface.glade",
+  "../share/BaroboLink/interface.glade",
   NULL,
   NULL
 };
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   GError *error = NULL;
 
 #ifdef _WIN32
-  /* Make sure there isn't another instance of RoboMancer running by checking
+  /* Make sure there isn't another instance of BaroboLink running by checking
    * for the existance of a named mutex. */
   HANDLE hMutex;
   hMutex = CreateMutex(NULL, TRUE, TEXT("Global\\RoboMancerMutex"));
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
         GTK_DIALOG_DESTROY_WITH_PARENT,
         GTK_MESSAGE_ERROR,
         GTK_BUTTONS_OK,
-        "Another instance of RoboMancer is already running. Please terminate the other process and try again.");
+        "Another instance of BaroboLink is already running. Please terminate the other process and try again.");
     int rc = gtk_dialog_run(GTK_DIALOG(d));
     exit(0);
   }
@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
   char *datadir = getenv("XDG_DATA_DIRS");
   if(datadir != NULL) {
     g_interfaceFiles[3] = (char*)malloc(sizeof(char)*512);
-    sprintf(g_interfaceFiles[3], "%s/RoboMancer/interface.glade", datadir);
+    sprintf(g_interfaceFiles[3], "%s/BaroboLink/interface.glade", datadir);
   }
 #endif
 
@@ -291,7 +291,7 @@ gboolean on_window1_delete_event(GtkWidget *w)
       GTK_DIALOG_MODAL,
       GTK_MESSAGE_INFO,
       GTK_BUTTONS_NONE,
-      "RoboMancer shutting down..."
+      "BaroboLink shutting down..."
       );
   gtk_window_set_decorated(
       GTK_WINDOW(d),

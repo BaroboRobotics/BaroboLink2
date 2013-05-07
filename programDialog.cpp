@@ -7,7 +7,7 @@
 #include <Scintilla.h>
 #include <SciLexer.h>
 #include <ScintillaWidget.h>
-#include "RoboMancer.h"
+#include "BaroboLink.h"
 #ifdef _MSYS
 #include <windows.h>
 #endif
