@@ -159,7 +159,9 @@ void on_button_saveToProgram_clicked(GtkWidget*widget, gpointer data)
       strcpy(defaultFilename, "untitled.py");
       break;
     case 1:
+      program = g_robotManager->generateCppProgram(playLooped, g_holdOnExit);
       strcpy(defaultFilename, "untitled.cpp");
+      break;
     case 2: // C++/Ch
       program = g_robotManager->generateChProgram(playLooped, g_holdOnExit);
       strcpy(defaultFilename, "untitled.Ch");
