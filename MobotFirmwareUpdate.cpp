@@ -335,7 +335,7 @@ gboolean switch_to_p3_timeout(gpointer data)
   g_stkComms->connectWithTTY(g_comport);
   g_stkComms->programAllAsync(g_hexfilename);
   /* Start the programming progress timeout */
-  g_timeout_add(200, programming_progress_timeout, NULL);
+  g_timeout_add(500, programming_progress_timeout, NULL);
   return FALSE;
 }
 
