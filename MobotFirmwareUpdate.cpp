@@ -47,6 +47,8 @@ char *g_interfaceFiles[512] = {
   NULL
 };
 
+const char* g_hexfilename;
+
 void* findDongleWorkerThread(void* arg)
 {
   /* The argument is a pointer to an int */
@@ -331,10 +333,16 @@ gboolean switch_to_p3_timeout(gpointer data)
       GTK_NOTEBOOK(gtk_builder_get_object(g_builder, "notebook1")));
   g_stkComms = new CStkComms();
   g_stkComms->connectWithTTY(g_comport);
-  g_stkComms->programAllAsync("hexfiles/mobot-il.hex");
+  g_stkComms->programAllAsync(g_hexfilename);
   /* Start the programming progress timeout */
   g_timeout_add(200, programming_progress_timeout, NULL);
   return FALSE;
+}
+
+int fileExists(const char* filename)
+{
+  struct stat s;
+  return (stat(filename, &s) == 0);
 }
 
 void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data)
@@ -344,6 +352,20 @@ void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data)
   /* First, reprogram the serial ID */
   const char* text;
   char buf[5];
+  /* Make sure a file is selected and exists */
+  g_hexfilename = gtk_file_chooser_get_filename(
+      GTK_FILE_CHOOSER(gtk_builder_get_object(g_builder, "filechooserbutton_hexfile")));
+  if(!fileExists(g_hexfilename)) {
+    /* Pop up a warning dialog and abort */
+    GtkWidget* d = gtk_message_dialog_new(
+        GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_ERROR,
+        GTK_BUTTONS_OK,
+        "File does not exist. Please select a valid hex file to flash to the LinkBot.");
+    int rc = gtk_dialog_run(GTK_DIALOG(d));
+    return;
+  }
   text = gtk_entry_get_text(
       GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_serialID")));
 #if 0
