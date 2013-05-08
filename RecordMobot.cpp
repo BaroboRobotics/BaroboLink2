@@ -58,6 +58,7 @@ const char* RecordMobot_getAddress(recordMobot_t* mobot)
 int RecordMobot_record(recordMobot_t* mobot)
 {
 	/* Get the robots positions */
+  char *poseName;
 	double angles[4];
 	Mobot_getJointAngles((mobot_t*)mobot, &angles[0], &angles[1], &angles[2], &angles[3]);
 	struct motion_s* motion;
@@ -67,7 +68,9 @@ int RecordMobot_record(recordMobot_t* mobot)
 	motion->data.pos[1] = angles[1];
 	motion->data.pos[2] = angles[2];
 	motion->data.pos[3] = angles[3];
-	motion->name = strdup("Pose");
+  poseName = (char*)malloc(32);
+  sprintf(poseName, "Pose %d", mobot->numMotions + 1);
+	motion->name = poseName;
 	mobot->motions[mobot->numMotions] = motion;
 	mobot->numMotions++;
 	return 0;

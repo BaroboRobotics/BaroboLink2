@@ -35,6 +35,10 @@ void teachingDialog_refreshRecordedMotions(int currentMotion)
           0, mobot->motions[i]->name,
           1, GTK_STOCK_YES,
           -1);
+      /* "Select" the currently posed row */
+      GtkTreeView *tv = GTK_TREE_VIEW(gtk_builder_get_object(g_builder, "treeview_recordedMotions"));
+      GtkTreeSelection *s = gtk_tree_view_get_selection(tv);
+      gtk_tree_selection_select_iter(s, &iter);
     } else {
       gtk_list_store_set(ls, &iter, 
           0, mobot->motions[i]->name,
@@ -386,6 +390,7 @@ void on_mobotButtonPress(void* data, int button, int buttonDown)
       /* Button A press/release */
       for(i = 0; i < g_robotManager->numConnected(); i++) {
 		    RecordMobot_record(g_robotManager->getMobot(i));
+        Mobot_blinkLED((mobot_t*)g_robotManager->getMobot(i), 100, 1);
 	    }
 	    //teachingDialog_refreshRecordedMotions(-1);
       g_idle_add(refreshTimeout, NULL);
