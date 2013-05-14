@@ -8,7 +8,8 @@ add_subdirectory(iMobot_gumstix_api/libimobotcomms)
 if(CMAKE_HOST_WIN32)
   include(FindPkgConfig)
   pkg_check_modules(GTK2 REQUIRED gtk+-2.0)
-  pkg_check_modules(PYTHON REQUIRED python)
+  #pkg_check_modules(PYTHON REQUIRED python)
+  find_package(PythonLibs 2.7 REQUIRED python)
   add_definitions(-D_MSYS -DMSYS)
   message( "gtk cflags: ${GTK2_CFLAGS}" )
   #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${GTK2_CFLAGS}")
@@ -62,7 +63,8 @@ if(CMAKE_HOST_WIN32)
       ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a 
       stkcomms 
       mobotStatic
-      ${GTK2_LIBRARIES} )
+      ${GTK2_LIBRARIES} 
+      ${PYTHON_LIBRARIES})
   target_link_libraries(
       MobotFirmwareUpdate
       stkcomms 
