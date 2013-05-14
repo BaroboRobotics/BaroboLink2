@@ -678,6 +678,7 @@ void refreshExternalEditor()
       program = g_robotManager->generateChProgram(playLooped, g_holdOnExit);
   }
   scintilla_send_message(g_sci_ext, SCI_INSERTTEXT, 0, (sptr_t)program->c_str());
+  scintilla_send_message(g_sci_ext, SCI_LINESCROLL, 0, 999);
 }
 
 void on_button_copyExternalToClipboard_clicked(GtkWidget *w, gpointer data)
