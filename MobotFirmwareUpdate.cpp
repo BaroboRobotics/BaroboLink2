@@ -362,7 +362,7 @@ void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data)
         GTK_DIALOG_DESTROY_WITH_PARENT,
         GTK_MESSAGE_ERROR,
         GTK_BUTTONS_OK,
-        "File does not exist. Please select a valid hex file to flash to the LinkBot.");
+        "File does not exist. Please select a valid hex file to flash to the Linkbot.");
     int rc = gtk_dialog_run(GTK_DIALOG(d));
     return;
   }
