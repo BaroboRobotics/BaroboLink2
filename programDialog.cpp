@@ -74,7 +74,7 @@ void initProgramDialog(void)
       (sptr_t)10);
 #define SSM(m, w, l) scintilla_send_message(g_sci, m, w, l)
    SSM(SCI_SETLEXER, SCLEX_PYTHON, 0);
-   SSM(SCI_SETKEYWORDS, 0, (sptr_t)"int char float double LinkBot barobo if else for while");
+   SSM(SCI_SETKEYWORDS, 0, (sptr_t)"int char float double Linkbot barobo if else for while");
    SSM(SCI_STYLESETFORE, SCE_C_COMMENT, 0x008000);
    SSM(SCI_STYLESETFORE, SCE_C_COMMENTLINE, 0x008000);
    SSM(SCI_STYLESETFORE, SCE_C_NUMBER, 0x808000);
@@ -110,7 +110,7 @@ void initProgramDialog(void)
       (sptr_t)10);
 #define SSM(m, w, l) scintilla_send_message(g_sci_ext, m, w, l)
   SSM(SCI_SETLEXER, SCLEX_PYTHON, 0);
-  SSM(SCI_SETKEYWORDS, 0, (sptr_t)"int char float double LinkBot barobo if else for while");
+  SSM(SCI_SETKEYWORDS, 0, (sptr_t)"int char float double Linkbot barobo if else for while");
   SSM(SCI_STYLESETFORE, SCE_C_COMMENT, 0x008000);
   SSM(SCI_STYLESETFORE, SCE_C_COMMENTLINE, 0x008000);
   SSM(SCI_STYLESETFORE, SCE_C_NUMBER, 0x808000);
@@ -178,11 +178,11 @@ void on_imagemenuitem_new_activate(GtkWidget* widget, gpointer data)
       "#!/usr/bin/env python\n"
       "from barobo.linkbot import *\n"
       "\n"
-      "myLinkBot = LinkBot()\n"
-      "myLinkBot.connect()\n"
+      "myLinkbot = Linkbot()\n"
+      "myLinkbot.connect()\n"
       "\n"
-      "myLinkBot.move(90, 90, 90)\n"
-      "myLinkBot.move(-90, -90, -90)\n"
+      "myLinkbot.move(90, 90, 90)\n"
+      "myLinkbot.move(-90, -90, -90)\n"
       );
   scintilla_send_message(g_sci, SCI_EMPTYUNDOBUFFER, 0, 0);
   GtkWidget *w;

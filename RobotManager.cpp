@@ -500,9 +500,9 @@ string* CRobotManager::generatePythonProgram(bool looped, bool holdOnExit)
   /* Declare the appropiate number of CMobot variables */
   for(i = 0; i < numConnected(); i++) {
     if(getMobot(i)->mobot.formFactor == MOBOTFORM_I) {
-      sprintf(tbuf, "linkbot%d = LinkBot()\n", i+1);
+      sprintf(tbuf, "linkbot%d = Linkbot()\n", i+1);
     } else if (getMobot(i)->mobot.formFactor == MOBOTFORM_L) {
-      sprintf(tbuf, "linkbot%d = LinkBot()\n", i+1);
+      sprintf(tbuf, "linkbot%d = Linkbot()\n", i+1);
     } else {
       sprintf(tbuf, "mobot%d = Mobot();\n", i+1);
     }
