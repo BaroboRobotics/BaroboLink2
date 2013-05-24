@@ -362,7 +362,7 @@
                         <property name="search_column">0</property>
                         <child>
                           <object class="GtkTreeViewColumn" id="treeviewcolumn4">
-                            <property name="title" translatable="yes">Mobot Serial Number</property>
+                            <property name="title" translatable="yes">Linkbot Serial Number</property>
                             <child>
                               <object class="GtkCellRendererText" id="cellrenderertext1"/>
                               <attributes>
@@ -437,7 +437,7 @@
         </child>
         <child>
           <object class="GtkButton" id="button_scanMobotsAdd">
-            <property name="label" translatable="yes">Add Mobot(s)</property>
+            <property name="label" translatable="yes">Add Robot(s)</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -562,9 +562,9 @@
                       <object class="GtkMenuItem" id="menuitem_DongleDialog">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">Manage the Mobot dongle connection</property>
+                        <property name="tooltip_text" translatable="yes">Manage the Linkbot dongle connection</property>
                         <property name="use_action_appearance">False</property>
-                        <property name="label" translatable="yes">Manage Dongle for Mobot-I and Mobot-L</property>
+                        <property name="label" translatable="yes">Manage Dongle for Linkbots</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_DongleDialog_activate" swapped="no"/>
                       </object>
@@ -575,7 +575,7 @@
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">Reset Mobot firmware to safe mode.</property>
                         <property name="use_action_appearance">False</property>
-                        <property name="label" translatable="yes">Reset Mobot-A Firmware</property>
+                        <property name="label" translatable="yes">Reset Mobot Firmware</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_forceUpgrade_activate" swapped="no"/>
                       </object>
@@ -738,7 +738,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="button_scanMobots">
-                                        <property name="label" translatable="yes">Scan for nearby Mobot-I's and Mobot-L's</property>
+                                        <property name="label" translatable="yes">Scan for nearby Linkbots</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
@@ -801,7 +801,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="xalign">0.94999998807907104</property>
-                            <property name="label" translatable="yes">Select a Mobot to control:</property>
+                            <property name="label" translatable="yes">Select a Robot to control:</property>
                             <property name="justify">right</property>
                           </object>
                           <packing>
@@ -2383,7 +2383,7 @@
                       <object class="GtkLabel" id="label53">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Sensory Information for Mobot-I and Mobot-L</property>
+                        <property name="label" translatable="yes">Sensory Information for Linkbots</property>
                         <attributes>
                           <attribute name="weight" value="ultrabold"/>
                           <attribute name="stretch" value="semi-expanded"/>
@@ -2625,6 +2625,7 @@
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
+                                <property name="padding">10</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
@@ -2720,7 +2721,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
-                                <property name="label" translatable="yes">The buttons on the Mobot perform special actions when using the Pose Teaching Dialog.  
+                                <property name="label" translatable="yes">The buttons on the robot perform special actions when using the Pose Teaching Dialog.  
 
 Button A: Record Pose
 Button B: Play / Stop 
