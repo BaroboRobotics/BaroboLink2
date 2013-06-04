@@ -59,7 +59,7 @@ if(GTK2_FOUND)
 
 if(CMAKE_HOST_WIN32)
   target_link_libraries(
-      BaroboLink 
+      BaroboLink
       ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a 
       stkcomms 
       mobotStatic
