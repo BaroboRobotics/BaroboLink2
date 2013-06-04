@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(BaroboLink)
 
 add_subdirectory(libstkcomms)
-add_subdirectory(iMobot_gumstix_api/libimobotcomms)
+add_subdirectory(libbarobo)
 
 if(CMAKE_HOST_WIN32)
   include(FindPkgConfig)
@@ -30,16 +30,16 @@ if(GTK2_FOUND)
   include_directories(${GTK2_INCLUDE_DIRS})
   include_directories(${PYTHON_INCLUDE_DIRS})
 # For Scintilla
-  include_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms)
-  include_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms/BaroboConfigFile)
-  include_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms/BaroboConfigFile/mxml-2.7)
+  include_directories(${CMAKE_SOURCE_DIR}/libbarobo)
+  include_directories(${CMAKE_SOURCE_DIR}/libbarobo/BaroboConfigFile)
+  include_directories(${CMAKE_SOURCE_DIR}/libbarobo/BaroboConfigFile/mxml-2.7)
   include_directories(${CMAKE_SOURCE_DIR}/scintilla/include)
   include_directories(${LIBSTKCOMMS_SOURCE_DIR})
   link_directories(${LIBSTKCOMMS_BINARY_DIR})
   link_directories(${GTK2_LIBRARY_DIRS})
   link_directories(${PYTHON_LIBRARY_DIRS})
-  link_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms)
-  link_directories(${CMAKE_SOURCE_DIR}/iMobot_gumstix_api/libimobotcomms/BaroboConfigFile)
+  link_directories(${CMAKE_SOURCE_DIR}/libbarobo)
+  link_directories(${CMAKE_SOURCE_DIR}/libbarobo/BaroboConfigFile)
 
   add_executable(BaroboLink
       commsHandler.cpp

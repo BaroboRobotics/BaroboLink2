@@ -324,7 +324,7 @@ gboolean controllerHandlerTimeout(gpointer data)
     /* Get the form factor and disable certain widgets if necessary */
     rc = Mobot_getFormFactor((mobot_t*)g_activeMobot, &form);
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_jointDiagram"));
-    if(rc) {
+    if(rc == -1) {
       /* Normal Mobot. Enable all widgets*/
       setMotorWidgetsSensitive(2, true);
       setMotorWidgetsSensitive(3, true);
