@@ -94,8 +94,8 @@ int RecordMobot_isMoving(recordMobot_t* rmobot)
   mobotJointState_t state;
   int i;
   for(i = 1; i <= 4; i++) {
-    Mobot_getJointState(mobot, (mobotJointId_t)i, &state);
-    if(state == MOBOT_FORWARD || state == MOBOT_BACKWARD) {
+    Mobot_getJointState(mobot, (robotJointId_t)i, &state);
+    if(state == ROBOT_FORWARD || state == ROBOT_BACKWARD) {
       return 1;
     }
   }

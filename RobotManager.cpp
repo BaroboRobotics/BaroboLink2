@@ -368,7 +368,7 @@ string* CRobotManager::generateChProgram(bool looped, bool holdOnExit)
 
   if(holdOnExit) {
     for(i = 0; i < numConnected(); i++) {
-      sprintf(tbuf, "mobot%d.setExitState(MOBOT_HOLD);\n", i+1);
+      sprintf(tbuf, "mobot%d.setExitState(ROBOT_HOLD);\n", i+1);
       buf.assign(tbuf);
       *program += buf;
     }
@@ -471,7 +471,7 @@ string* CRobotManager::generateCppProgram(bool looped, bool holdOnExit)
 
   if(holdOnExit) {
     for(i = 0; i < numConnected(); i++) {
-      sprintf(tbuf, "    mobot%d.setExitState(MOBOT_HOLD);\n", i+1);
+      sprintf(tbuf, "    mobot%d.setExitState(ROBOT_HOLD);\n", i+1);
       buf.assign(tbuf);
       *program += buf;
     }
@@ -572,7 +572,7 @@ string* CRobotManager::generatePythonProgram(bool looped, bool holdOnExit)
 
   if(holdOnExit) {
     for(i = 0; i < numConnected(); i++) {
-      sprintf(tbuf, "mobot%d.setExitState(MOBOT_HOLD)\n", i+1);
+      sprintf(tbuf, "mobot%d.setExitState(ROBOT_HOLD)\n", i+1);
       buf.assign(tbuf);
       *program += buf;
     }

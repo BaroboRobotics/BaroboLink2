@@ -61,10 +61,10 @@ void on_button_setJointsNeutral_clicked(GtkWidget*w, gpointer data)
       continue;
     }
     Mobot_setMovementStateNB(mobot, 
-        MOBOT_NEUTRAL,
-        MOBOT_NEUTRAL,
-        MOBOT_NEUTRAL,
-        MOBOT_NEUTRAL);
+        ROBOT_NEUTRAL,
+        ROBOT_NEUTRAL,
+        ROBOT_NEUTRAL,
+        ROBOT_NEUTRAL);
   }
 }
 
@@ -79,10 +79,10 @@ void on_button_holdJoints_clicked(GtkWidget*w, gpointer data)
       continue;
     }
     Mobot_setMovementStateNB(mobot, 
-        MOBOT_HOLD,
-        MOBOT_HOLD,
-        MOBOT_HOLD,
-        MOBOT_HOLD);
+        ROBOT_HOLD,
+        ROBOT_HOLD,
+        ROBOT_HOLD,
+        ROBOT_HOLD);
   }
 }
 
@@ -238,17 +238,17 @@ void* playThread(void* arg)
         if(g_holdOnExit) {
           Mobot_setMovementStateNB(
               (mobot_t*)robotManager->getMobot(j),
-              MOBOT_HOLD,
-              MOBOT_HOLD,
-              MOBOT_HOLD,
-              MOBOT_HOLD);
+              ROBOT_HOLD,
+              ROBOT_HOLD,
+              ROBOT_HOLD,
+              ROBOT_HOLD);
         } else {
           Mobot_setMovementStateNB(
               (mobot_t*)robotManager->getMobot(j),
-              MOBOT_NEUTRAL,
-              MOBOT_NEUTRAL,
-              MOBOT_NEUTRAL,
-              MOBOT_NEUTRAL);
+              ROBOT_NEUTRAL,
+              ROBOT_NEUTRAL,
+              ROBOT_NEUTRAL,
+              ROBOT_NEUTRAL);
         }
       }
       g_isPlaying = false;
@@ -280,17 +280,17 @@ void* playThread(void* arg)
     if(g_holdOnExit) {
       Mobot_setMovementStateNB(
           (mobot_t*)robotManager->getMobot(j),
-          MOBOT_HOLD,
-          MOBOT_HOLD,
-          MOBOT_HOLD,
-          MOBOT_HOLD);
+          ROBOT_HOLD,
+          ROBOT_HOLD,
+          ROBOT_HOLD,
+          ROBOT_HOLD);
     } else {
       Mobot_setMovementStateNB(
           (mobot_t*)robotManager->getMobot(j),
-          MOBOT_NEUTRAL,
-          MOBOT_NEUTRAL,
-          MOBOT_NEUTRAL,
-          MOBOT_NEUTRAL);
+          ROBOT_NEUTRAL,
+          ROBOT_NEUTRAL,
+          ROBOT_NEUTRAL,
+          ROBOT_NEUTRAL);
     }
   }
   g_isPlaying = false;
