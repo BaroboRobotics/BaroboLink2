@@ -63,6 +63,7 @@ if(CMAKE_HOST_WIN32)
       ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a 
       stkcomms 
       baroboStatic
+      ${CMAKE_SOURCE_DIR}/BaroboLink.res
       ${GTK2_LIBRARIES} 
       ${PYTHON_LIBRARIES})
   target_link_libraries(
