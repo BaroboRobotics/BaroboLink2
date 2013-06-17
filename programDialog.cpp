@@ -150,6 +150,7 @@ void initProgramDialog(void)
   on_imagemenuitem_new_activate(NULL, NULL);
   g_textview_programMessages = GTK_WIDGET(gtk_builder_get_object(g_builder, "textview_programMessages"));
   g_textbuffer_programMessages = GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(g_textview_programMessages)));
+#if 0
   if(
       (pipe2(g_pipefd_stdout, O_NONBLOCK) == -1) ||
       (pipe2(g_pipefd_stdin, 0) == -1) ||
@@ -163,6 +164,7 @@ void initProgramDialog(void)
   dup2(g_pipefd_stderr[1], STDERR_FILENO);
   dup2(g_pipefd_stdin[0], STDIN_FILENO);
   g_timeout_add(500, check_io_timeout, NULL);
+#endif
 }
 
 void check_save_on_dirty()

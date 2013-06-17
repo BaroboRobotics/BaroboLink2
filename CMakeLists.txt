@@ -62,17 +62,17 @@ if(CMAKE_HOST_WIN32)
       BaroboLink
       ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a 
       stkcomms 
-      mobotStatic
+      baroboStatic
       ${GTK2_LIBRARIES} 
       ${PYTHON_LIBRARIES})
   target_link_libraries(
       MobotFirmwareUpdate
       stkcomms 
-      mobotStatic
+      baroboStatic
       ${GTK2_LIBRARIES} )
 else()
-  target_link_libraries(BaroboLink mobotStatic ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a stkcomms pthread bluetooth ${GTK2_LIBRARIES} ${PYTHON_LIBRARIES} )
-  target_link_libraries(MobotFirmwareUpdate mobotStatic stkcomms pthread ${GTK2_LIBRARIES} )
+  target_link_libraries(BaroboLink baroboStatic ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a stkcomms pthread bluetooth ${GTK2_LIBRARIES} ${PYTHON_LIBRARIES} )
+  target_link_libraries(MobotFirmwareUpdate baroboStatic stkcomms pthread ${GTK2_LIBRARIES} )
 endif()
 else(GTK2_FOUND)
   message(FATAL_ERROR "Gtk not found!")

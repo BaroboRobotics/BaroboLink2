@@ -103,9 +103,11 @@ gboolean listenButtonHWRev(gpointer data)
   if(ABS(voltage-5) < 0.1) {
     rc = TRUE;
   } else if (ABS(voltage - 2.5) < 0.1) {
+    printf("rev 3 detected\n");
     g_reflashHWRev = 3;
     rc = FALSE;
   } else if (ABS(voltage - 1.685) < 0.1) {
+    printf("rev 4 detected\n");
     g_reflashHWRev = 4;
     rc = FALSE;
   }
