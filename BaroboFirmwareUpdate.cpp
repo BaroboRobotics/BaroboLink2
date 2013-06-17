@@ -31,7 +31,7 @@
 #include <sys/stat.h>
 #include <mobot.h>
 #include <libstkcomms.hpp>
-#include "MobotFirmwareUpdate.h"
+#include "BaroboFirmwareUpdate.h"
 #include "thread_macros.h"
 
 #define MAX_THREADS 20
