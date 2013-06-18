@@ -22,6 +22,8 @@
 !define REG_START_MENU "Start Menu Folder"
 
 var SM_Folder
+var chhome
+var OUT
 
 ######################################################################
 
@@ -46,6 +48,10 @@ InstallDir "$PROGRAMFILES\BaroboLink"
 ######################################################################
 
 !include "MUI.nsh"
+!include "LogicLib.nsh"
+!include "NSISpcre.nsh"
+
+!insertmacro REReplace
 
 !define MUI_ABORTWARNING
 !define MUI_UNABORTWARNING
@@ -145,6 +151,29 @@ File "hexfiles\linkbot_76.hex"
 File "hexfiles\rev3.hex"
 File "hexfiles\rev3_safe.hex"
 File "hexfiles\rev4.hex"
+
+# Install the Ch package
+# First, figure out if Ch in installed already.
+ReadRegStr $chhome HKLM SOFTWARE\SoftIntegration "CHHOME"
+
+# Change slashes to backslashes
+${REReplace} $OUT "\/" $chhome "\\" 1
+
+${If} $OUT == ""
+  StrCpy $OUT "C:\Ch"
+${EndIf}
+SetOutPath "$OUT\package"
+File /r "..\chmobot\chmobot"
+
+GetVersion::WindowsPlatformArchitecture
+Pop $R0
+DetailPrint $R0
+${If} $R0 == "64"
+Rename "$OUT\package\chmobot\dl\Win64\libmobot.dl" "$OUT\package\chmobot\dl\libmobot.dl" 
+${Else}
+Rename "$OUT\package\chmobot\dl\Windows\libmobot.dl" "$OUT\package\chmobot\dl\libmobot.dl" 
+${Endif}
+
 SectionEnd
 
 ######################################################################
@@ -153,7 +182,7 @@ Section -Icons_Reg
 SetOutPath "$INSTDIR"
 WriteUninstaller "$INSTDIR\uninstall.exe"
 
-!ifdef REG_START_MENU
+!ifdef REG_START_MENU 
 !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 CreateDirectory "$SMPROGRAMS\$SM_Folder"
 CreateShortCut "$SMPROGRAMS\$SM_Folder\${APP_NAME}.lnk" "$INSTDIR\${MAIN_APP_EXE}"
