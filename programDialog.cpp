@@ -35,7 +35,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <Python.h>
+//#include <Python.h>
 #include <fcntl.h>
 #include "thread_macros.h"
 
@@ -537,6 +537,7 @@ void on_button_exportExe_clicked(GtkWidget* widget, gpointer data)
 
 void* run_program_thread(void* arg)
 {
+#if 0
   char* sourceCode = (char*)arg;
   /* Use the python interpreter */
   Py_Initialize();
@@ -544,6 +545,8 @@ void* run_program_thread(void* arg)
   //Py_Finalize();
   free(sourceCode);
   g_programRunning = false;
+#endif
+  return NULL;
 }
 
 void on_button_runExe_clicked(GtkWidget* widget, gpointer data)
