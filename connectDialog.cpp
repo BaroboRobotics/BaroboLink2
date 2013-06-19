@@ -111,13 +111,13 @@ gboolean progressBarConnectUpdate(gpointer data)
       case -1: 
         sprintf(buf, 
             "Connection to %s failed: Remote device could not be found. Please check \n"
-            "that the Mobot is turned on and the address is correct.",
+            "that the robot is turned on and the address is correct.",
             g_robotManager->getEntry(a->connectIndex));
         gtk_label_set_text(label, buf);
         break;
       case -2:
         sprintf(buf,
-            "Connection to %s failed: Another device is already connected to the Mobot.",
+            "Connection to %s failed: Another device is already connected to the robot.",
             g_robotManager->getEntry(a->connectIndex));
         gtk_label_set_text(label, buf);
         break;
@@ -143,8 +143,8 @@ gboolean progressBarConnectUpdate(gpointer data)
         break;
       case -6:
         sprintf(buf,
-            "Connection to %s failed: The Mobot firmware version does not match the \n"
-            "BaroboLink version. Please make sure that both your Mobot firmware and \n"
+            "Connection to %s failed: The robot firmware version does not match the \n"
+            "BaroboLink version. Please make sure that both your robot firmware and \n"
             "your BaroboLink software are up to date.",
             g_robotManager->getEntry(a->connectIndex));
         gtk_label_set_text(label,buf);

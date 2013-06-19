@@ -174,10 +174,10 @@ gboolean findDongleTimeout(gpointer data)
     /* Set up the labels and stuff */
     switch(g_mobot->formFactor) {
       case MOBOTFORM_I:
-        sprintf(buf, "Mobot-I");
+        sprintf(buf, "Linkbot-I");
         break;
       case MOBOTFORM_L:
-        sprintf(buf, "Mobot-L");
+        sprintf(buf, "Linkbot-L");
         break;
       default:
         sprintf(buf, "Unkown");
@@ -212,7 +212,7 @@ gboolean findDongleTimeout(gpointer data)
         GTK_DIALOG_DESTROY_WITH_PARENT,
         GTK_MESSAGE_QUESTION,
         GTK_BUTTONS_OK,
-        "No attached Mobot was detected. Please make sure there is a Mobot connected to the computer with a Micro-USB cable and that the Mobot is powered on.");
+        "No attached Linkbot was detected. Please make sure there is a Linkbot connected to the computer with a Micro-USB cable and that the Linkbot is powered on.");
     gtk_dialog_run(GTK_DIALOG(d));
     gtk_widget_hide(GTK_WIDGET(d));
     rc = FALSE;
@@ -250,7 +250,7 @@ int main(int argc, char* argv[])
         GTK_DIALOG_DESTROY_WITH_PARENT,
         GTK_MESSAGE_ERROR,
         GTK_BUTTONS_OK,
-        "An instance of BaroboLink is already running. Please terminate Robomancer before running the Mobot Firmware Update Utility.");
+        "An instance of BaroboLink is already running. Please terminate Robomancer before running the Barobo Firmware Update Utility.");
     int rc = gtk_dialog_run(GTK_DIALOG(d));
     exit(0);
   }

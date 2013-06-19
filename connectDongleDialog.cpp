@@ -195,7 +195,7 @@ void askConnectDongle(void)
       GTK_DIALOG_DESTROY_WITH_PARENT,
       GTK_MESSAGE_QUESTION,
       GTK_BUTTONS_YES_NO,
-      "There is currently no Mobot dongle associated with BaroboLink. Would you like to add one now?");
+      "There is currently no Linkbot dongle associated with BaroboLink. Would you like to add one now?");
   int rc = gtk_dialog_run(GTK_DIALOG(d));
   if(rc == GTK_RESPONSE_YES) {
     showConnectDongleDialog();
@@ -278,7 +278,7 @@ void on_button_connectDongleConnect_clicked(GtkWidget *widget, gpointer data)
           GTK_DIALOG_DESTROY_WITH_PARENT,
           GTK_MESSAGE_WARNING,
           GTK_BUTTONS_CLOSE,
-          "No dongle detected. Please make sure that a Mobot is currently "
+          "No dongle detected. Please make sure that a Linkbot is currently "
           "connected to the computer with a USB cable and turned on.");
       gtk_dialog_run(GTK_DIALOG(d));
       gtk_widget_destroy(d);
