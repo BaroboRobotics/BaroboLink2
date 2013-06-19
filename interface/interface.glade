@@ -504,13 +504,13 @@
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Python</col>
+        <col id="0" translatable="yes">Ch</col>
       </row>
       <row>
         <col id="0" translatable="yes">C++</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Ch</col>
+        <col id="0" translatable="yes">Python</col>
       </row>
     </data>
   </object>
@@ -635,16 +635,6 @@
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <signal name="activate" handler="on_imagemenuitem_about_activate" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem" id="menuitem_demos">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
-                        <property name="label" translatable="yes">Demos</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_menuitem_demos_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>

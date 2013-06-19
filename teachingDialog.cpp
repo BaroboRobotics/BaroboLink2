@@ -177,17 +177,18 @@ void on_button_saveToProgram_clicked(GtkWidget*widget, gpointer data)
   int languageindex = gtk_combo_box_get_active(GTK_COMBO_BOX(combobox));
   char defaultFilename[128];
   switch(languageindex) {
-    case 0: // Python
-      program = g_robotManager->generatePythonProgram(playLooped, g_holdOnExit);
-      strcpy(defaultFilename, "untitled.py");
+    case 0: // C++/Ch
+      program = g_robotManager->generateChProgram(playLooped, g_holdOnExit);
+      strcpy(defaultFilename, "untitled.ch");
       break;
     case 1:
       program = g_robotManager->generateCppProgram(playLooped, g_holdOnExit);
       strcpy(defaultFilename, "untitled.cpp");
       break;
-    case 2: // C++/Ch
-      program = g_robotManager->generateChProgram(playLooped, g_holdOnExit);
-      strcpy(defaultFilename, "untitled.Ch");
+    case 2: // Python
+      program = g_robotManager->generatePythonProgram(playLooped, g_holdOnExit);
+      strcpy(defaultFilename, "untitled.py");
+      break;
   }
   
   /* Open a save file dialog */
