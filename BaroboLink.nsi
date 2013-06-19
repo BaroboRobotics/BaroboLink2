@@ -117,6 +117,7 @@ File "libstdc++-6.dll"
 File "BaroboFirmwareUpdate.exe"
 File "pthreadGC2.dll"
 File "zlib1.dll"
+File "Barobo_Linkbot_Driver.exe"
 SetOutPath "$INSTDIR\interface"
 File "interface\16px_move_back.png"
 File "interface\16px_move_back.svg"
@@ -144,6 +145,10 @@ File "interface\rotate_right.png"
 File "interface\rotate_right.svg"
 File "interface\stop.png"
 File "interface\stop.svg"
+SetOutPath "$INSTDIR\docs"
+File "libbarobo\docs\barobo.pdf"
+File "libbarobo\docs\index.html"
+File "libbarobo\docs\Barobo.png"
 SetOutPath "$INSTDIR\hexfiles"
 File "hexfiles\linkbot_68.hex"
 File "hexfiles\linkbot_75.hex"
@@ -161,17 +166,29 @@ ${REReplace} $OUT "\/" $chhome "\\" 1
 
 ${If} $OUT == ""
   StrCpy $OUT "C:\Ch"
+${Else}
+  RMDir /r "$OUT\package\chbarobo"
+  Delete "$OUT\toolkit\include\mobot.h"
+  Delete "$OUT\toolkit\include\linkbot.h"
 ${EndIf}
 SetOutPath "$OUT\package"
-File /r "..\chmobot\chmobot"
+File /r "..\chmobot\chbarobo"
 
 GetVersion::WindowsPlatformArchitecture
 Pop $R0
 DetailPrint $R0
 ${If} $R0 == "64"
-Rename "$OUT\package\chmobot\dl\Win64\libmobot.dl" "$OUT\package\chmobot\dl\libmobot.dl" 
+Rename "$OUT\package\chbarobo\dl\Win64\libmobot.dl" "$OUT\package\chbarobo\dl\libmobot.dl" 
+Rename "$OUT\package\chbarobo\dl\Win64\Microsoft.VC80.CRT" "$OUT\package\chbarobo\dl\Microsoft.VC80.CRT" 
 ${Else}
-Rename "$OUT\package\chmobot\dl\Windows\libmobot.dl" "$OUT\package\chmobot\dl\libmobot.dl" 
+Rename "$OUT\package\chbarobo\dl\Windows\libmobot.dl" "$OUT\package\chbarobo\dl\libmobot.dl" 
+Rename "$OUT\package\chbarobo\dl\Windows\Microsoft.VC90.CRT" "$OUT\package\chbarobo\dl\Microsoft.VC90.CRT" 
+${Endif}
+
+# Copy chbarobo header files to toolkit/include directory
+${If} $chhome != ""
+CopyFiles $OUT\package\chbarobo\include\mobot.h $OUT\toolkit\include\mobot.h
+CopyFiles $OUT\package\chbarobo\include\linkbot.h $OUT\toolkit\include\linkbot.h
 ${Endif}
 
 SectionEnd

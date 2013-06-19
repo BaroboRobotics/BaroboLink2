@@ -250,6 +250,21 @@ void on_imagemenuitem_about_activate(GtkWidget *widget, gpointer data)
 void on_menuitem_installLinkbotDriver_activate(GtkWidget *widget, gpointer data)
 {
 #ifdef _MSYS
+  STARTUPINFO si;
+  PROCESS_INFORMATION pi;
+  memset(&si, 0, sizeof(STARTUPINFO));
+  memset(&pi, 0, sizeof(PROCESS_INFORMATION));
+  CreateProcess(
+	"Barobo_Linkbot_Driver.exe",
+	"",
+	NULL,
+	NULL,
+	FALSE,
+	NORMAL_PRIORITY_CLASS,
+	NULL,
+	NULL,
+	&si,
+	&pi);
 #endif
 }
 
