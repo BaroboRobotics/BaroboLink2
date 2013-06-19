@@ -70,6 +70,7 @@ G_MODULE_EXPORT void on_aboutdialog_activate_link(GtkAboutDialog *label, gchar* 
 G_MODULE_EXPORT gboolean on_window1_delete_event(GtkWidget *w);
 G_MODULE_EXPORT void on_menuitem_help_activate(GtkWidget *widget, gpointer data);
 G_MODULE_EXPORT void on_menuitem_demos_activate(GtkWidget *widget, gpointer data);
+G_MODULE_EXPORT void on_menuitem_installLinkbotDriver_activate(GtkWidget *widget, gpointer data);
 
 /* Connect Dialog */
 G_MODULE_EXPORT void on_button_connect_addRobot_clicked(GtkWidget* widget, gpointer data);

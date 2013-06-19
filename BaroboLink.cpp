@@ -247,6 +247,12 @@ void on_imagemenuitem_about_activate(GtkWidget *widget, gpointer data)
   gtk_dialog_run(GTK_DIALOG(w));
 }
 
+void on_menuitem_installLinkbotDriver_activate(GtkWidget *widget, gpointer data)
+{
+#ifdef _MSYS
+#endif
+}
+
 void on_aboutdialog_activate_link(GtkAboutDialog *label, gchar* uri, gpointer data)
 {
 #ifdef _MSYS
