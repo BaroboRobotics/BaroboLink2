@@ -33,6 +33,10 @@
 #endif
 #include <sys/stat.h>
 #include "thread_macros.h"
+#ifdef _MSYS
+#include <windows.h>
+
+#endif
 
 GtkBuilder *g_builder;
 GtkWidget *g_window;
@@ -196,10 +200,32 @@ int getIterModelFromTreeSelection(GtkTreeView *treeView, GtkTreeModel **model, G
 void on_menuitem_help_activate(GtkWidget *widget, gpointer data)
 {
 #ifdef _MSYS
+  /* Get the install path of BaroboLink from the registry */
+  DWORD size;
+  char path[1024];
+  HKEY key;
+  RegOpenKeyEx(
+      HKEY_LOCAL_MACHINE,
+      "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\BaroboLink.exe",
+      0,
+      KEY_QUERY_VALUE,
+      &key);
+
+  RegQueryValueEx(
+      key,
+      "PATH",
+      NULL,
+      NULL,
+      (LPBYTE)path,
+      &size);
+  path[size] = '\0';
+
+  strcat(path, "\\docs\\index.html");
+
   ShellExecute(
       NULL,
       "open",
-      "C:\\ch\\package\\chmobot\\docs\\index.html",
+      path,
       NULL,
       NULL,
       SW_SHOW);
