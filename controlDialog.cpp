@@ -166,6 +166,7 @@ void setMotionsSensitive(bool sensitive)
   }
 }
 
+void hideJoint4Widgets();
 void initControlDialog(void)
 {
 #define BUTTON(x) \
@@ -217,6 +218,22 @@ void initControlDialog(void)
       0, str, -1);
 #include "gaits.x.h"
 #undef GAIT
+
+  /* Initialize default appearance to be that of Linkbot-I */
+  setMotorWidgetsSensitive(2, false);
+  setMotorWidgetsSensitive(3, true);
+  setMotorWidgetsSensitive(4, false);
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_jointDiagram"));
+  gtk_image_set_from_file(GTK_IMAGE(w), "interface/DOF_joint_diagram.png");
+  setColorWidgetSensitive(true);
+  setAccelWidgetSensitive(true);
+  setRollingControlSensitive(true);
+  setMotionsSensitive(false);
+  hideJoint4Widgets();
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos2"));
+  gtk_range_set_range(GTK_RANGE(w), -180, 180);
+  w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos3"));
+  gtk_range_set_range(GTK_RANGE(w), -180, 180);
 
   /* Initialize thread stuff */
   MUTEX_INIT(&g_activeMobotLock);
