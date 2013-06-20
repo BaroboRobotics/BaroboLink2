@@ -275,22 +275,46 @@ void on_imagemenuitem_about_activate(GtkWidget *widget, gpointer data)
 
 void on_menuitem_installLinkbotDriver_activate(GtkWidget *widget, gpointer data)
 {
-#ifdef _MSYS
+#if 0
+  /* Get the install path of BaroboLink from the registry */
+  DWORD size;
+  char path[1024];
+  HKEY key;
+  RegOpenKeyEx(
+      HKEY_LOCAL_MACHINE,
+      "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\BaroboLink.exe",
+      0,
+      KEY_QUERY_VALUE,
+      &key);
+
+  RegQueryValueEx(
+      key,
+      "PATH",
+      NULL,
+      NULL,
+      (LPBYTE)path,
+      &size);
+  path[size] = '\0';
+  strcat(path, "\\Barobo_Linkbot_Driver.exe");
+
   STARTUPINFO si;
   PROCESS_INFORMATION pi;
   memset(&si, 0, sizeof(STARTUPINFO));
   memset(&pi, 0, sizeof(PROCESS_INFORMATION));
+  /*
   CreateProcess(
-	"Barobo_Linkbot_Driver.exe",
+	path,
 	"",
 	NULL,
 	NULL,
 	FALSE,
-	NORMAL_PRIORITY_CLASS,
+	0x0200,
 	NULL,
 	NULL,
 	&si,
 	&pi);
+  */
+  system(path);
 #endif
 }
 
