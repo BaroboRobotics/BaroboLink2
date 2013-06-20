@@ -84,6 +84,9 @@ void* findDongleWorkerThread(void* arg)
   mobot = (mobot_t*)malloc(sizeof(mobot_t));
   Mobot_init(mobot);
   rc = Mobot_connectWithTTY(mobot, buf);
+  if(rc != 0) {
+    rc = Mobot_connectWithTTY_500kbaud(mobot, buf);
+  }
   if(rc == 0) {
     /* We found the Mobot */
     MUTEX_LOCK(&g_giant_lock);
@@ -371,6 +374,56 @@ void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data)
   /* First, reprogram the serial ID */
   const char* text;
   char buf[5];
+  text = gtk_entry_get_text(
+      GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_serialID")));
+  if(strlen(text)==4) {
+    for(i = 0; i < 5; i++) {
+      buf[i] = toupper(text[i]);
+    }
+    if(strcmp(g_mobot->serialID, buf)) {
+      Mobot_setID(g_mobot, buf);
+    }
+  } else {
+    /* Pop up warning dialog */
+    GtkWidget* d = gtk_message_dialog_new(
+        GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_WARNING,
+        GTK_BUTTONS_OK,
+        "The Serial ID does not have a valid format. The serial ID should consist of four alpha-numeric characters.");
+    gtk_dialog_run(GTK_DIALOG(d));
+    gtk_widget_hide(d);
+    gtk_widget_set_sensitive(widget, true);
+    return;
+  }
+
+#ifndef _WIN32
+  g_hexfilename = strdup("hexfiles/linkbot_latest.hex");
+#else
+  /* Get the install path of BaroboLink from the registry */
+  DWORD size;
+  char path[1024];
+  HKEY key;
+  RegOpenKeyEx(
+      HKEY_LOCAL_MACHINE,
+      "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\BaroboLink.exe",
+      0,
+      KEY_QUERY_VALUE,
+      &key);
+
+  RegQueryValueEx(
+      key,
+      "PATH",
+      NULL,
+      NULL,
+      (LPBYTE)path,
+      &size);
+  path[size] = '\0';
+
+  strcat(path, "\\hexfiles\\linkbot_latest.hex");
+  g_hexfilename = strdup(path);
+#endif
+  
   /* Make sure a file is selected and exists */
   g_hexfilename = gtk_file_chooser_get_filename(
       GTK_FILE_CHOOSER(gtk_builder_get_object(g_builder, "filechooserbutton_hexfile")));
@@ -385,28 +438,7 @@ void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data)
     int rc = gtk_dialog_run(GTK_DIALOG(d));
     return;
   }
-  text = gtk_entry_get_text(
-      GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_serialID")));
-#if 0
-  if(strlen(text)==4) {
-    for(i = 0; i < 5; i++) {
-      buf[i] = toupper(text[i]);
-    }
-    Mobot_setID(g_mobot, buf);
-  } else {
-    /* Pop up warning dialog */
-    GtkWidget* d = gtk_message_dialog_new(
-        GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
-        GTK_DIALOG_DESTROY_WITH_PARENT,
-        GTK_MESSAGE_WARNING,
-        GTK_BUTTONS_OK,
-        "The Serial ID does not have a valid format. The serial ID should consist of four alpha-numeric characters.");
-    gtk_dialog_run(GTK_DIALOG(d));
-    gtk_widget_hide(d);
-    gtk_widget_set_sensitive(widget, true);
-    return;
-  }
-#endif
+
   /* Next, reboot the module and go on to the next page */
   Mobot_reboot(g_mobot);
   Mobot_disconnect(g_mobot);
