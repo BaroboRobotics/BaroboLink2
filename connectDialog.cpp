@@ -33,6 +33,23 @@ void on_button_connect_addRobot_clicked(GtkWidget* widget, gpointer data)
 {
   GtkEntry* entry = GTK_ENTRY(gtk_builder_get_object(g_builder, "entry_connect_newAddress"));
   const gchar* addr = gtk_entry_get_text(entry);
+  if(
+      (strlen(addr) != 4) &&
+      (strlen(addr) != strlen("00:00:00:00:00:00"))
+    )
+  {
+    /* Pop up a dialog box */
+    GtkWidget* d = gtk_message_dialog_new(
+        GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_ERROR,
+        GTK_BUTTONS_OK,
+        "Error: The address \"%s\" is not a valid Linkbot ID or Bluetooth address.",
+        addr);
+    gtk_dialog_run(GTK_DIALOG(d));
+    gtk_widget_hide(GTK_WIDGET(d));
+    return;
+  }
   g_robotManager->addEntry(addr);
   g_robotManager->write();
   refreshConnectDialog();
