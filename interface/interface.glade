@@ -581,16 +581,6 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="menuitem_installLinkbotDriver">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
-                        <property name="label" translatable="yes">Install Linkbot Driver</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_menuitem_installLinkbotDriver_activate" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem5">
                         <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
@@ -801,7 +791,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="xalign">0.94999998807907104</property>
-                            <property name="label" translatable="yes">Select a Robot to control:</property>
+                            <property name="label" translatable="yes">Select a robot to control:</property>
                             <property name="justify">right</property>
                           </object>
                           <packing>
