@@ -253,7 +253,7 @@ int main(int argc, char* argv[])
         GTK_DIALOG_DESTROY_WITH_PARENT,
         GTK_MESSAGE_ERROR,
         GTK_BUTTONS_OK,
-        "An instance of BaroboLink is already running. Please terminate Robomancer before running the Barobo Firmware Update Utility.");
+        "An instance of BaroboLink is already running. Please terminate BaroboLink before running the Barobo Firmware Update Utility.");
     int rc = gtk_dialog_run(GTK_DIALOG(d));
     exit(0);
   }
