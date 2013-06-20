@@ -179,10 +179,10 @@ Pop $R0
 DetailPrint $R0
 ${If} $R0 == "64"
 Rename "$OUT\package\chbarobo\dl\Win64\libmobot.dl" "$OUT\package\chbarobo\dl\libmobot.dl" 
-Rename "$OUT\package\chbarobo\dl\Win64\Microsoft.VC80.CRT" "$OUT\package\chbarobo\dl\Microsoft.VC80.CRT" 
+Rename "$OUT\package\chbarobo\dl\Win64\Microsoft.VC90.CRT" "$OUT\package\chbarobo\dl\Microsoft.VC90.CRT" 
 ${Else}
 Rename "$OUT\package\chbarobo\dl\Windows\libmobot.dl" "$OUT\package\chbarobo\dl\libmobot.dl" 
-Rename "$OUT\package\chbarobo\dl\Windows\Microsoft.VC90.CRT" "$OUT\package\chbarobo\dl\Microsoft.VC90.CRT" 
+Rename "$OUT\package\chbarobo\dl\Windows\Microsoft.VC80.CRT" "$OUT\package\chbarobo\dl\Microsoft.VC80.CRT" 
 ${Endif}
 
 # Copy chbarobo header files to toolkit/include directory
