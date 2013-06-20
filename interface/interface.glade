@@ -1426,6 +1426,19 @@
                                               </packing>
                                             </child>
                                             <child>
+                                              <object class="GtkLabel" id="label_speed1">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="label" translatable="yes">45</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="padding">3</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
                                               <object class="GtkVScale" id="vscale_motorspeed1">
                                                 <property name="height_request">180</property>
                                                 <property name="visible">True</property>
@@ -1434,13 +1447,14 @@
                                                 <property name="fill_level">120</property>
                                                 <property name="round_digits">0</property>
                                                 <property name="digits">0</property>
+                                                <property name="draw_value">False</property>
                                                 <signal name="button-press-event" handler="on_vscale_motorspeed1_button_press_event" swapped="no"/>
                                                 <signal name="button-release-event" handler="on_vscale_motorspeed1_button_release_event" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="expand">True</property>
                                                 <property name="fill">True</property>
-                                                <property name="position">1</property>
+                                                <property name="position">2</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -1458,7 +1472,7 @@
                                               <packing>
                                                 <property name="expand">False</property>
                                                 <property name="fill">False</property>
-                                                <property name="position">2</property>
+                                                <property name="position">3</property>
                                               </packing>
                                             </child>
                                           </object>
@@ -1487,6 +1501,19 @@
                                               </packing>
                                             </child>
                                             <child>
+                                              <object class="GtkLabel" id="label_speed2">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="label" translatable="yes">45</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="padding">3</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
                                               <object class="GtkVScale" id="vscale_motorspeed2">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
@@ -1494,13 +1521,14 @@
                                                 <property name="fill_level">120</property>
                                                 <property name="round_digits">0</property>
                                                 <property name="digits">0</property>
+                                                <property name="draw_value">False</property>
                                                 <signal name="button-press-event" handler="on_vscale_motorspeed2_button_press_event" swapped="no"/>
                                                 <signal name="button-release-event" handler="on_vscale_motorspeed2_button_release_event" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="expand">True</property>
                                                 <property name="fill">True</property>
-                                                <property name="position">1</property>
+                                                <property name="position">2</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -1518,7 +1546,7 @@
                                               <packing>
                                                 <property name="expand">False</property>
                                                 <property name="fill">False</property>
-                                                <property name="position">2</property>
+                                                <property name="position">3</property>
                                               </packing>
                                             </child>
                                           </object>
@@ -1547,6 +1575,19 @@
                                               </packing>
                                             </child>
                                             <child>
+                                              <object class="GtkLabel" id="label_speed3">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="label" translatable="yes">45</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="padding">3</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
                                               <object class="GtkVScale" id="vscale_motorspeed3">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
@@ -1554,13 +1595,14 @@
                                                 <property name="fill_level">120</property>
                                                 <property name="round_digits">0</property>
                                                 <property name="digits">0</property>
+                                                <property name="draw_value">False</property>
                                                 <signal name="button-press-event" handler="on_vscale_motorspeed3_button_press_event" swapped="no"/>
                                                 <signal name="button-release-event" handler="on_vscale_motorspeed3_button_release_event" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="expand">True</property>
                                                 <property name="fill">True</property>
-                                                <property name="position">1</property>
+                                                <property name="position">2</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -1578,7 +1620,7 @@
                                               <packing>
                                                 <property name="expand">False</property>
                                                 <property name="fill">False</property>
-                                                <property name="position">2</property>
+                                                <property name="position">3</property>
                                               </packing>
                                             </child>
                                           </object>
@@ -1607,6 +1649,19 @@
                                               </packing>
                                             </child>
                                             <child>
+                                              <object class="GtkLabel" id="label_speed4">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="label" translatable="yes">45</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="padding">3</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
                                               <object class="GtkVScale" id="vscale_motorspeed4">
                                                 <property name="height_request">200</property>
                                                 <property name="visible">True</property>
@@ -1615,13 +1670,14 @@
                                                 <property name="fill_level">120</property>
                                                 <property name="round_digits">0</property>
                                                 <property name="digits">0</property>
+                                                <property name="draw_value">False</property>
                                                 <signal name="button-press-event" handler="on_vscale_motorspeed4_button_press_event" swapped="no"/>
                                                 <signal name="button-release-event" handler="on_vscale_motorspeed4_button_release_event" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="expand">True</property>
                                                 <property name="fill">True</property>
-                                                <property name="position">1</property>
+                                                <property name="position">2</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -1639,13 +1695,13 @@
                                               <packing>
                                                 <property name="expand">False</property>
                                                 <property name="fill">False</property>
-                                                <property name="position">2</property>
+                                                <property name="position">3</property>
                                               </packing>
                                             </child>
                                           </object>
                                           <packing>
-                                            <property name="expand">True</property>
-                                            <property name="fill">True</property>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
                                             <property name="padding">2</property>
                                             <property name="position">3</property>
                                           </packing>

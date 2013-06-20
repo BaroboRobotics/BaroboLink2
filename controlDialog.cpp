@@ -251,6 +251,7 @@ void hideJoint4Widgets()
   gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos4")));
   gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorPos4")));
   gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "label_motorPos4")));
+  gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "label_speed4")));
 
   gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "label20")));
   gtk_widget_hide( GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed4")));
@@ -268,6 +269,7 @@ void showJoint4Widgets()
   gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos4")));
   gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "entry_motorPos4")));
   gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "label_motorPos4")));
+  gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "label_speed4")));
 
   gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "label20")));
   gtk_widget_show( GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed4")));
@@ -298,7 +300,8 @@ gboolean controllerHandlerTimeout(gpointer data)
     *vscale_motorPos[4],
     *label_motorPos[4],
     *vscale_motorspeed[4],
-    *vscale_accel[4];
+    *vscale_accel[4],
+    *label_motorSpeed[4];
   static int init = 1;
 
   if(init) {
@@ -314,6 +317,10 @@ gboolean controllerHandlerTimeout(gpointer data)
     vscale_accel[1] = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accely"));
     vscale_accel[2] = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelz"));
     vscale_accel[3] = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelmag"));
+    label_motorSpeed[0] = GTK_WIDGET(gtk_builder_get_object(g_builder, "label_speed1"));
+    label_motorSpeed[1] = GTK_WIDGET(gtk_builder_get_object(g_builder, "label_speed2"));
+    label_motorSpeed[2] = GTK_WIDGET(gtk_builder_get_object(g_builder, "label_speed3"));
+    label_motorSpeed[3] = GTK_WIDGET(gtk_builder_get_object(g_builder, "label_speed4"));
     init = 0;
   }
 
@@ -425,6 +432,8 @@ gboolean controllerHandlerTimeout(gpointer data)
       } 
       sprintf(buf, "%3.2lf", g_positionValues[i]); 
       gtk_label_set_text(GTK_LABEL(label_motorPos[i]), buf); 
+      sprintf(buf, "%3.0lf", g_speedSliderValues[i]);
+      gtk_label_set_text(GTK_LABEL(label_motorSpeed[i]), buf); 
     } else {
       gtk_range_set_value(GTK_RANGE(vscale_motorPos[i]), 0); 
       sprintf(buf, "N/A"); 
@@ -444,7 +453,14 @@ gboolean controllerHandlerTimeout(gpointer data)
     }
 
     for(i = 0; i < 4; i++) {
-      gtk_range_set_value(GTK_RANGE(vscale_motorspeed[i]), RAD2DEG(angles[i])); 
+      if(motorMask & (1<<i)) {
+        gtk_range_set_value(GTK_RANGE(vscale_motorspeed[i]), RAD2DEG(angles[i])); 
+        sprintf(buf, "%3.0lf", RAD2DEG(angles[i]));
+        gtk_label_set_text(GTK_LABEL(label_motorSpeed[i]), buf);
+      } else {
+        gtk_widget_set_sensitive(vscale_motorspeed[i], false);
+        gtk_label_set_text(GTK_LABEL(label_motorSpeed[i]), "N/A");
+      }
     }
     g_initSpeeds = 0;
   }
