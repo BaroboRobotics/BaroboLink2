@@ -406,11 +406,11 @@ to close this program.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Flashing process complete. You may now
-disconnect the Mobot.
+disconnect the Linkbot.
 
-If you would like to flash another Mobot, 
+If you would like to flash another Linkbot, 
 you may attach it now and click "Flash 
-Another Mobot". Otherwise, click "Close"
+Another Linkbot". Otherwise, click "Close"
 to close this program.</property>
               </object>
               <packing>
@@ -426,7 +426,7 @@ to close this program.</property>
                 <property name="layout_style">spread</property>
                 <child>
                   <object class="GtkButton" id="button_flashAnother1">
-                    <property name="label" translatable="yes">Flash Another Mobot</property>
+                    <property name="label" translatable="yes">Flash Another Linkbot</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
