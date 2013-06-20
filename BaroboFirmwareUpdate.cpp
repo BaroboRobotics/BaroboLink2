@@ -253,7 +253,7 @@ int main(int argc, char* argv[])
         GTK_DIALOG_DESTROY_WITH_PARENT,
         GTK_MESSAGE_ERROR,
         GTK_BUTTONS_OK,
-        "An instance of BaroboLink is already running. Please terminate Robomancer before running the Barobo Firmware Update Utility.");
+        "An instance of BaroboLink is already running. Please terminate BaroboLink before running the Barobo Firmware Update Utility.");
     int rc = gtk_dialog_run(GTK_DIALOG(d));
     exit(0);
   }
@@ -356,6 +356,7 @@ gboolean switch_to_p3_timeout(gpointer data)
   g_stkComms = new CStkComms();
   g_stkComms->connectWithTTY(g_comport);
   g_stkComms->programAllAsync(g_hexfilename);
+  sleep(2);
   /* Start the programming progress timeout */
   g_timeout_add(500, programming_progress_timeout, NULL);
   return FALSE;
@@ -447,7 +448,7 @@ void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data)
   Mobot_disconnect(g_mobot);
   free(g_mobot);
   g_mobot = NULL;
-  g_timeout_add(3000, switch_to_p3_timeout, NULL);
+  g_timeout_add(1000, switch_to_p3_timeout, NULL);
 }
 
 void on_button_flashAnother_clicked(GtkWidget* widget, gpointer data)
