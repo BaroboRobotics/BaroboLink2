@@ -61,6 +61,7 @@ void initScanMobotsDialog()
 void* scanMobotsThread(void* arg)
 {
   g_scanMobotsActive = 1;
+  Mobot_clearQueriedAddresses((mobot_t*)g_mobotParent);
   Mobot_queryAddresses((mobot_t*)g_mobotParent);
 #ifndef _WIN32
   sleep(3);
