@@ -356,7 +356,11 @@ gboolean switch_to_p3_timeout(gpointer data)
   g_stkComms = new CStkComms();
   g_stkComms->connectWithTTY(g_comport);
   g_stkComms->programAllAsync(g_hexfilename);
+#ifndef _WIN32
   sleep(2);
+#else
+  Sleep(2000);
+#endif
   /* Start the programming progress timeout */
   g_timeout_add(500, programming_progress_timeout, NULL);
   return FALSE;
@@ -424,10 +428,12 @@ void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data)
   strcat(path, "\\hexfiles\\linkbot_latest.hex");
   g_hexfilename = strdup(path);
 #endif
-  
+ 
+#if 0 
   /* Make sure a file is selected and exists */
   g_hexfilename = gtk_file_chooser_get_filename(
       GTK_FILE_CHOOSER(gtk_builder_get_object(g_builder, "filechooserbutton_hexfile")));
+#endif
   if(!fileExists(g_hexfilename)) {
     /* Pop up a warning dialog and abort */
     GtkWidget* d = gtk_message_dialog_new(
@@ -435,7 +441,8 @@ void on_button_p2_yes_clicked(GtkWidget* widget, gpointer data)
         GTK_DIALOG_DESTROY_WITH_PARENT,
         GTK_MESSAGE_ERROR,
         GTK_BUTTONS_OK,
-        "File does not exist. Please select a valid hex file to flash to the Linkbot.");
+        "File \"%s\" does not exist. \nPlease select a valid hex file to flash to the Linkbot.",
+        g_hexfilename);
     int rc = gtk_dialog_run(GTK_DIALOG(d));
     return;
   }
