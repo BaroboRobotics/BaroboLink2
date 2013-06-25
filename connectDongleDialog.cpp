@@ -55,6 +55,13 @@ void* findDongleThread(void* arg)
     g_dongle = mobot;
     COND_SIGNAL(&foundDongle_cond);
     MUTEX_UNLOCK(&foundDongle_lock);
+  } else if (!Mobot_connectWithTTY_500kbaud((mobot_t*)mobot, buf)) {
+    MUTEX_LOCK(&foundDongle_lock);
+    foundDongle = 1;
+    foundDonglePort = portnum;
+    g_dongle = mobot;
+    COND_SIGNAL(&foundDongle_cond);
+    MUTEX_UNLOCK(&foundDongle_lock);
   } else {
     Mobot_disconnect((mobot_t*)mobot);
     free(mobot);
@@ -152,9 +159,9 @@ int findDongle(void)
   /* At this point, all worker threads have been started, but a dongle has not
    * yet been found... Wait for 1 second, and only 1 second */
 #ifdef _WIN32
-  Sleep(1000);
+  Sleep(4000);
 #else
-  sleep(1);
+  sleep(4);
 #endif
   MUTEX_LOCK(&foundDongle_lock);
   if(foundDongle) {
