@@ -348,6 +348,13 @@ gboolean controllerHandlerTimeout(gpointer data)
     /* Get the form factor and disable certain widgets if necessary */
     rc = Mobot_getFormFactor((mobot_t*)g_activeMobot, &form);
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_jointDiagram"));
+    for(i = 0; i < 4; i++) {
+      gtk_range_set_range(GTK_RANGE(vscale_motorspeed[i]), 0, rad2deg(g_activeMobot->mobot.maxSpeed[0]));
+      sprintf(buf, "Joint Speed([0, %.0lf] deg/sec)", rad2deg(g_activeMobot->mobot.maxSpeed[0]));
+      gtk_label_set_text(
+          GTK_LABEL(gtk_builder_get_object(g_builder, "label_jointSpeed")),
+          buf);
+    }
     if(rc == -1) {
       /* Normal Mobot. Enable all widgets*/
       setMotorWidgetsSensitive(2, true);

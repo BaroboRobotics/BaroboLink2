@@ -1403,7 +1403,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <child>
-                                      <object class="GtkLabel" id="label29">
+                                      <object class="GtkLabel" id="label_jointSpeed">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="label" translatable="yes">Joint Speed ([0, 120] deg/sec)</property>
@@ -1454,7 +1454,8 @@
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="inverted">True</property>
-                                                <property name="fill_level">120</property>
+                                                <property name="restrict_to_fill_level">False</property>
+                                                <property name="fill_level">0</property>
                                                 <property name="round_digits">0</property>
                                                 <property name="digits">0</property>
                                                 <property name="draw_value">False</property>
@@ -1528,7 +1529,8 @@
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="inverted">True</property>
-                                                <property name="fill_level">120</property>
+                                                <property name="restrict_to_fill_level">False</property>
+                                                <property name="fill_level">0</property>
                                                 <property name="round_digits">0</property>
                                                 <property name="digits">0</property>
                                                 <property name="draw_value">False</property>
@@ -1602,6 +1604,7 @@
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="inverted">True</property>
+                                                <property name="restrict_to_fill_level">False</property>
                                                 <property name="fill_level">120</property>
                                                 <property name="round_digits">0</property>
                                                 <property name="digits">0</property>
@@ -1677,6 +1680,7 @@
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="inverted">True</property>
+                                                <property name="restrict_to_fill_level">False</property>
                                                 <property name="fill_level">120</property>
                                                 <property name="round_digits">0</property>
                                                 <property name="digits">0</property>
