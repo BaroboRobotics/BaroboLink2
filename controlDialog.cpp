@@ -914,8 +914,6 @@ void on_button_setSpeeds_clicked(GtkWidget* wid, gpointer data)
     g_speedEntryValuesValid[n-1] = true; \
     /* Set the slider value */ \
     w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorspeed" #n)); \
-    if(value < 0) { value = 0; } \
-    if(value > 120) {value = 120;} \
     gtk_range_set_value(GTK_RANGE(w), value);  \
   } else { \
     g_speedEntryValuesValid[n-1] = false; \
