@@ -200,13 +200,16 @@ void askConnectDongle(void)
   GtkWidget* d = gtk_message_dialog_new(
       GTK_WINDOW(gtk_builder_get_object(g_builder, "window1")),
       GTK_DIALOG_DESTROY_WITH_PARENT,
-      GTK_MESSAGE_QUESTION,
-      GTK_BUTTONS_YES_NO,
-      "There is currently no Linkbot dongle associated with BaroboLink. Would you like to add one now?");
+      GTK_MESSAGE_ERROR,
+      GTK_BUTTONS_OK,
+      "No attached dongle could be detected on this computer. Please check the following items to ensure the best connection to your Linkbot:\n"
+      "- The Linkbot is turned on.\n"
+      "- The robot's 4 digit serial ID has been entered correctly.\n"
+      "- The device driver for the Linkbot has been installed.\n"
+      "- The USB cable is firmly plugged into both the computer and the Linkbot.\n"
+      "- The USB cable is in good working order.\n"
+      "- If the previous five steps do not work, try restarting both the robot and BaroboLink.\n");
   int rc = gtk_dialog_run(GTK_DIALOG(d));
-  if(rc == GTK_RESPONSE_YES) {
-    showConnectDongleDialog();
-  }
   gtk_widget_destroy(d);
 }
 
