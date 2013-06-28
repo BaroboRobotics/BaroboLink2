@@ -1406,7 +1406,7 @@
                                       <object class="GtkLabel" id="label_jointSpeed">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Joint Speed ([0, 120] deg/sec)</property>
+                                        <property name="label" translatable="yes">Joint Speed ([0, 240] deg/sec)</property>
                                       </object>
                                       <packing>
                                         <property name="expand">True</property>
