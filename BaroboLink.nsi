@@ -5,14 +5,14 @@
 ############################################################################################
 
 !define APP_NAME "BaroboLink"
-!define FIRMUP_APP_NAME "Barobo Firmware Utility"
+!define FIRMUP_APP_NAME "Barobo Firmware Update Utility"
 !define COMP_NAME "Barobo"
 !define WEB_SITE "http://www.barobo.com"
-!define SHORTVERSION "01.00.00"
+!define SHORTVERSION "1.1.0"
 !define VERSION "${SHORTVERSION}.00"
 !define COPYRIGHT "Barobo  © 2013"
 !define DESCRIPTION "Application"
-!define INSTALLER_NAME "BaroboLink_setup-${SHORTVERSION}.exe"
+!define INSTALLER_NAME "BaroboLink-${SHORTVERSION}.exe"
 !define MAIN_APP_EXE "BaroboLink.exe"
 !define FIRMUP_APP_EXE "BaroboFirmwareUpdate.exe"
 !define INSTALL_TYPE "SetShellVarContext all"
