@@ -691,15 +691,16 @@ void refreshExternalEditor()
   combobox = GTK_WIDGET(gtk_builder_get_object(g_builder, "combobox_outputLanguage"));
   int languageindex = gtk_combo_box_get_active(GTK_COMBO_BOX(combobox));
   switch(languageindex) {
-    case 0: // Python
-      program = g_robotManager->generatePythonProgram(playLooped, g_holdOnExit);
+    case 0: // Ch
+      program = g_robotManager->generateChProgram(playLooped, g_holdOnExit);
       break;
     case 1:
       // c++
       program = g_robotManager->generateCppProgram(playLooped, g_holdOnExit);
       break;
-    case 2: // Ch
-      program = g_robotManager->generateChProgram(playLooped, g_holdOnExit);
+    case 2: // Python
+      program = g_robotManager->generatePythonProgram(playLooped, g_holdOnExit);
+      break;
   }
   scintilla_send_message(g_sci_ext, SCI_INSERTTEXT, 0, (sptr_t)program->c_str());
   scintilla_send_message(g_sci_ext, SCI_LINESCROLL, 0, 999);
