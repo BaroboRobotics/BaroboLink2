@@ -8,7 +8,7 @@
 !define FIRMUP_APP_NAME "Barobo Firmware Update Utility"
 !define COMP_NAME "Barobo"
 !define WEB_SITE "http://www.barobo.com"
-!define SHORTVERSION "1.1.0"
+!define SHORTVERSION "1.2.0"
 !define VERSION "${SHORTVERSION}.00"
 !define COPYRIGHT "Barobo  © 2013"
 !define DESCRIPTION "Application"
@@ -21,6 +21,8 @@
 !define UNINSTALL_PATH "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
 
 !define REG_START_MENU "Start Menu Folder"
+
+!finalize '"C:/Program Files/Microsoft SDKs/Windows/v7.0A/bin/signtool.exe" sign "${INSTALLER_NAME}"'
 
 var SM_Folder
 var chhome
