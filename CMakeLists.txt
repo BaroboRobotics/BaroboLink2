@@ -4,6 +4,8 @@ project(BaroboLink)
 
 add_subdirectory(libstkcomms)
 add_subdirectory(libbarobo)
+exec_program(cat ARGS VERSION.TXT OUTPUT_VARIABLE barobolink_version)
+add_definitions(-DBAROBOLINK_VERSION=${barobolink_version})
 
 if(CMAKE_HOST_WIN32)
   include(FindPkgConfig)
@@ -74,7 +76,74 @@ if(CMAKE_HOST_WIN32)
 else()
   target_link_libraries(BaroboLink baroboStatic ${CMAKE_SOURCE_DIR}/scintilla/bin/scintilla.a stkcomms pthread bluetooth ${GTK2_LIBRARIES} ${PYTHON_LIBRARIES} )
   target_link_libraries(BaroboFirmwareUpdate baroboStatic stkcomms pthread ${GTK2_LIBRARIES} )
+  install(TARGETS BaroboLink BaroboFirmwareUpdate
+          RUNTIME DESTINATION bin )
+  install(FILES 
+      interface/16px_move_back.png
+      interface/16px_move_back.svg
+      interface/16px_move_forward.png
+      interface/16px_move_forward.svg
+      interface/16px_stop.png
+      interface/16px_stop.svg
+      interface/DOF_joint_diagram.png
+      interface/face_backward.svg
+      interface/imobot_diagram.png
+      interface/imobot_diagram.svg
+      interface/iMobot.png
+      interface/inch_left.svg
+      interface/inch_right.svg
+      interface/interface.glade
+      interface/interfacepatch.patch
+      interface/lface_forward.svg
+      interface/mobotfirmwareupdateinterface.glade
+      interface/move_back.png
+      interface/move_back.svg
+      interface/move_forward.png
+      interface/move_forward.svg
+      interface/rotate_left.png
+      interface/rotate_left.svg
+      interface/rotate_right.png
+      interface/rotate_right.svg
+      interface/stop.png
+      interface/stop.svg
+      DESTINATION share/BaroboLink)
 endif()
 else(GTK2_FOUND)
   message(FATAL_ERROR "Gtk not found!")
 endif(GTK2_FOUND)
+
+if(CMAKE_SYSTEM_NAME MATCHES [Ll]inux)
+  string(TOLOWER "${CPACK_PACKAGE_NAME}" CPACK_PACKAGE_NAME_LOWERCASE)
+  find_program(DPKG_PROGRAM dpkg DOC "dpkg program of Debian-based systems")
+  if(DPKG_PROGRAM)
+       execute_process(COMMAND ${DPKG_PROGRAM} --print-architecture
+                 OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE
+                 OUTPUT_STRIP_TRAILING_WHITESPACE)
+       set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME_LOWERCASE}_${PROJECT_VERSION}-${CPACK_DEBIAN_PACKAGE_REVISION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}") 
+  else(DPKG_PROGRAM)
+       set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME_LOWERCASE}_${PROJECT_VERSION}-${CPACK_DEBIAN_PACKAGE_REVISION}_${CMAKE_SYSTEM_NAME}")
+  endif(DPKG_PROGRAM)
+
+  INCLUDE (InstallRequiredSystemLibraries)
+
+  SET (CPACK_SET_DESTDIR "on")
+  SET (CPACK_PACKAGE_NAME "BaroboLink")
+  SET (CPACK_PACKAGING_INSTALL_PREFIX "/tmp")
+  SET (CPACK_GENERATOR "DEB")
+
+  SET (VERSION 1.2.0)
+  SET (CPACK_DEBIAN_PACKAGE_VERSION ${VERSION})
+  SET (CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+  SET (CPACK_DEBIAN_PACKAGE_SECTION "Science & Engineering")
+  SET (CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
+#SET (CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libgladeui-1-11, libglib2.0-0, libgtk2.0-0")
+  set (CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+
+  SET (CPACK_PACKAGE_DESCRIPTION "Barobo Robot Controller")
+  SET (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Graphical Interface for controlling, programming, and interacting with Barobo Mobots and Linkbots.")
+  SET (CPACK_PACKAGE_CONTACT "Barobo david@barobo.com")
+  SET (CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
+
+  SET (CPACK_COMPONENTS_ALL Libraries ApplicationData)
+  INCLUDE (CPack)
+endif()

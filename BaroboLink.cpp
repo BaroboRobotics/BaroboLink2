@@ -265,11 +265,15 @@ void on_menuitem_demos_activate(GtkWidget *widget, gpointer data)
 #endif
 }
 
+#define Q(x) QUOTE(x)
+#define QUOTE(x) #x
+
 void on_imagemenuitem_about_activate(GtkWidget *widget, gpointer data)
 {
   /* Find the about dialog and show it */
   GtkWidget *w;
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "aboutdialog"));
+  gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(w), Q(BAROBOLINK_VERSION));
   gtk_dialog_run(GTK_DIALOG(w));
 }
 
