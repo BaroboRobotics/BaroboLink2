@@ -107,6 +107,10 @@ else()
       interface/stop.png
       interface/stop.svg
       DESTINATION share/BaroboLink)
+  install(FILES
+      BaroboLink.desktop 
+      DESTINATION share/applications
+      )
 endif()
 else(GTK2_FOUND)
   message(FATAL_ERROR "Gtk not found!")
@@ -141,7 +145,8 @@ if(CMAKE_SYSTEM_NAME MATCHES [Ll]inux)
 
   SET (CPACK_PACKAGE_DESCRIPTION "Barobo Robot Controller")
   SET (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Graphical Interface for controlling, programming, and interacting with Barobo Mobots and Linkbots.")
-  SET (CPACK_PACKAGE_CONTACT "Barobo david@barobo.com")
+  SET (CPACK_PACKAGE_CONTACT "david@barobo.com")
+  SET (CPACK_DEBIAN_PACKAGE_MAINTAINER "David Ko <david@barobo.com>")
   SET (CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
 
   SET (CPACK_COMPONENTS_ALL Libraries ApplicationData)

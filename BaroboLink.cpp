@@ -51,9 +51,12 @@ const char *g_interfaceFiles[512] = {
   "interface/interface.glade",
   "interface.glade",
   "../share/BaroboLink/interface.glade",
+  "/usr/share/BaroboLink/interface.glade",
   NULL,
   NULL
 };
+
+char *g_interfaceDir;
 
 int main(int argc, char* argv[])
 {
@@ -90,6 +93,11 @@ int main(int argc, char* argv[])
     g_interfaceFiles[3] = (char*)malloc(sizeof(char)*512);
     sprintf(g_interfaceFiles[3], "%s/BaroboLink/interface.glade", datadir);
   }
+  g_interfaceDir = strdup(datadir);
+#elif defined _WIN32
+  g_interfaceDir = strdup("interface");
+#else
+  g_interfaceDir = strdup("/usr/share/BaroboLink");
 #endif
 
   /* Load the UI */

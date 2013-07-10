@@ -9,7 +9,7 @@
 !define WEB_SITE "http://www.barobo.com"
 !define COPYRIGHT "Barobo  © 2013"
 !define DESCRIPTION "Driver"
-!define INSTALLER_NAME "Barobo_Linkbot_Driver_Win7.exe"
+!define INSTALLER_NAME "Barobo_Linkbot_Driver.exe"
 !define INSTALL_TYPE "SetShellVarContext all"
 !define VERSION "00.00.01.00"
 

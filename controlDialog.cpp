@@ -224,7 +224,9 @@ void initControlDialog(void)
   setMotorWidgetsSensitive(3, true);
   setMotorWidgetsSensitive(4, false);
   w = GTK_WIDGET(gtk_builder_get_object(g_builder, "image_jointDiagram"));
-  gtk_image_set_from_file(GTK_IMAGE(w), "interface/DOF_joint_diagram.png");
+  char buf[256];
+  sprintf(buf, "%s/DOF_joint_diagram.png", g_interfaceDir);
+  gtk_image_set_from_file(GTK_IMAGE(w), buf);
   setColorWidgetSensitive(true);
   setAccelWidgetSensitive(true);
   setRollingControlSensitive(true);
@@ -294,7 +296,7 @@ gboolean controllerHandlerTimeout(gpointer data)
   int rc;
   static int form;
   static int formFactorInitialized;
-  char buf[80];
+  char buf[256];
 
   static GtkWidget 
     *vscale_motorPos[4],
@@ -365,7 +367,8 @@ gboolean controllerHandlerTimeout(gpointer data)
       setRollingControlSensitive(true);
       setMotionsSensitive(true);
       showJoint4Widgets();
-      gtk_image_set_from_file(GTK_IMAGE(w), "interface/imobot_diagram.png");
+      sprintf(buf, "%s/imobot_diagram.png", g_interfaceDir);
+      gtk_image_set_from_file(GTK_IMAGE(w), buf);
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos2"));
       gtk_range_set_range(GTK_RANGE(w), -90, 90);
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos3"));
@@ -381,7 +384,8 @@ gboolean controllerHandlerTimeout(gpointer data)
       setRollingControlSensitive(false);
       setMotionsSensitive(false);
       hideJoint4Widgets();
-      gtk_image_set_from_file(GTK_IMAGE(w), "interface/DOF_joint_diagram.png");
+      sprintf(buf, "%s/DOF_joint_diagram.png", g_interfaceDir);
+      gtk_image_set_from_file(GTK_IMAGE(w), buf);
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos2"));
       gtk_range_set_range(GTK_RANGE(w), -180, 180);
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos3"));
@@ -392,7 +396,8 @@ gboolean controllerHandlerTimeout(gpointer data)
       setMotorWidgetsSensitive(2, false);
       setMotorWidgetsSensitive(3, true);
       setMotorWidgetsSensitive(4, false);
-      gtk_image_set_from_file(GTK_IMAGE(w), "interface/DOF_joint_diagram.png");
+      sprintf(buf, "%s/DOF_joint_diagram.png", g_interfaceDir);
+      gtk_image_set_from_file(GTK_IMAGE(w), buf);
       setColorWidgetSensitive(true);
       setAccelWidgetSensitive(true);
       setRollingControlSensitive(true);
@@ -413,7 +418,8 @@ gboolean controllerHandlerTimeout(gpointer data)
       setRollingControlSensitive(true);
       setMotionsSensitive(true);
       showJoint4Widgets();
-      gtk_image_set_from_file(GTK_IMAGE(w), "interface/imobot_diagram.png");
+      sprintf(buf, "%s/imobot_diagram.png", g_interfaceDir);
+      gtk_image_set_from_file(GTK_IMAGE(w), buf);
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos2"));
       gtk_range_set_range(GTK_RANGE(w), -90, 90);
       w = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_motorPos3"));

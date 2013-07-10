@@ -56,6 +56,7 @@ extern GtkWidget *g_scieditor_ext;
 extern ScintillaObject *g_sci_ext;
 extern recordMobot_t* g_activeMobot;
 extern recordMobot_t *g_mobotParent;
+extern char *g_interfaceDir;
 #ifdef _MSYS
 extern HANDLE g_activeMobotLock;
 #else
