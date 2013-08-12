@@ -21,9 +21,6 @@
 #include <string.h>
 #define PLAT_GTK 1
 #define GTK
-#include <Scintilla.h>
-#include <SciLexer.h>
-#include <ScintillaWidget.h>
 #include "BaroboLink.h"
 #include "RobotManager.h"
 #ifdef __MACH__
@@ -42,9 +39,7 @@
 GtkBuilder *g_builder;
 GtkWidget *g_window;
 GtkWidget *g_scieditor;
-ScintillaObject *g_sci;
 GtkWidget *g_scieditor_ext;
-ScintillaObject *g_sci_ext;
 
 CRobotManager *g_robotManager;
 
@@ -163,7 +158,6 @@ void initialize()
   g_notebookRoot = GTK_NOTEBOOK(gtk_builder_get_object(g_builder, "notebook_root"));
   g_reflashConnectSpinner = GTK_SPINNER(gtk_builder_get_object(g_builder, "spinner_reflashConnect"));
   initControlDialog();
-  initProgramDialog();
   initScanMobotsDialog();
   initializeComms();
 
