@@ -66,7 +66,6 @@ void teachingDialog_refreshRecordedMotions(int currentMotion)
     }
   }
   g_dnd = true;
-  refreshExternalEditor();
 }
 
 void on_button_setJointsNeutral_clicked(GtkWidget*w, gpointer data)
@@ -613,5 +612,4 @@ void on_liststore_recordedMotions_row_inserted(
    
 void on_combobox_outputLanguage_changed(GtkComboBox *w, gpointer data)
 {
-  refreshExternalEditor();
 }

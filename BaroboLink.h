@@ -29,9 +29,6 @@
 
 #define PLAT_GTK 1
 #define GTK
-#include <Scintilla.h>
-#include <SciLexer.h>
-#include <ScintillaWidget.h>
 #include <math.h>
 #define RAD2DEG(x) ((x)*180.0/M_PI)
 #define DEG2RAD(x) ((x)*M_PI/180.0)
@@ -51,9 +48,7 @@ extern GtkBuilder *g_builder;
 extern CRobotManager *g_robotManager;
 extern GtkWidget *g_window;
 extern GtkWidget *g_scieditor;
-extern ScintillaObject *g_sci;
 extern GtkWidget *g_scieditor_ext;
-extern ScintillaObject *g_sci_ext;
 extern recordMobot_t* g_activeMobot;
 extern recordMobot_t *g_mobotParent;
 extern char *g_interfaceDir;
