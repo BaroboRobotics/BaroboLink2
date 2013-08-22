@@ -303,7 +303,8 @@ gboolean controllerHandlerTimeout(gpointer data)
     *label_motorPos[4],
     *vscale_motorspeed[4],
     *vscale_accel[4],
-    *label_motorSpeed[4];
+    *label_motorSpeed[4],
+    *label_accel[4];
   static int init = 1;
 
   if(init) {
@@ -314,6 +315,8 @@ gboolean controllerHandlerTimeout(gpointer data)
       label_motorPos[i] = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
       sprintf(buf, "vscale_motorspeed%d", i+1);
       vscale_motorspeed[i] = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
+      sprintf(buf, "label_accel%d", i+1);
+      label_accel[i] = GTK_WIDGET(gtk_builder_get_object(g_builder, buf)); 
     }
     vscale_accel[0] = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accelx"));
     vscale_accel[1] = GTK_WIDGET(gtk_builder_get_object(g_builder, "vscale_accely"));
@@ -484,6 +487,8 @@ gboolean controllerHandlerTimeout(gpointer data)
     /* Set acceleration sliders */
     for(i = 0; i < 4; i++) {
       gtk_range_set_value(GTK_RANGE(vscale_accel[i]), g_accelerationValues[i]);
+      sprintf(buf, "%0.2lf", g_accelerationValues[i]);
+      gtk_label_set_text(GTK_LABEL(label_accel[i]), buf);
     }
   }
 
