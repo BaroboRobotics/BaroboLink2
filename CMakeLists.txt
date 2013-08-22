@@ -64,7 +64,8 @@ if(CMAKE_HOST_WIN32)
       baroboStatic
       ${CMAKE_SOURCE_DIR}/BaroboLink.res
       ${GTK2_LIBRARIES} 
-      ${PYTHON_LIBRARIES})
+      ${PYTHON_LIBRARIES}
+      pthread)
   target_link_libraries(
       BaroboFirmwareUpdate
       stkcomms 

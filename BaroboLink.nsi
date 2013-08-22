@@ -8,7 +8,7 @@
 !define FIRMUP_APP_NAME "Barobo Firmware Update Utility"
 !define COMP_NAME "Barobo"
 !define WEB_SITE "http://www.barobo.com"
-!define SHORTVERSION "1.1.0"
+!define SHORTVERSION "1.5.0"
 !define VERSION "${SHORTVERSION}.00"
 !define COPYRIGHT "Barobo  © 2013"
 !define DESCRIPTION "Application"
@@ -17,10 +17,13 @@
 !define FIRMUP_APP_EXE "BaroboFirmwareUpdate.exe"
 !define INSTALL_TYPE "SetShellVarContext all"
 !define REG_ROOT "HKLM"
+!define REG_DRIVER "Software\Barobo\BaroboDriver"
 !define REG_APP_PATH "Software\Microsoft\Windows\CurrentVersion\App Paths\${MAIN_APP_EXE}"
 !define UNINSTALL_PATH "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
 
 !define REG_START_MENU "Start Menu Folder"
+
+!finalize '"C:/Program Files/Microsoft SDKs/Windows/v7.0A/bin/signtool.exe" sign "${INSTALLER_NAME}"'
 
 var SM_Folder
 var chhome
@@ -169,6 +172,7 @@ ${REReplace} $OUT "\/" $chhome "\\" 1
 
 ${If} $OUT == ""
   StrCpy $OUT "C:\Ch"
+  CreateDirectory "C:\Ch\toolkit\include"
 ${Else}
   RMDir /r "$OUT\package\chbarobo"
   Delete "$OUT\toolkit\include\mobot.h"
@@ -189,10 +193,16 @@ Rename "$OUT\package\chbarobo\dl\Windows\Microsoft.VC80.CRT" "$OUT\package\chbar
 ${Endif}
 
 # Copy chbarobo header files to toolkit/include directory
-${If} $chhome != ""
 CopyFiles $OUT\package\chbarobo\include\mobot.h $OUT\toolkit\include\mobot.h
 CopyFiles $OUT\package\chbarobo\include\linkbot.h $OUT\toolkit\include\linkbot.h
-${Endif}
+
+# See if the Linkbot driver has been installed yet
+ReadRegStr $0 ${REG_ROOT} ${REG_DRIVER} "VERSION"
+${If} $0 == ""
+  # Install the driver
+  ExecWait "$INSTDIR\Drivers\Barobo_Linkbot_Driver.exe"
+  WriteRegStr ${REG_ROOT} ${REG_DRIVER} "VERSION" "1.0"
+${EndIf}
 
 SectionEnd
 
