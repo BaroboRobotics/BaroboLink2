@@ -162,8 +162,6 @@ void initialize()
   initializeComms();
 
   /* Try to connect to a DOF dongle if possible */
-  g_mobotParent = (recordMobot_t*)malloc(sizeof(recordMobot_t));
-  RecordMobot_init(g_mobotParent, "DONGLE");
   const char *dongle;
   int i, rc;
   GtkLabel* l = GTK_LABEL(gtk_builder_get_object(g_builder, "label_connectDongleCurrentPort"));
@@ -173,6 +171,8 @@ void initialize()
       i++, dongle = g_robotManager->getDongle(i)
      ) 
   {
+    g_mobotParent = (recordMobot_t*)malloc(sizeof(recordMobot_t));
+    RecordMobot_init(g_mobotParent, "DONGLE");
     rc = Mobot_connectWithTTY((mobot_t*)g_mobotParent, dongle);
     if(rc == 0) {
       Mobot_setDongleMobot((mobot_t*)g_mobotParent);
