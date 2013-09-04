@@ -1,3 +1,4 @@
 [submodule "libbarobo"]
 	path = libbarobo
 	url = git@github.com:Barobo/libbarobo.git
+	branch = barobolink2
