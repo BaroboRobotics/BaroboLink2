@@ -1,0 +1,547 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2D742FF017D81EDB0004CFDF /* liblibbarobo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D742FEF17D81B650004CFDF /* liblibbarobo.a */; };
+		2D742FF617D823140004CFDF /* RecordMobot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D742FF417D823140004CFDF /* RecordMobot.cpp */; };
+		2D742FF717D823140004CFDF /* RecordMobot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D742FF417D823140004CFDF /* RecordMobot.cpp */; };
+		2DAED25617D8130A0067E98D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DAED25517D8130A0067E98D /* Cocoa.framework */; };
+		2DAED26017D8130A0067E98D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DAED25E17D8130A0067E98D /* InfoPlist.strings */; };
+		2DAED26217D8130A0067E98D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAED26117D8130A0067E98D /* main.m */; };
+		2DAED26617D8130A0067E98D /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2DAED26417D8130A0067E98D /* Credits.rtf */; };
+		2DAED26917D8130A0067E98D /* BAROBOAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAED26817D8130A0067E98D /* BAROBOAppDelegate.m */; };
+		2DAED26C17D8130B0067E98D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DAED26A17D8130B0067E98D /* MainMenu.xib */; };
+		2DAED27417D8130B0067E98D /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DAED27317D8130B0067E98D /* SenTestingKit.framework */; };
+		2DAED27517D8130B0067E98D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DAED25517D8130A0067E98D /* Cocoa.framework */; };
+		2DAED27D17D8130B0067E98D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DAED27B17D8130B0067E98D /* InfoPlist.strings */; };
+		2DAED28017D8130B0067E98D /* BaroboLinkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAED27F17D8130B0067E98D /* BaroboLinkTests.m */; };
+		2DAED28D17D813E10067E98D /* barobo-logo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2DAED28C17D813E10067E98D /* barobo-logo.icns */; };
+		2DAED28F17D814150067E98D /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DAED28E17D814150067E98D /* IOKit.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2D742FEE17D81B650004CFDF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D742FEA17D81B650004CFDF /* libbarobo.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2DAED1DF17D804490067E98D;
+			remoteInfo = libbarobo;
+		};
+		2DAED27617D8130B0067E98D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DAED24A17D8130A0067E98D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DAED25117D8130A0067E98D;
+			remoteInfo = BaroboLink;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		2D742FEA17D81B650004CFDF /* libbarobo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libbarobo.xcodeproj; path = ../libbarobo/libbarobo.xcodeproj; sourceTree = "<group>"; };
+		2D742FF117D81F3E0004CFDF /* linkbot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = linkbot.h; path = /Users/adamruggles/Documents/projects/BaroboLink2/apple/libbarobo/../../libbarobo/linkbot.h; sourceTree = "<absolute>"; };
+		2D742FF217D81F500004CFDF /* mobot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mobot.h; path = /Users/adamruggles/Documents/projects/BaroboLink2/apple/libbarobo/../../libbarobo/mobot.h; sourceTree = "<absolute>"; };
+		2D742FF417D823140004CFDF /* RecordMobot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RecordMobot.cpp; path = ../../../src/RecordMobot.cpp; sourceTree = "<group>"; };
+		2D742FF517D823140004CFDF /* RecordMobot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecordMobot.h; path = ../../../src/RecordMobot.h; sourceTree = "<group>"; };
+		2DAED25217D8130A0067E98D /* BaroboLink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BaroboLink.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DAED25517D8130A0067E98D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		2DAED25817D8130A0067E98D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		2DAED25917D8130A0067E98D /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		2DAED25A17D8130A0067E98D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		2DAED25D17D8130A0067E98D /* BaroboLink-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BaroboLink-Info.plist"; sourceTree = "<group>"; };
+		2DAED25F17D8130A0067E98D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2DAED26117D8130A0067E98D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2DAED26317D8130A0067E98D /* BaroboLink-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BaroboLink-Prefix.pch"; sourceTree = "<group>"; };
+		2DAED26517D8130A0067E98D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		2DAED26717D8130A0067E98D /* BAROBOAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BAROBOAppDelegate.h; sourceTree = "<group>"; };
+		2DAED26817D8130A0067E98D /* BAROBOAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BAROBOAppDelegate.m; sourceTree = "<group>"; };
+		2DAED26B17D8130B0067E98D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		2DAED27217D8130B0067E98D /* BaroboLinkTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BaroboLinkTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DAED27317D8130B0067E98D /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		2DAED27A17D8130B0067E98D /* BaroboLinkTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BaroboLinkTests-Info.plist"; sourceTree = "<group>"; };
+		2DAED27C17D8130B0067E98D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2DAED27E17D8130B0067E98D /* BaroboLinkTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaroboLinkTests.h; sourceTree = "<group>"; };
+		2DAED27F17D8130B0067E98D /* BaroboLinkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaroboLinkTests.m; sourceTree = "<group>"; };
+		2DAED28C17D813E10067E98D /* barobo-logo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "barobo-logo.icns"; path = "../barobo-logo.icns"; sourceTree = "<group>"; };
+		2DAED28E17D814150067E98D /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2DAED24F17D8130A0067E98D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D742FF017D81EDB0004CFDF /* liblibbarobo.a in Frameworks */,
+				2DAED28F17D814150067E98D /* IOKit.framework in Frameworks */,
+				2DAED25617D8130A0067E98D /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DAED26E17D8130B0067E98D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DAED27417D8130B0067E98D /* SenTestingKit.framework in Frameworks */,
+				2DAED27517D8130B0067E98D /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2D742FEB17D81B650004CFDF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2D742FEF17D81B650004CFDF /* liblibbarobo.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2D742FF317D822ED0004CFDF /* Shared Files */ = {
+			isa = PBXGroup;
+			children = (
+				2D742FF417D823140004CFDF /* RecordMobot.cpp */,
+				2D742FF517D823140004CFDF /* RecordMobot.h */,
+			);
+			name = "Shared Files";
+			sourceTree = "<group>";
+		};
+		2DAED24917D8130A0067E98D = {
+			isa = PBXGroup;
+			children = (
+				2DAED25B17D8130A0067E98D /* BaroboLink */,
+				2DAED27817D8130B0067E98D /* BaroboLinkTests */,
+				2DAED25417D8130A0067E98D /* Frameworks */,
+				2DAED25317D8130A0067E98D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2DAED25317D8130A0067E98D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2DAED25217D8130A0067E98D /* BaroboLink.app */,
+				2DAED27217D8130B0067E98D /* BaroboLinkTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2DAED25417D8130A0067E98D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2D742FEA17D81B650004CFDF /* libbarobo.xcodeproj */,
+				2DAED28E17D814150067E98D /* IOKit.framework */,
+				2DAED25517D8130A0067E98D /* Cocoa.framework */,
+				2DAED27317D8130B0067E98D /* SenTestingKit.framework */,
+				2DAED25717D8130A0067E98D /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2DAED25717D8130A0067E98D /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2DAED25817D8130A0067E98D /* AppKit.framework */,
+				2DAED25917D8130A0067E98D /* CoreData.framework */,
+				2DAED25A17D8130A0067E98D /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		2DAED25B17D8130A0067E98D /* BaroboLink */ = {
+			isa = PBXGroup;
+			children = (
+				2D742FF317D822ED0004CFDF /* Shared Files */,
+				2D742FF117D81F3E0004CFDF /* linkbot.h */,
+				2D742FF217D81F500004CFDF /* mobot.h */,
+				2DAED28917D813B80067E98D /* Assets */,
+				2DAED26717D8130A0067E98D /* BAROBOAppDelegate.h */,
+				2DAED26817D8130A0067E98D /* BAROBOAppDelegate.m */,
+				2DAED26A17D8130B0067E98D /* MainMenu.xib */,
+				2DAED25C17D8130A0067E98D /* Supporting Files */,
+			);
+			path = BaroboLink;
+			sourceTree = "<group>";
+		};
+		2DAED25C17D8130A0067E98D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				2DAED25D17D8130A0067E98D /* BaroboLink-Info.plist */,
+				2DAED25E17D8130A0067E98D /* InfoPlist.strings */,
+				2DAED26117D8130A0067E98D /* main.m */,
+				2DAED26317D8130A0067E98D /* BaroboLink-Prefix.pch */,
+				2DAED26417D8130A0067E98D /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		2DAED27817D8130B0067E98D /* BaroboLinkTests */ = {
+			isa = PBXGroup;
+			children = (
+				2DAED27E17D8130B0067E98D /* BaroboLinkTests.h */,
+				2DAED27F17D8130B0067E98D /* BaroboLinkTests.m */,
+				2DAED27917D8130B0067E98D /* Supporting Files */,
+			);
+			path = BaroboLinkTests;
+			sourceTree = "<group>";
+		};
+		2DAED27917D8130B0067E98D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				2DAED27A17D8130B0067E98D /* BaroboLinkTests-Info.plist */,
+				2DAED27B17D8130B0067E98D /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		2DAED28917D813B80067E98D /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				2DAED28C17D813E10067E98D /* barobo-logo.icns */,
+			);
+			name = Assets;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2DAED25117D8130A0067E98D /* BaroboLink */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DAED28317D8130B0067E98D /* Build configuration list for PBXNativeTarget "BaroboLink" */;
+			buildPhases = (
+				2DAED24E17D8130A0067E98D /* Sources */,
+				2DAED24F17D8130A0067E98D /* Frameworks */,
+				2DAED25017D8130A0067E98D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BaroboLink;
+			productName = BaroboLink;
+			productReference = 2DAED25217D8130A0067E98D /* BaroboLink.app */;
+			productType = "com.apple.product-type.application";
+		};
+		2DAED27117D8130B0067E98D /* BaroboLinkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DAED28617D8130B0067E98D /* Build configuration list for PBXNativeTarget "BaroboLinkTests" */;
+			buildPhases = (
+				2DAED26D17D8130B0067E98D /* Sources */,
+				2DAED26E17D8130B0067E98D /* Frameworks */,
+				2DAED26F17D8130B0067E98D /* Resources */,
+				2DAED27017D8130B0067E98D /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2DAED27717D8130B0067E98D /* PBXTargetDependency */,
+			);
+			name = BaroboLinkTests;
+			productName = BaroboLinkTests;
+			productReference = 2DAED27217D8130B0067E98D /* BaroboLinkTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2DAED24A17D8130A0067E98D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = BAROBO;
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = "Barobo, Inc,";
+			};
+			buildConfigurationList = 2DAED24D17D8130A0067E98D /* Build configuration list for PBXProject "BaroboLink" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 2DAED24917D8130A0067E98D;
+			productRefGroup = 2DAED25317D8130A0067E98D /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 2D742FEB17D81B650004CFDF /* Products */;
+					ProjectRef = 2D742FEA17D81B650004CFDF /* libbarobo.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				2DAED25117D8130A0067E98D /* BaroboLink */,
+				2DAED27117D8130B0067E98D /* BaroboLinkTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		2D742FEF17D81B650004CFDF /* liblibbarobo.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = liblibbarobo.a;
+			remoteRef = 2D742FEE17D81B650004CFDF /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2DAED25017D8130A0067E98D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DAED26017D8130A0067E98D /* InfoPlist.strings in Resources */,
+				2DAED26617D8130A0067E98D /* Credits.rtf in Resources */,
+				2DAED26C17D8130B0067E98D /* MainMenu.xib in Resources */,
+				2DAED28D17D813E10067E98D /* barobo-logo.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DAED26F17D8130B0067E98D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DAED27D17D8130B0067E98D /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2DAED27017D8130B0067E98D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2DAED24E17D8130A0067E98D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DAED26217D8130A0067E98D /* main.m in Sources */,
+				2DAED26917D8130A0067E98D /* BAROBOAppDelegate.m in Sources */,
+				2D742FF617D823140004CFDF /* RecordMobot.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DAED26D17D8130B0067E98D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DAED28017D8130B0067E98D /* BaroboLinkTests.m in Sources */,
+				2D742FF717D823140004CFDF /* RecordMobot.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2DAED27717D8130B0067E98D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DAED25117D8130A0067E98D /* BaroboLink */;
+			targetProxy = 2DAED27617D8130B0067E98D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		2DAED25E17D8130A0067E98D /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2DAED25F17D8130A0067E98D /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		2DAED26417D8130A0067E98D /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2DAED26517D8130A0067E98D /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		2DAED26A17D8130B0067E98D /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2DAED26B17D8130B0067E98D /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		2DAED27B17D8130B0067E98D /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2DAED27C17D8130B0067E98D /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		2DAED28117D8130B0067E98D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.7;
+			};
+			name = Debug;
+		};
+		2DAED28217D8130B0067E98D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx10.7;
+			};
+			name = Release;
+		};
+		2DAED28417D8130B0067E98D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "BaroboLink/BaroboLink-Prefix.pch";
+				INFOPLIST_FILE = "BaroboLink/BaroboLink-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/libbarobo";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		2DAED28517D8130B0067E98D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "BaroboLink/BaroboLink-Prefix.pch";
+				INFOPLIST_FILE = "BaroboLink/BaroboLink-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/libbarobo";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		2DAED28717D8130B0067E98D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/BaroboLink.app/Contents/MacOS/BaroboLink";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "BaroboLink/BaroboLink-Prefix.pch";
+				INFOPLIST_FILE = "BaroboLinkTests/BaroboLinkTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		2DAED28817D8130B0067E98D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/BaroboLink.app/Contents/MacOS/BaroboLink";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "BaroboLink/BaroboLink-Prefix.pch";
+				INFOPLIST_FILE = "BaroboLinkTests/BaroboLinkTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2DAED24D17D8130A0067E98D /* Build configuration list for PBXProject "BaroboLink" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DAED28117D8130B0067E98D /* Debug */,
+				2DAED28217D8130B0067E98D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DAED28317D8130B0067E98D /* Build configuration list for PBXNativeTarget "BaroboLink" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DAED28417D8130B0067E98D /* Debug */,
+				2DAED28517D8130B0067E98D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DAED28617D8130B0067E98D /* Build configuration list for PBXNativeTarget "BaroboLinkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DAED28717D8130B0067E98D /* Debug */,
+				2DAED28817D8130B0067E98D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2DAED24A17D8130A0067E98D /* Project object */;
+}

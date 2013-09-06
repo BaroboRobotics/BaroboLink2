@@ -59,7 +59,7 @@ int RecordMobot_connectWithAddress(recordMobot_t* mobot, const char address[], i
   int rc;
   strcpy(mobot->address, address);
   mobot->connectStatus = RMOBOT_CONNECTING;
-  if(rc = Mobot_connectWithAddress((mobot_t*)mobot, address, channel)) {
+  if((rc = Mobot_connectWithAddress((mobot_t*)mobot, address, channel))) {
     mobot->connectStatus = RMOBOT_NOT_CONNECTED;
     return rc;
   }
@@ -141,6 +141,7 @@ int RecordMobot_play(recordMobot_t* mobot, int index)
 #endif
 		return 0;
 	}
+    return 0;
 }
 
 int RecordMobot_getMotionType(recordMobot_t* mobot, int index)
