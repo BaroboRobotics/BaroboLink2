@@ -93,6 +93,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2D0E70DE17DAD8D600A72A2A /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
 		2D742FEB17D81B650004CFDF /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -132,6 +139,8 @@
 		2DAED25417D8130A0067E98D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2D742FF117D81F3E0004CFDF /* linkbot.h */,
+				2D742FF217D81F500004CFDF /* mobot.h */,
 				2D742FEA17D81B650004CFDF /* libbarobo.xcodeproj */,
 				2DAED28E17D814150067E98D /* IOKit.framework */,
 				2DAED25517D8130A0067E98D /* Cocoa.framework */,
@@ -154,9 +163,8 @@
 		2DAED25B17D8130A0067E98D /* BaroboLink */ = {
 			isa = PBXGroup;
 			children = (
+				2D0E70DE17DAD8D600A72A2A /* ViewControllers */,
 				2D742FF317D822ED0004CFDF /* Shared Files */,
-				2D742FF117D81F3E0004CFDF /* linkbot.h */,
-				2D742FF217D81F500004CFDF /* mobot.h */,
 				2DAED28917D813B80067E98D /* Assets */,
 				2DAED26717D8130A0067E98D /* BAROBOAppDelegate.h */,
 				2DAED26817D8130A0067E98D /* BAROBOAppDelegate.m */,
@@ -475,6 +483,7 @@
 				GCC_PREFIX_HEADER = "BaroboLink/BaroboLink-Prefix.pch";
 				INFOPLIST_FILE = "BaroboLink/BaroboLink-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/libbarobo";
 				WRAPPER_EXTENSION = app;

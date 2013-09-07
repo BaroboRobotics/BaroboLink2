@@ -18,4 +18,6 @@
 
 @property (assign) IBOutlet NSWindow *window;
 
+- (void)listenForRobots;
+
 @end

@@ -103,8 +103,8 @@ void usbDeviceRemoved(void *refCon, io_iterator_t iterator)
         
         NSLog(@"BSD Path = %@", bsdPath);
         
-        NSRange range = [bsdPath rangeOfString:@"bluetooth" options:NSCaseInsensitiveSearch];
-        if (range.location == NSNotFound) {
+        //NSRange range = [bsdPath rangeOfString:@"bluetooth" options:NSCaseInsensitiveSearch];
+        //if (range.location == NSNotFound) {
             // Attempt to connect to the mobot.
             mobot_t* mobot = (mobot_t*)malloc(sizeof(mobot_t));
             Mobot_init(mobot);
@@ -114,12 +114,10 @@ void usbDeviceRemoved(void *refCon, io_iterator_t iterator)
                 free(mobot);
             } else {
                 NSLog(@"Robot NOT found at %@", bsdPath);
-                if (mobot->socket >= 0) {
-                    close(mobot->socket);
-                }
+                Mobot_disconnect(mobot);
                 free(mobot);
             }
-        }
+        //}
 		//NSLog(@"Vendor ID: %@", [NSString stringWithFormat: @"0x%04x", vendor]);
         //NSLog(@"Product ID: %@", [NSString stringWithFormat: @"0x%04x", product]);
         
@@ -210,7 +208,13 @@ void usbDeviceRemoved(void *refCon, io_iterator_t iterator)
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    [self listenForRobots];
+    [NSThread detachNewThreadSelector:@selector(listenForRobots) toTarget:self withObject:nil];
+    //[self listenForRobots];
+}
+
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)application
+{
+    return YES;
 }
 
 @end
