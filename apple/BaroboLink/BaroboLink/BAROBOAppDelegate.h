@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "BAROBORobotTableViewController.h"
 
 @interface BAROBOAppDelegate : NSObject <NSApplicationDelegate> {
     NSMutableArray *deviceArray;
@@ -14,9 +15,12 @@
     io_iterator_t gNewDeviceRemovedIterator;
     IONotificationPortRef gNotifyPort;
 	CFMutableDictionaryRef classToMatch;
+    
+
 }
 
 @property (assign) IBOutlet NSWindow *window;
+@property (assign) IBOutlet BAROBORobotTableViewController *tvc;
 
 - (void)listenForRobots;
 
