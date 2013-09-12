@@ -29,6 +29,8 @@
 		2D0E710017DEB97600A72A2A /* rotate_right.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D0E70F117DEB97600A72A2A /* rotate_right.png */; };
 		2D0E710117DEB97600A72A2A /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D0E70F217DEB97600A72A2A /* stop.png */; };
 		2D0E710217DEB97600A72A2A /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D0E70F217DEB97600A72A2A /* stop.png */; };
+		2D723D1117DFF38A000EAD3D /* BAROBOControlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D723D1017DFF38A000EAD3D /* BAROBOControlViewController.m */; };
+		2D723D1217DFF38A000EAD3D /* BAROBOControlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D723D1017DFF38A000EAD3D /* BAROBOControlViewController.m */; };
 		2D742FF017D81EDB0004CFDF /* liblibbarobo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D742FEF17D81B650004CFDF /* liblibbarobo.a */; };
 		2D742FF617D823140004CFDF /* RecordMobot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D742FF417D823140004CFDF /* RecordMobot.cpp */; };
 		2D742FF717D823140004CFDF /* RecordMobot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D742FF417D823140004CFDF /* RecordMobot.cpp */; };
@@ -77,6 +79,8 @@
 		2D0E70F017DEB97600A72A2A /* rotate_left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = rotate_left.png; path = ../../../assets/interface/rotate_left.png; sourceTree = "<group>"; };
 		2D0E70F117DEB97600A72A2A /* rotate_right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = rotate_right.png; path = ../../../assets/interface/rotate_right.png; sourceTree = "<group>"; };
 		2D0E70F217DEB97600A72A2A /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stop.png; path = ../../../assets/interface/stop.png; sourceTree = "<group>"; };
+		2D723D0F17DFF38A000EAD3D /* BAROBOControlViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAROBOControlViewController.h; path = Source/ViewControllers/BAROBOControlViewController.h; sourceTree = "<group>"; };
+		2D723D1017DFF38A000EAD3D /* BAROBOControlViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAROBOControlViewController.m; path = Source/ViewControllers/BAROBOControlViewController.m; sourceTree = "<group>"; };
 		2D742FEA17D81B650004CFDF /* libbarobo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libbarobo.xcodeproj; path = ../libbarobo/libbarobo.xcodeproj; sourceTree = "<group>"; };
 		2D742FF117D81F3E0004CFDF /* linkbot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = linkbot.h; path = /Users/adamruggles/Documents/projects/BaroboLink2/apple/libbarobo/../../libbarobo/linkbot.h; sourceTree = "<absolute>"; };
 		2D742FF217D81F500004CFDF /* mobot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mobot.h; path = /Users/adamruggles/Documents/projects/BaroboLink2/apple/libbarobo/../../libbarobo/mobot.h; sourceTree = "<absolute>"; };
@@ -133,6 +137,8 @@
 			children = (
 				2D0E70DF17DB9B1400A72A2A /* BAROBORobotTableViewController.h */,
 				2D0E70E017DB9B1400A72A2A /* BAROBORobotTableViewController.m */,
+				2D723D0F17DFF38A000EAD3D /* BAROBOControlViewController.h */,
+				2D723D1017DFF38A000EAD3D /* BAROBOControlViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -418,6 +424,7 @@
 				2D742FF617D823140004CFDF /* RecordMobot.cpp in Sources */,
 				2D0E70E117DB9B1400A72A2A /* BAROBORobotTableViewController.m in Sources */,
 				2D0E70E617DB9F1700A72A2A /* BAROBORobot.m in Sources */,
+				2D723D1117DFF38A000EAD3D /* BAROBOControlViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -429,6 +436,7 @@
 				2D742FF717D823140004CFDF /* RecordMobot.cpp in Sources */,
 				2D0E70E217DB9B1400A72A2A /* BAROBORobotTableViewController.m in Sources */,
 				2D0E70E717DB9F1700A72A2A /* BAROBORobot.m in Sources */,
+				2D723D1217DFF38A000EAD3D /* BAROBOControlViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

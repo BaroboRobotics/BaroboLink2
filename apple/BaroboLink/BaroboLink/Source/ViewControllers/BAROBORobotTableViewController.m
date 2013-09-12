@@ -37,6 +37,17 @@
     [self.tableView reloadData];
 }
 
+- (BAROBORobot*)selectedRobot {
+    if ([self.dataSource count] == 0) {
+        return nil;
+    }
+    NSInteger row = [[self tableView] selectedRow];
+    if (row < 0) {
+        row = 0;
+    }
+    return [self.dataSource objectAtIndex:row];
+}
+
 /**
  * NSTableViewDataSource implementation.
  */

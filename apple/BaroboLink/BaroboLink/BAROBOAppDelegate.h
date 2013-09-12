@@ -8,6 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 #import "BAROBORobotTableViewController.h"
+#import "BAROBOControlViewController.h"
+#import "BAROBORobot.h"
 
 @interface BAROBOAppDelegate : NSObject <NSApplicationDelegate> {
     NSMutableArray *deviceArray;
@@ -20,8 +22,10 @@
 }
 
 @property (assign) IBOutlet NSWindow *window;
-@property (assign) IBOutlet BAROBORobotTableViewController *tvc;
+@property (assign) IBOutlet BAROBORobotTableViewController *tableViewController;
+@property (assign) IBOutlet BAROBOControlViewController *controlViewController;
 
 - (void)listenForRobots;
+- (BAROBORobot*)selectedRobot;
 
 @end

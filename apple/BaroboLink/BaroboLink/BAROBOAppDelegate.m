@@ -121,8 +121,8 @@ void usbDeviceRemoved(void *refCon, io_iterator_t iterator)
                 [robot setName:name];
                 [robot setLocation:bsdPath];
                 [robot setLocationType:LOCATION_USB];
-                [self.tvc addRobot:robot];
-                [self.tvc refreshTable];
+                [self.tableViewController addRobot:robot];
+                [self.tableViewController refreshTable];
             } else {
                 NSLog(@"Robot NOT found at %@", bsdPath);
             }
@@ -164,15 +164,15 @@ void usbDeviceRemoved(void *refCon, io_iterator_t iterator)
 		NSLog(@"BSD Path = %@", bsdPath);
         if (bsdPath) {
             BAROBORobot *robotToRemove = nil;
-            for (BAROBORobot *robot in self.tvc.dataSource) {
+            for (BAROBORobot *robot in self.tableViewController.dataSource) {
                 if ([robot.location isEqualToString: bsdPath]) {
                     robotToRemove = robot;
                     break;
                 }
             }
             if (robotToRemove) {
-                [self.tvc.dataSource removeObject:robotToRemove];
-                [self.tvc refreshTable];
+                [self.tableViewController.dataSource removeObject:robotToRemove];
+                [self.tableViewController refreshTable];
             }
         }
         
@@ -250,6 +250,10 @@ void usbDeviceRemoved(void *refCon, io_iterator_t iterator)
    // mach_port_deallocate(mach_task_self(), masterPort);
 }
 
+- (BAROBORobot*)selectedRobot
+{
+    return [[self tableViewController] selectedRobot];
+}
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {

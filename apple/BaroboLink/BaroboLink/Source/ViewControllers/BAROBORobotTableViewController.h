@@ -18,5 +18,6 @@
 - (void)addRobot:(BAROBORobot*)robot;
 - (void)clearTable;
 - (void)refreshTable;
+- (BAROBORobot*)selectedRobot;
 
 @end
